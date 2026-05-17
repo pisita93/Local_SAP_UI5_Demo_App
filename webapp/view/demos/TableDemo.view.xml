@@ -1,0 +1,55 @@
+<mvc:View
+	controllerName="com.myorg.myapp.controller.demos.TableDemo"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page
+		id="tableDemoPage"
+		title="{i18n>demoTableTitle}"
+		showNavButton="true"
+		navButtonPress=".onNavBack">
+		<content>
+			<Table
+				id="productsTable"
+				class="sapUiResponsiveMargin"
+				width="auto"
+				items="{/products}"
+				growing="true"
+				growingThreshold="10">
+				<headerToolbar>
+					<OverflowToolbar>
+						<Title text="{i18n>demoTableHeader}" level="H2" />
+						<ToolbarSpacer />
+						<SearchField
+							width="20rem"
+							liveChange=".onSearch"
+							placeholder="{i18n>searchPlaceholder}" />
+					</OverflowToolbar>
+				</headerToolbar>
+				<columns>
+					<Column>
+						<Text text="{i18n>colProduct}" />
+					</Column>
+					<Column hAlign="End">
+						<Text text="{i18n>colPrice}" />
+					</Column>
+					<Column hAlign="End">
+						<Text text="{i18n>colStock}" />
+					</Column>
+					<Column>
+						<Text text="{i18n>colStatus}" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<ObjectIdentifier title="{name}" text="{category}" />
+							<ObjectNumber number="{price}" unit="USD" />
+							<Text text="{stock}" />
+							<ObjectStatus text="{statusText}" state="{statusState}" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+	</Page>
+</mvc:View>

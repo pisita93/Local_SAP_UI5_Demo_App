@@ -1,0 +1,35 @@
+<mvc:View
+	controllerName="com.myorg.myapp.controller.demos.ChartDemo"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page
+		id="chartDemoPage"
+		title="{i18n>demoChartTitle}"
+		showNavButton="true"
+		navButtonPress=".onNavBack">
+		<content>
+			<Panel
+				class="sapUiMediumMargin"
+				headerText="{i18n>demoChartHeader}"
+				expandable="false">
+				<Text text="{i18n>demoChartNote}" class="sapUiSmallMarginBottom" />
+
+				<VBox items="{/bars}" class="sapUiSmallMarginTop">
+					<HBox alignItems="Center" class="sapUiTinyMarginBottom">
+						<Label text="{label}" width="8rem" />
+						<ProgressIndicator
+							percentValue="{percent}"
+							displayValue="{= ${value} + ' ' + ${i18n>unitsLabel} }"
+							state="{state}"
+							width="20rem" />
+						<Text text="{value}" class="sapUiTinyMarginBegin" />
+					</HBox>
+				</VBox>
+
+				<HBox justifyContent="End" class="sapUiSmallMarginTop">
+					<Button text="{i18n>buttonRandomize}" press=".onRandomize" />
+				</HBox>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>

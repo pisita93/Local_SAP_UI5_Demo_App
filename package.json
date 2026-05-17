@@ -1,0 +1,20 @@
+{
+  "name": "local-sap-ui5-demo-app",
+  "version": "0.1.0",
+  "description": "Local SAP UI5 demo app following the UI5 CLI Getting Started guide",
+  "private": true,
+  "scripts": {
+    "start": "ui5 serve",
+    "build": "ui5 build --all"
+  },
+  "keywords": [
+    "openui5",
+    "sapui5",
+    "ui5"
+  ],
+  "author": "pisita93",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@ui5/cli": "^4.0.53"
+  }
+}

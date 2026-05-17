@@ -1,0 +1,60 @@
+<mvc:View
+	controllerName="com.myorg.myapp.controller.demos.FormsDemo"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+	<Page
+		id="formsDemoPage"
+		title="{i18n>demoFormsTitle}"
+		showNavButton="true"
+		navButtonPress=".onNavBack">
+		<content>
+			<form:SimpleForm
+				id="employeeForm"
+				editable="true"
+				layout="ColumnLayout"
+				class="sapUiMediumMargin"
+				title="{i18n>demoFormsSectionTitle}">
+				<form:content>
+					<core:Title text="{i18n>demoFormsPersonal}" />
+
+					<Label text="{i18n>fieldFirstName}" required="true" />
+					<Input value="{/firstName}" />
+
+					<Label text="{i18n>fieldLastName}" required="true" />
+					<Input value="{/lastName}" />
+
+					<Label text="{i18n>fieldEmail}" />
+					<Input value="{/email}" type="Email" />
+
+					<core:Title text="{i18n>demoFormsRole}" />
+
+					<Label text="{i18n>fieldRole}" />
+					<Select selectedKey="{/role}">
+						<core:Item key="engineer" text="{i18n>roleEngineer}" />
+						<core:Item key="designer" text="{i18n>roleDesigner}" />
+						<core:Item key="manager"  text="{i18n>roleManager}" />
+					</Select>
+
+					<Label text="{i18n>fieldRemote}" />
+					<Switch state="{/remote}" />
+
+					<Label text="{i18n>fieldNotes}" />
+					<TextArea value="{/notes}" rows="3" />
+				</form:content>
+			</form:SimpleForm>
+
+			<HBox class="sapUiMediumMargin" justifyContent="End">
+				<Button
+					text="{i18n>buttonReset}"
+					press=".onReset"
+					class="sapUiTinyMarginEnd" />
+				<Button
+					text="{i18n>buttonSubmit}"
+					type="Emphasized"
+					press=".onSubmit" />
+			</HBox>
+		</content>
+	</Page>
+</mvc:View>

@@ -1,0 +1,27 @@
+<mvc:View
+	controllerName="com.myorg.myapp.controller.Home"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page id="homePage" title="{i18n>appTitle}">
+		<content>
+			<VBox class="sapUiMediumMargin">
+				<Title text="{i18n>catalogHeader}" level="H2" />
+				<Text text="{i18n>catalogSubtitle}" class="sapUiSmallMarginBottom" />
+				<List
+					id="demoList"
+					items="{/demos}"
+					itemPress=".onDemoPress"
+					mode="None">
+					<StandardListItem
+						title="{title}"
+						description="{description}"
+						icon="{icon}"
+						iconDensityAware="false"
+						iconInset="false"
+						type="Navigation"
+						press=".onDemoPress" />
+				</List>
+			</VBox>
+		</content>
+	</Page>
+</mvc:View>
