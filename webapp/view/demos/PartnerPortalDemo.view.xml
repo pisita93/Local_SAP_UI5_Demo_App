@@ -1,0 +1,22 @@
+<mvc:View
+	controllerName="com.myorg.myapp.controller.demos.PartnerPortalDemo"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page
+		id="partnerPortalPage"
+		title="{i18n>demoPartnerPortalTitle}"
+		showNavButton="true"
+		navButtonPress=".onNavBack"
+		enableScrolling="false">
+		<headerContent>
+			<Button
+				icon="sap-icon://action"
+				tooltip="{i18n>demoPartnerPortalOpenStandalone}"
+				press=".onOpenStandalone" />
+		</headerContent>
+		<content>
+			<core:HTML id="partnerPortalFrame" />
+		</content>
+	</Page>
+</mvc:View>

@@ -77,6 +77,11 @@
           "pattern": "demo/sales-bkk",
           "name": "salesBkkDemo",
           "target": "salesBkkDemo"
+        },
+        {
+          "pattern": "demo/partner-portal",
+          "name": "partnerPortalDemo",
+          "target": "partnerPortalDemo"
         }
       ],
       "targets": {
@@ -98,6 +103,10 @@
         },
         "salesBkkDemo": {
           "viewName": "demos.SalesBkkDemo",
+          "viewLevel": 1
+        },
+        "partnerPortalDemo": {
+          "viewName": "demos.PartnerPortalDemo",
           "viewLevel": 1
         }
       }

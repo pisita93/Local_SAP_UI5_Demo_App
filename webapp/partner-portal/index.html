@@ -1,0 +1,2856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partner Portal — SAP BTP</title>
+<link rel="stylesheet" href="portal-styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useCallback } = React;
+
+/* ─── SVG Icons ──────────────────────────────────────────────── */
+const Ic = ({ d, size = 16, stroke = "currentColor", fill = "none", sw = 2 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+    {typeof d === 'string' ? <path d={d} /> : d}
+  </svg>
+);
+const IcMenu     = (p) => <Ic {...p} d={<><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></>} />;
+const IcHome     = (p) => <Ic {...p} d={<><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></>} />;
+const IcUsers    = (p) => <Ic {...p} d={<><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>} />;
+const IcTruck    = (p) => <Ic {...p} d={<><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></>} />;
+const IcBell     = (p) => <Ic {...p} d={<><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></>} />;
+const IcSearch   = (p) => <Ic {...p} d={<><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></>} />;
+const IcPlus     = (p) => <Ic {...p} d={<><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></>} />;
+const IcCheck    = (p) => <Ic {...p} d={<polyline points="20 6 9 17 4 12"/>} />;
+const IcX        = (p) => <Ic {...p} d={<><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>} />;
+const IcChevR    = (p) => <Ic {...p} d={<polyline points="9 18 15 12 9 6"/>} />;
+const IcChevD    = (p) => <Ic {...p} d={<polyline points="6 9 12 15 18 9"/>} />;
+const IcEdit     = (p) => <Ic {...p} d={<><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></>} />;
+const IcEye      = (p) => <Ic {...p} d={<><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></>} />;
+const IcInbox    = (p) => <Ic {...p} d={<><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></>} />;
+const IcCredit   = (p) => <Ic {...p} d={<><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></>} />;
+const IcRefresh  = (p) => <Ic {...p} d={<><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></>} />;
+const IcFilter   = (p) => <Ic {...p} d={<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>} />;
+const IcAlert    = (p) => <Ic {...p} d={<><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></>} />;
+const IcClipboard= (p) => <Ic {...p} d={<><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></>} />;
+const IcSend     = (p) => <Ic {...p} d={<><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></>} />;
+const IcList     = (p) => <Ic {...p} d={<><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></>} />;
+const IcShoppingCart = (p) => <Ic {...p} d={<><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></>} />;
+const IcFileInv  = (p) => <Ic {...p} d={<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></>} />;
+const IcCalendar = (p) => <Ic {...p} d={<><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>} />;
+const IcDollar   = (p) => <Ic {...p} d={<><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></>} />;
+
+/* ─── SAP Logo ───────────────────────────────────────────────── */
+const SapLogo = () => (
+  <svg width="36" height="18" viewBox="0 0 54 26.713">
+    <defs><linearGradient id="sg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stopColor="#00B8F1"/><stop offset="31%" stopColor="#0D90D9"/>
+      <stop offset="82%" stopColor="#1C65C8"/><stop offset="100%" stopColor="#1E5FBB"/>
+    </linearGradient></defs>
+    <polygon points="0,26.713 27.291,26.713 54,0 0,0" fill="url(#sg)"/>
+    <text x="4" y="20" fontSize="14" fontWeight="900" fill="white" fontFamily="Arial">SAP</text>
+  </svg>
+);
+
+/* ─── Toast ──────────────────────────────────────────────────── */
+let _toast;
+const Toast = () => {
+  const [t, setT] = useState({ show: false, msg: '', type: 'info' });
+  _toast = (msg, type = 'info') => {
+    setT({ show: true, msg, type });
+    setTimeout(() => setT(p => ({ ...p, show: false })), 3000);
+  };
+  return (
+    <div className={`toast toast-${t.type} ${t.show ? 'show' : ''}`}>
+      {t.type === 'success' ? <IcCheck size={14} /> : t.type === 'error' ? <IcX size={14} /> : <IcAlert size={14} />}
+      {t.msg}
+    </div>
+  );
+};
+const showToast = (msg, type = 'info') => _toast && _toast(msg, type);
+
+/* ─── Workflow Steps Component ───────────────────────────────── */
+const WorkflowSteps = ({ steps, current }) => (
+  <div className="workflow-bar">
+    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--sap-color-text-2)', marginBottom: 14, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Approval Workflow</div>
+    <div className="wf-steps">
+      {steps.map((s, i) => {
+        const st = i < current ? 'done' : i === current ? 'active' : '';
+        return (
+          <div key={i} className={`wf-step ${st}`}>
+            <div className="wf-circle">
+              {i < current ? <IcCheck size={12} /> : i + 1}
+            </div>
+            <div className="wf-label">{s.label}</div>
+            <div className="wf-role">{s.role}</div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+);
+
+/* ─── Breadcrumb ─────────────────────────────────────────────── */
+const Breadcrumb = ({ items }) => (
+  <div className="breadcrumb">
+    {items.map((it, i) => (
+      <React.Fragment key={i}>
+        {i > 0 && <IcChevR size={12} />}
+        {it.onClick ? <a onClick={it.onClick}>{it.label}</a> : <span>{it.label}</span>}
+      </React.Fragment>
+    ))}
+  </div>
+);
+
+/* ─── Dialog ─────────────────────────────────────────────────── */
+const Dialog = ({ title, onClose, footer, children, wide }) => (
+  <div className="dialog-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+    <div className="dialog" style={wide ? { width: 680 } : {}}>
+      <div className="dialog-header">
+        <span className="dialog-title">{title}</span>
+        <button className="btn btn-ghost btn-sm" onClick={onClose}><IcX size={16} /></button>
+      </div>
+      <div className="dialog-body">{children}</div>
+      {footer && <div className="dialog-footer">{footer}</div>}
+    </div>
+  </div>
+);
+
+/* ─── DATA ───────────────────────────────────────────────────── */
+const CUSTOMERS = [
+  { id: 'C-001', name: 'Acme Corporation', country: 'DE', taxId: 'DE123456789', paymentTerms: 'Net 30', creditLimit: '€500,000', creditRating: 'A', status: 'Active', requestedBy: 'John Müller', createdOn: '2025-01-10', step: 4 },
+  { id: 'C-002', name: 'TechFlow GmbH', country: 'DE', taxId: 'DE987654321', paymentTerms: 'Net 60', creditLimit: '€250,000', creditRating: 'B+', status: 'Pending', requestedBy: 'Sarah Schmidt', createdOn: '2025-01-14', step: 1 },
+  { id: 'C-003', name: 'Global Traders Ltd', country: 'GB', taxId: 'GB334455667', paymentTerms: 'Net 45', creditLimit: '€180,000', creditRating: 'B', status: 'Pending', requestedBy: 'Michael Brown', createdOn: '2025-01-15', step: 2 },
+  { id: 'C-004', name: 'Nordic Supplies AS', country: 'NO', taxId: 'NO112233445', paymentTerms: 'Net 30', creditLimit: '€320,000', creditRating: 'A-', status: 'Active', requestedBy: 'Lars Hansen', createdOn: '2024-12-20', step: 4 },
+  { id: 'C-005', name: 'Iberia Trade SL', country: 'ES', taxId: 'ES-B44556677', paymentTerms: 'Net 60', creditLimit: '€90,000', creditRating: 'C+', status: 'Rejected', requestedBy: 'Carlos Ruiz', createdOn: '2025-01-05', step: 0 },
+];
+
+const SUPPLIERS = [
+  { id: 'S-001', name: 'Raw Materials AG', country: 'DE', taxId: 'DE445566778', paymentTerms: 'Net 45', bankAccount: 'DE89370400440532013000', status: 'Active', requestedBy: 'Anna Weber', createdOn: '2025-01-08', step: 3 },
+  { id: 'S-002', name: 'Logistics Partners BV', country: 'NL', taxId: 'NL556677889', paymentTerms: 'Net 30', bankAccount: 'NL91ABNA0417164300', status: 'Pending', requestedBy: 'Jan Visser', createdOn: '2025-01-12', step: 1 },
+  { id: 'S-003', name: 'IT Services Co.', country: 'FR', taxId: 'FR667788990', paymentTerms: 'Net 60', bankAccount: 'FR7630006000011234567890189', status: 'Pending', requestedBy: 'Sophie Martin', createdOn: '2025-01-16', step: 2 },
+  { id: 'S-004', name: 'Packaging Solutions Ltd', country: 'GB', taxId: 'GB778899001', paymentTerms: 'Net 30', bankAccount: 'GB29NWBK60161331926819', status: 'Active', requestedBy: 'Robert Jones', createdOn: '2024-11-30', step: 3 },
+];
+
+const APPROVALS = [
+  { id: 'AP-001', type: 'customer', subtype: 'Create', name: 'TechFlow GmbH', id2: 'C-002', priority: 'High', submittedBy: 'Sarah Schmidt', submittedOn: '2025-01-14', step: '1st Level Approval' },
+  { id: 'AP-002', type: 'customer', subtype: 'Credit', name: 'Global Traders Ltd', id2: 'C-003', priority: 'Normal', submittedBy: 'Michael Brown', submittedOn: '2025-01-15', step: 'Credit Evaluation' },
+  { id: 'AP-003', type: 'supplier', subtype: 'Create', name: 'Logistics Partners BV', id2: 'S-002', priority: 'Normal', submittedBy: 'Jan Visser', submittedOn: '2025-01-12', step: '1st Level Approval' },
+  { id: 'AP-004', type: 'supplier', subtype: 'Change', name: 'IT Services Co.', id2: 'S-003', priority: 'High', submittedBy: 'Sophie Martin', submittedOn: '2025-01-16', step: '2nd Level Approval' },
+];
+
+const CUST_WF = [
+  { label: 'Draft / Submit', role: 'Requester' },
+  { label: '1st Approval', role: 'Line Manager' },
+  { label: '2nd Approval', role: 'Data Steward' },
+  { label: 'Credit Eval', role: 'Credit Processor' },
+  { label: 'SAP Created', role: 'System' },
+];
+
+const SUPP_WF = [
+  { label: 'Draft / Submit', role: 'Requester' },
+  { label: '1st Approval', role: 'Line Manager' },
+  { label: '2nd Approval', role: 'Data Steward' },
+  { label: 'SAP Created', role: 'System' },
+];
+
+const statusCls = { Active: 'tag-approved', Pending: 'tag-pending', Rejected: 'tag-error', Draft: 'tag-draft' };
+const ratingColor = { A: '#1A6B35', 'A-': '#1A6B35', 'A+': '#1A6B35', 'B+': '#0070F2', B: '#0070F2', 'B-': '#0070F2', 'C+': '#FF9900', C: '#FF9900', 'C-': '#AA0808' };
+
+/* ─── OVERVIEW PAGE ──────────────────────────────────────────── */
+const OverviewPage = ({ setView }) => {
+  const pendingApprovals = APPROVALS.length;
+  return (
+    <div className="page-area">
+      <div className="page-title-row">
+        <div>
+          <div className="page-title">Welcome back, John</div>
+          <div className="page-subtitle">Partner Portal — Customer &amp; Supplier Master Data Management</div>
+        </div>
+        <div className="flex gap-8">
+          <button className="btn btn-secondary btn-sm"><IcRefresh size={13} /> Refresh</button>
+        </div>
+      </div>
+
+      <div className="kpi-strip">
+        <div className="kpi-card kpi-card-blue" onClick={() => setView('customers')} style={{ cursor: 'pointer' }}>
+          <div className="kpi-icon" style={{ background: '#EDF6FF' }}><IcUsers size={16} stroke="var(--sap-color-interactive)" /></div>
+          <div className="kpi-val">{CUSTOMERS.length}</div>
+          <div className="kpi-label">Total Customers</div>
+        </div>
+        <div className="kpi-card kpi-card-green" onClick={() => setView('suppliers')} style={{ cursor: 'pointer' }}>
+          <div className="kpi-icon" style={{ background: '#e6f9ee' }}><IcTruck size={16} stroke="var(--sap-color-positive)" /></div>
+          <div className="kpi-val">{SUPPLIERS.length}</div>
+          <div className="kpi-label">Total Suppliers</div>
+        </div>
+        <div className="kpi-card kpi-card-yellow" onClick={() => setView('inbox')} style={{ cursor: 'pointer' }}>
+          <div className="kpi-icon" style={{ background: '#FFF3B8' }}><IcInbox size={16} stroke="var(--sap-color-warning)" /></div>
+          <div className="kpi-val">{pendingApprovals}</div>
+          <div className="kpi-label">Pending Approvals</div>
+        </div>
+        <div className="kpi-card kpi-card-purple">
+          <div className="kpi-icon" style={{ background: '#EEE4F8' }}><IcCredit size={16} stroke="#8B5CF6" /></div>
+          <div className="kpi-val">2</div>
+          <div className="kpi-label">Credit Reviews</div>
+        </div>
+      </div>
+
+      {/* Portal quick-access strips */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+        <div className="card">
+          <div className="card-header">
+            <span className="card-title">Customer Portal</span>
+            <span className="tag tag-info">Customer View</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--sap-color-border-2)' }}>
+            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
+              onClick={() => setView('cust-so')}
+              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
+              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EDF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <IcShoppingCart size={16} stroke="var(--sap-color-interactive)" />
+                </div>
+                <span style={{ fontWeight: 700, fontSize: 14 }}>Sales Orders</span>
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Track orders from creation to delivery and invoice</div>
+            </div>
+            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
+              onClick={() => setView('cust-ar')}
+              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
+              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFDBEF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <IcDollar size={16} stroke="var(--sap-color-negative)" />
+                </div>
+                <span style={{ fontWeight: 700, fontSize: 14 }}>Outstanding Invoices</span>
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>View unpaid AR invoices and overdue amounts</div>
+            </div>
+          </div>
+        </div>
+        <div className="card">
+          <div className="card-header">
+            <span className="card-title">Supplier Portal</span>
+            <span className="tag tag-purple">Supplier View</span>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--sap-color-border-2)' }}>
+            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
+              onClick={() => setView('supp-po')}
+              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
+              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFF3B8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <IcFileInv size={16} stroke="var(--sap-color-warning)" />
+                </div>
+                <span style={{ fontWeight: 700, fontSize: 14 }}>Open Purchase Orders</span>
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>View POs and book delivery slots</div>
+            </div>
+            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
+              onClick={() => setView('supp-ap')}
+              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
+              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EEE4F8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <IcCalendar size={16} stroke="#8B5CF6" />
+                </div>
+                <span style={{ fontWeight: 700, fontSize: 14 }}>AP Invoices</span>
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Track invoices pending payment from buyer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Sales + Admin quick-access */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+        <div className="card">
+          <div className="card-header">
+            <span className="card-title">Sales</span>
+            <span className="tag tag-info">Internal Sales</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--sap-color-border-2)' }}>
+            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
+              onClick={() => setView('sales-billing')}
+              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
+              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EDF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <IcList size={16} stroke="var(--sap-color-interactive)" />
+                </div>
+                <span style={{ fontWeight: 700, fontSize: 14 }}>Billing Report</span>
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>SO → Invoice → Payment transactions by sales group</div>
+            </div>
+            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
+              onClick={() => setView('sales-cia')}
+              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
+              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFF3B8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <IcDollar size={16} stroke="var(--sap-color-warning)" />
+                </div>
+                <span style={{ fontWeight: 700, fontSize: 14 }}>Cash-in-Advance</span>
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Export orders pending CIA payment before release</div>
+            </div>
+          </div>
+        </div>
+        <div className="card">
+          <div className="card-header">
+            <span className="card-title">Admin</span>
+            <span className="tag tag-error">Restricted</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--sap-color-border-2)' }}>
+            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
+              onClick={() => setView('admin-auth')}
+              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
+              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFDBEF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <IcUsers size={16} stroke="var(--sap-color-negative)" />
+                </div>
+                <span style={{ fontWeight: 700, fontSize: 14 }}>Authorization</span>
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Manage user roles and sales group access</div>
+            </div>
+            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
+              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
+              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#F5F6F7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <IcClipboard size={16} stroke="var(--sap-color-text-2)" />
+                </div>
+                <span style={{ fontWeight: 700, fontSize: 14 }}>Audit Log</span>
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>View system access and change history</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="card mb-16" style={{ marginBottom: 16 }}>
+        <div className="card-header">
+          <span className="card-title">Procurement — Internal Tools</span>
+          <span className="tag tag-info">Internal</span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 1, background: 'var(--sap-color-border-2)' }}>
+          <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
+            onClick={() => setView('proc-slots')}
+            onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
+            onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EDF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <IcCalendar size={16} stroke="var(--sap-color-interactive)" />
+              </div>
+              <span style={{ fontWeight: 700, fontSize: 14 }}>Delivery Slot Management</span>
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Add, confirm and notify suppliers of delivery slots</div>
+          </div>
+          <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
+            onClick={() => setView('supp-po')}
+            onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
+            onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFF3B8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <IcFileInv size={16} stroke="var(--sap-color-warning)" />
+              </div>
+              <span style={{ fontWeight: 700, fontSize: 14 }}>Open Purchase Orders</span>
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>View all open POs and their delivery status</div>
+          </div>
+          <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
+            onClick={() => setView('supp-ap')}
+            onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
+            onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EEE4F8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <IcDollar size={16} stroke="#8B5CF6" />
+              </div>
+              <span style={{ fontWeight: 700, fontSize: 14 }}>AP Invoices</span>
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Review and approve supplier invoices for payment</div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        {/* Recent Customers */}
+        <div className="card">
+          <div className="card-header">
+            <span className="card-title">Recent Customers</span>
+            <button className="btn btn-ghost btn-sm" onClick={() => setView('customers')}>View All</button>
+          </div>
+          <div style={{ padding: 0 }}>
+            <table className="sap-table">
+              <thead><tr><th>Name</th><th>Country</th><th>Status</th><th>Credit</th></tr></thead>
+              <tbody>
+                {CUSTOMERS.slice(0, 4).map(c => (
+                  <tr key={c.id} onClick={() => setView('cust-detail', c)}>
+                    <td><a>{c.name}</a></td>
+                    <td><span className="fs-13">{c.country}</span></td>
+                    <td><span className={`tag ${statusCls[c.status]}`}>{c.status}</span></td>
+                    <td style={{ color: ratingColor[c.creditRating], fontWeight: 700, fontSize: 13 }}>{c.creditRating}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Approval Inbox */}
+        <div className="card">
+          <div className="card-header">
+            <div className="flex items-center gap-8">
+              <span className="card-title">My Approval Inbox</span>
+              <span className="badge">{APPROVALS.length}</span>
+            </div>
+            <button className="btn btn-ghost btn-sm" onClick={() => setView('inbox')}>View All</button>
+          </div>
+          <div style={{ padding: '8px 0' }}>
+            {APPROVALS.map(a => (
+              <div key={a.id} style={{ padding: '10px 18px', borderBottom: '1px solid var(--sap-color-border-2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
+                onClick={() => setView(a.type === 'customer' ? 'cust-approval' : 'supp-approval', a)}>
+                <div>
+                  <div className="flex items-center gap-8">
+                    <span className="fw-600 fs-13">{a.name}</span>
+                    <span className={`tag ${a.type === 'customer' ? 'tag-info' : 'tag-purple'}`}>{a.type === 'customer' ? 'Customer' : 'Supplier'}</span>
+                  </div>
+                  <div className="fs-12 text-2 mt-4">{a.step} · {a.submittedBy}</div>
+                </div>
+                <span className={`tag ${a.priority === 'High' ? 'tag-error' : 'tag-pending'}`}>{a.priority}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ─── CUSTOMER LIST ──────────────────────────────────────────── */
+const CustomerList = ({ setView }) => {
+  const [q, setQ] = useState('');
+  const [showCreate, setShowCreate] = useState(false);
+  const rows = CUSTOMERS.filter(c => c.name.toLowerCase().includes(q.toLowerCase()) || c.id.includes(q));
+
+  return (
+    <div className="page-area">
+      <Breadcrumb items={[{ label: 'Home', onClick: () => setView('overview') }, { label: 'Customer Master Data' }]} />
+      <div className="page-title-row">
+        <div>
+          <div className="page-title">Customer Master Data</div>
+          <div className="page-subtitle">{CUSTOMERS.length} customers · including credit master data</div>
+        </div>
+        <div className="flex gap-8">
+          <button className="btn btn-secondary btn-sm"><IcFilter size={13} /> Filter</button>
+          <button className="btn btn-primary btn-sm" onClick={() => setView('cust-create')}>
+            <IcPlus size={13} /> Create Customer
+          </button>
+        </div>
+      </div>
+
+      <div className="table-wrap">
+        <div className="table-toolbar">
+          <div className="search-field" style={{ width: 280 }}>
+            <IcSearch size={14} stroke="var(--sap-color-text-2)" />
+            <input placeholder="Search customers..." value={q} onChange={e => setQ(e.target.value)} />
+          </div>
+          <span className="fs-12 text-2">{rows.length} results</span>
+        </div>
+        <table className="sap-table">
+          <thead>
+            <tr>
+              <th>Customer ID</th><th>Name</th><th>Country</th><th>Tax ID</th>
+              <th>Payment Terms</th><th>Credit Limit</th><th>Rating</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(c => (
+              <tr key={c.id} onClick={() => setView('cust-detail', c)}>
+                <td><a>{c.id}</a></td>
+                <td style={{ fontWeight: 600 }}>{c.name}</td>
+                <td>{c.country}</td>
+                <td className="text-2">{c.taxId}</td>
+                <td>{c.paymentTerms}</td>
+                <td style={{ fontWeight: 600 }}>{c.creditLimit}</td>
+                <td><span style={{ fontWeight: 700, color: ratingColor[c.creditRating] }}>{c.creditRating}</span></td>
+                <td><span className={`tag ${statusCls[c.status]}`}>{c.status}</span></td>
+                <td onClick={e => e.stopPropagation()} style={{ whiteSpace: 'nowrap' }}>
+                  <button className="btn btn-ghost btn-sm" onClick={() => setView('cust-detail', c)}><IcEye size={13} /></button>
+                  <button className="btn btn-ghost btn-sm" onClick={() => setView('cust-change', c)}><IcEdit size={13} /></button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="table-footer">
+          <span>{rows.length} of {CUSTOMERS.length} records</span>
+          <div className="flex gap-8">
+            <button className="btn btn-secondary btn-sm" disabled>‹ Prev</button>
+            <button className="btn btn-secondary btn-sm" disabled>Next ›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ─── SUPPLIER LIST ──────────────────────────────────────────── */
+const SupplierList = ({ setView }) => {
+  const [q, setQ] = useState('');
+  const rows = SUPPLIERS.filter(s => s.name.toLowerCase().includes(q.toLowerCase()) || s.id.includes(q));
+
+  return (
+    <div className="page-area">
+      <Breadcrumb items={[{ label: 'Home', onClick: () => setView('overview') }, { label: 'Supplier Master Data' }]} />
+      <div className="page-title-row">
+        <div>
+          <div className="page-title">Supplier Master Data</div>
+          <div className="page-subtitle">{SUPPLIERS.length} suppliers registered</div>
+        </div>
+        <div className="flex gap-8">
+          <button className="btn btn-secondary btn-sm"><IcFilter size={13} /> Filter</button>
+          <button className="btn btn-primary btn-sm" onClick={() => setView('supp-create')}>
+            <IcPlus size={13} /> Create Supplier
+          </button>
+        </div>
+      </div>
+
+      <div className="table-wrap">
+        <div className="table-toolbar">
+          <div className="search-field" style={{ width: 280 }}>
+            <IcSearch size={14} stroke="var(--sap-color-text-2)" />
+            <input placeholder="Search suppliers..." value={q} onChange={e => setQ(e.target.value)} />
+          </div>
+          <span className="fs-12 text-2">{rows.length} results</span>
+        </div>
+        <table className="sap-table">
+          <thead>
+            <tr>
+              <th>Supplier ID</th><th>Name</th><th>Country</th><th>Tax ID</th>
+              <th>Payment Terms</th><th>Bank Account</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(s => (
+              <tr key={s.id} onClick={() => setView('supp-detail', s)}>
+                <td><a>{s.id}</a></td>
+                <td style={{ fontWeight: 600 }}>{s.name}</td>
+                <td>{s.country}</td>
+                <td className="text-2">{s.taxId}</td>
+                <td>{s.paymentTerms}</td>
+                <td className="text-2" style={{ fontFamily: 'monospace', fontSize: 12 }}>{s.bankAccount}</td>
+                <td><span className={`tag ${statusCls[s.status]}`}>{s.status}</span></td>
+                <td onClick={e => e.stopPropagation()} style={{ whiteSpace: 'nowrap' }}>
+                  <button className="btn btn-ghost btn-sm" onClick={() => setView('supp-detail', s)}><IcEye size={13} /></button>
+                  <button className="btn btn-ghost btn-sm" onClick={() => setView('supp-change', s)}><IcEdit size={13} /></button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="table-footer">
+          <span>{rows.length} of {SUPPLIERS.length} records</span>
+          <div className="flex gap-8">
+            <button className="btn btn-secondary btn-sm" disabled>‹ Prev</button>
+            <button className="btn btn-secondary btn-sm" disabled>Next ›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ─── CUSTOMER DETAIL ────────────────────────────────────────── */
+const CustomerDetail = ({ rec, setView }) => {
+  const [activeTab, setActiveTab] = useState(0);
+  const tabs = ['General Data', 'Credit Master Data', 'Workflow History', 'Attachments'];
+  const isReadonly = rec.status === 'Active';
+
+  return (
+    <div className="page-area">
+      <Breadcrumb items={[
+        { label: 'Home', onClick: () => setView('overview') },
+        { label: 'Customer Master Data', onClick: () => setView('customers') },
+        { label: rec.name }
+      ]} />
+
+      <div className="obj-header">
+        <div className="obj-title-row">
+          <div>
+            <div className="flex items-center gap-8">
+              <div className="obj-title">{rec.name}</div>
+              <span className={`tag ${statusCls[rec.status]}`}>{rec.status}</span>
+              {rec.creditRating && <span className="tag tag-credit">Rating: {rec.creditRating}</span>}
+            </div>
+            <div className="obj-attrs">
+              <div className="obj-attr"><div className="obj-attr-label">Customer ID</div><div className="obj-attr-val">{rec.id}</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Country</div><div className="obj-attr-val">{rec.country}</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Tax ID</div><div className="obj-attr-val">{rec.taxId}</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Credit Limit</div><div className="obj-attr-val">{rec.creditLimit}</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Requested By</div><div className="obj-attr-val">{rec.requestedBy}</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Created On</div><div className="obj-attr-val">{rec.createdOn}</div></div>
+            </div>
+          </div>
+          <div className="flex gap-8">
+            {rec.status !== 'Rejected' && <button className="btn btn-secondary btn-sm" onClick={() => setView('cust-change', rec)}><IcEdit size={13} /> Change</button>}
+          </div>
+        </div>
+      </div>
+
+      <WorkflowSteps steps={CUST_WF} current={rec.step} />
+
+      <div className="page-tabs">
+        {tabs.map((t, i) => <div key={i} className={`tab ${activeTab === i ? 'active' : ''}`} onClick={() => setActiveTab(i)}>{t}</div>)}
+      </div>
+
+      {activeTab === 0 && (
+        <div>
+          <div className="form-section">
+            <div className="form-section-hdr">General Information</div>
+            <div className="form-grid form-grid-3">
+              <div className="field"><div className="field-label">Customer Name</div><input className="input readonly" readOnly value={rec.name} /></div>
+              <div className="field"><div className="field-label">Country</div><input className="input readonly" readOnly value={rec.country} /></div>
+              <div className="field"><div className="field-label">Tax ID / VAT</div><input className="input readonly" readOnly value={rec.taxId} /></div>
+              <div className="field"><div className="field-label">Payment Terms</div><input className="input readonly" readOnly value={rec.paymentTerms} /></div>
+              <div className="field"><div className="field-label">Currency</div><input className="input readonly" readOnly value="EUR" /></div>
+              <div className="field"><div className="field-label">Account Group</div><input className="input readonly" readOnly value="External Customer" /></div>
+            </div>
+          </div>
+          <div className="form-section">
+            <div className="form-section-hdr">Address</div>
+            <div className="form-grid form-grid-3">
+              <div className="field col-span-2"><div className="field-label">Street / House No.</div><input className="input readonly" readOnly value="123 Business Street" /></div>
+              <div className="field"><div className="field-label">Postal Code</div><input className="input readonly" readOnly value="10115" /></div>
+              <div className="field"><div className="field-label">City</div><input className="input readonly" readOnly value="Berlin" /></div>
+              <div className="field"><div className="field-label">Region</div><input className="input readonly" readOnly value="Brandenburg" /></div>
+              <div className="field"><div className="field-label">Country</div><input className="input readonly" readOnly value={rec.country} /></div>
+            </div>
+          </div>
+        </div>
+      )}
+      {activeTab === 1 && (
+        <div>
+          <div className="msg-strip msg-info"><IcAlert size={14} /><span>Credit master data is managed by the Credit Processor after 2nd level approval.</span></div>
+          <div className="form-section">
+            <div className="form-section-hdr">Credit Information</div>
+            <div className="form-grid form-grid-3">
+              <div className="field"><div className="field-label">Credit Limit</div><input className="input readonly" readOnly value={rec.creditLimit} /></div>
+              <div className="field"><div className="field-label">Credit Rating</div>
+                <input className="input readonly" readOnly value={rec.creditRating} style={{ color: ratingColor[rec.creditRating], fontWeight: 700 }} />
+              </div>
+              <div className="field"><div className="field-label">Risk Category</div><input className="input readonly" readOnly value={rec.creditRating?.startsWith('A') ? 'Low Risk' : rec.creditRating?.startsWith('B') ? 'Medium Risk' : 'High Risk'} /></div>
+              <div className="field"><div className="field-label">Credit Exposure</div><input className="input readonly" readOnly value="€127,450" /></div>
+              <div className="field"><div className="field-label">Days Sales Outstanding</div><input className="input readonly" readOnly value="28 days" /></div>
+              <div className="field"><div className="field-label">Last Review Date</div><input className="input readonly" readOnly value={rec.createdOn} /></div>
+            </div>
+          </div>
+        </div>
+      )}
+      {activeTab === 2 && (
+        <div className="table-wrap">
+          <table className="sap-table">
+            <thead><tr><th>Date</th><th>Action</th><th>By</th><th>Role</th><th>Comments</th></tr></thead>
+            <tbody>
+              <tr><td>{rec.createdOn}</td><td><span className="tag tag-info">Submitted</span></td><td>{rec.requestedBy}</td><td>Requester</td><td>Initial submission</td></tr>
+              {rec.step > 1 && <tr><td>{rec.createdOn}</td><td><span className="tag tag-approved">Approved</span></td><td>Klaus Bauer</td><td>Line Manager</td><td>Verified — proceed</td></tr>}
+              {rec.step > 2 && <tr><td>{rec.createdOn}</td><td><span className="tag tag-approved">Approved</span></td><td>Maria Gonzalez</td><td>Data Steward</td><td>Data quality check passed</td></tr>}
+              {rec.step > 3 && <tr><td>{rec.createdOn}</td><td><span className="tag tag-credit">Credit Set</span></td><td>Thomas Kraft</td><td>Credit Processor</td><td>Rating assigned: {rec.creditRating}</td></tr>}
+              {rec.status === 'Active' && <tr><td>{rec.createdOn}</td><td><span className="tag tag-approved">Created in SAP</span></td><td>System</td><td>Automation</td><td>Customer master data created in S/4HANA</td></tr>}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {activeTab === 3 && (
+        <div className="card"><div className="card-body" style={{ textAlign: 'center', padding: '40px', color: 'var(--sap-color-text-2)' }}>No attachments for this record.</div></div>
+      )}
+    </div>
+  );
+};
+
+/* ─── SUPPLIER DETAIL ────────────────────────────────────────── */
+const SupplierDetail = ({ rec, setView }) => {
+  const [activeTab, setActiveTab] = useState(0);
+  const tabs = ['General Data', 'Bank Details', 'Workflow History', 'Attachments'];
+
+  return (
+    <div className="page-area">
+      <Breadcrumb items={[
+        { label: 'Home', onClick: () => setView('overview') },
+        { label: 'Supplier Master Data', onClick: () => setView('suppliers') },
+        { label: rec.name }
+      ]} />
+
+      <div className="obj-header">
+        <div className="obj-title-row">
+          <div>
+            <div className="flex items-center gap-8">
+              <div className="obj-title">{rec.name}</div>
+              <span className={`tag ${statusCls[rec.status]}`}>{rec.status}</span>
+            </div>
+            <div className="obj-attrs">
+              <div className="obj-attr"><div className="obj-attr-label">Supplier ID</div><div className="obj-attr-val">{rec.id}</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Country</div><div className="obj-attr-val">{rec.country}</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Tax ID</div><div className="obj-attr-val">{rec.taxId}</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Payment Terms</div><div className="obj-attr-val">{rec.paymentTerms}</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Requested By</div><div className="obj-attr-val">{rec.requestedBy}</div></div>
+            </div>
+          </div>
+          <div className="flex gap-8">
+            {rec.status !== 'Rejected' && <button className="btn btn-secondary btn-sm" onClick={() => setView('supp-change', rec)}><IcEdit size={13} /> Change</button>}
+          </div>
+        </div>
+      </div>
+
+      <WorkflowSteps steps={SUPP_WF} current={rec.step} />
+
+      <div className="page-tabs">
+        {tabs.map((t, i) => <div key={i} className={`tab ${activeTab === i ? 'active' : ''}`} onClick={() => setActiveTab(i)}>{t}</div>)}
+      </div>
+
+      {activeTab === 0 && (
+        <div className="form-section">
+          <div className="form-section-hdr">General Information</div>
+          <div className="form-grid form-grid-3">
+            <div className="field"><div className="field-label">Supplier Name</div><input className="input" readOnly value={rec.name} /></div>
+            <div className="field"><div className="field-label">Country</div><input className="input" readOnly value={rec.country} /></div>
+            <div className="field"><div className="field-label">Tax ID / VAT</div><input className="input" readOnly value={rec.taxId} /></div>
+            <div className="field"><div className="field-label">Payment Terms</div><input className="input" readOnly value={rec.paymentTerms} /></div>
+            <div className="field"><div className="field-label">Currency</div><input className="input" readOnly value="EUR" /></div>
+            <div className="field"><div className="field-label">Account Group</div><input className="input" readOnly value="External Supplier" /></div>
+          </div>
+        </div>
+      )}
+      {activeTab === 1 && (
+        <div className="form-section">
+          <div className="form-section-hdr">Bank Details</div>
+          <div className="form-grid">
+            <div className="field"><div className="field-label">Bank Account (IBAN)</div><input className="input" readOnly value={rec.bankAccount} style={{ fontFamily: 'monospace' }} /></div>
+            <div className="field"><div className="field-label">Bank Key (BIC/SWIFT)</div><input className="input" readOnly value="DEUTDEDB" /></div>
+            <div className="field"><div className="field-label">Bank Name</div><input className="input" readOnly value="Deutsche Bank AG" /></div>
+            <div className="field"><div className="field-label">Account Holder</div><input className="input" readOnly value={rec.name} /></div>
+          </div>
+        </div>
+      )}
+      {activeTab === 2 && (
+        <div className="table-wrap">
+          <table className="sap-table">
+            <thead><tr><th>Date</th><th>Action</th><th>By</th><th>Role</th><th>Comments</th></tr></thead>
+            <tbody>
+              <tr><td>{rec.createdOn}</td><td><span className="tag tag-info">Submitted</span></td><td>{rec.requestedBy}</td><td>Requester</td><td>New supplier request</td></tr>
+              {rec.step > 1 && <tr><td>{rec.createdOn}</td><td><span className="tag tag-approved">Approved</span></td><td>Klaus Bauer</td><td>Line Manager</td><td>Business case verified</td></tr>}
+              {rec.step > 2 && <tr><td>{rec.createdOn}</td><td><span className="tag tag-approved">Approved</span></td><td>Maria Gonzalez</td><td>Data Steward</td><td>Master data quality OK</td></tr>}
+              {rec.status === 'Active' && <tr><td>{rec.createdOn}</td><td><span className="tag tag-approved">Created in SAP</span></td><td>System</td><td>Automation</td><td>Supplier created in S/4HANA</td></tr>}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {activeTab === 3 && (
+        <div className="card"><div className="card-body" style={{ textAlign: 'center', padding: '40px', color: 'var(--sap-color-text-2)' }}>No attachments.</div></div>
+      )}
+    </div>
+  );
+};
+
+/* ─── CUSTOMER CREATE/CHANGE FORM ────────────────────────────── */
+const CustomerForm = ({ rec, mode, setView }) => {
+  const isChange = mode === 'change';
+  const [form, setForm] = useState({
+    name: rec?.name || '', country: rec?.country || 'DE', taxId: rec?.taxId || '',
+    street: rec?.street || '', city: rec?.city || '', postal: rec?.postal || '',
+    paymentTerms: rec?.paymentTerms || 'Net 30', currency: 'EUR', accountGroup: 'External Customer',
+    phone: '', email: '', website: '', notes: ''
+  });
+  const [submitted, setSubmitted] = useState(false);
+  const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
+
+  const handleSubmit = () => {
+    setSubmitted(true);
+    showToast(isChange ? 'Change request submitted for approval' : 'Customer request submitted for 1st level approval', 'success');
+    setTimeout(() => setView('customers'), 800);
+  };
+
+  return (
+    <div className="page-area">
+      <Breadcrumb items={[
+        { label: 'Home', onClick: () => setView('overview') },
+        { label: 'Customer Master Data', onClick: () => setView('customers') },
+        { label: isChange ? `Change: ${rec?.name}` : 'Create Customer' }
+      ]} />
+      <div className="page-title-row">
+        <div>
+          <div className="page-title">{isChange ? `Change Customer: ${rec?.name}` : 'Create New Customer'}</div>
+          <div className="page-subtitle">{isChange ? 'Modification requires 2-level approval + credit processor review' : 'New customer requires 2-level approval + credit processor review + SAP creation'}</div>
+        </div>
+        <div className="flex gap-8">
+          <button className="btn btn-secondary btn-sm" onClick={() => setView(isChange ? 'cust-detail' : 'customers', rec)}>Cancel</button>
+          <button className="btn btn-primary btn-sm" onClick={handleSubmit}><IcSend size={13} /> Submit for Approval</button>
+        </div>
+      </div>
+
+      <WorkflowSteps steps={CUST_WF} current={0} />
+
+      <div className="msg-strip msg-info"><IcAlert size={14} /><span>After submission, this request will go through 1st Level → 2nd Level → Credit Processor evaluation before customer is created in SAP S/4HANA.</span></div>
+
+      <div className="form-section">
+        <div className="form-section-hdr">General Data <span className="fs-12 text-2" style={{ fontWeight: 400 }}>* Required fields</span></div>
+        <div className="form-grid form-grid-3">
+          <div className="field col-span-2"><div className="field-label">Customer / Company Name <span className="req">*</span></div>
+            <input className="input" value={form.name} onChange={e => set('name', e.target.value)} placeholder="Enter company name" /></div>
+          <div className="field"><div className="field-label">Account Group <span className="req">*</span></div>
+            <select className="input" value={form.accountGroup} onChange={e => set('accountGroup', e.target.value)}>
+              <option>External Customer</option><option>Internal Customer</option><option>One-Time Customer</option>
+            </select></div>
+          <div className="field"><div className="field-label">Country <span className="req">*</span></div>
+            <select className="input" value={form.country} onChange={e => set('country', e.target.value)}>
+              <option value="DE">Germany (DE)</option><option value="GB">United Kingdom (GB)</option>
+              <option value="FR">France (FR)</option><option value="NL">Netherlands (NL)</option>
+              <option value="ES">Spain (ES)</option><option value="US">United States (US)</option>
+            </select></div>
+          <div className="field"><div className="field-label">Tax ID / VAT Number <span className="req">*</span></div>
+            <input className="input" value={form.taxId} onChange={e => set('taxId', e.target.value)} placeholder="e.g. DE123456789" /></div>
+          <div className="field"><div className="field-label">Currency</div>
+            <select className="input" value={form.currency} onChange={e => set('currency', e.target.value)}>
+              <option>EUR</option><option>USD</option><option>GBP</option><option>CHF</option>
+            </select></div>
+        </div>
+      </div>
+
+      <div className="form-section">
+        <div className="form-section-hdr">Address</div>
+        <div className="form-grid form-grid-3">
+          <div className="field col-span-2"><div className="field-label">Street / House No. <span className="req">*</span></div>
+            <input className="input" value={form.street} onChange={e => set('street', e.target.value)} placeholder="Street address" /></div>
+          <div className="field"><div className="field-label">Postal Code <span className="req">*</span></div>
+            <input className="input" value={form.postal} onChange={e => set('postal', e.target.value)} placeholder="Postal code" /></div>
+          <div className="field"><div className="field-label">City <span className="req">*</span></div>
+            <input className="input" value={form.city} onChange={e => set('city', e.target.value)} placeholder="City" /></div>
+          <div className="field"><div className="field-label">Region / State</div>
+            <input className="input" placeholder="Region" /></div>
+          <div className="field"><div className="field-label">P.O. Box</div>
+            <input className="input" placeholder="Optional" /></div>
+        </div>
+      </div>
+
+      <div className="form-section">
+        <div className="form-section-hdr">Sales Data</div>
+        <div className="form-grid form-grid-3">
+          <div className="field"><div className="field-label">Payment Terms <span className="req">*</span></div>
+            <select className="input" value={form.paymentTerms} onChange={e => set('paymentTerms', e.target.value)}>
+              <option>Net 30</option><option>Net 45</option><option>Net 60</option><option>2/10 Net 30</option><option>Immediate</option>
+            </select></div>
+          <div className="field"><div className="field-label">Sales Organisation</div>
+            <select className="input"><option>1000 — Germany</option><option>2000 — UK</option></select></div>
+          <div className="field"><div className="field-label">Distribution Channel</div>
+            <select className="input"><option>10 — Direct</option><option>20 — Wholesale</option></select></div>
+          <div className="field"><div className="field-label">Division</div>
+            <select className="input"><option>00 — Cross-division</option><option>01 — Products</option></select></div>
+          <div className="field"><div className="field-label">Incoterms</div>
+            <select className="input"><option>DAP — Delivered at Place</option><option>EXW — Ex Works</option><option>CIF — Cost Insurance Freight</option></select></div>
+          <div className="field"><div className="field-label">Price Group</div>
+            <select className="input"><option>01 — Standard</option><option>02 — Premium</option></select></div>
+        </div>
+      </div>
+
+      <div className="form-section">
+        <div className="form-section-hdr">Credit Request <span className="tag tag-credit" style={{ marginLeft: 8 }}>Credit Processor Step</span></div>
+        <div className="msg-strip msg-warning" style={{ margin: '14px 18px 0' }}><IcAlert size={14} /><span>Credit limit and rating will be assigned by the Credit Processor during evaluation. Provide guidance below.</span></div>
+        <div className="form-grid form-grid-3" style={{ paddingTop: 8 }}>
+          <div className="field"><div className="field-label">Requested Credit Limit</div>
+            <input className="input" placeholder="e.g. €250,000" /></div>
+          <div className="field"><div className="field-label">Credit Risk Category</div>
+            <select className="input"><option>Low Risk</option><option>Medium Risk</option><option>High Risk</option></select></div>
+          <div className="field"><div className="field-label">Credit Control Area</div>
+            <select className="input"><option>1000 — Germany</option><option>2000 — Group</option></select></div>
+          <div className="field col-span-3"><div className="field-label">Justification / Notes for Credit Processor</div>
+            <textarea className="input" rows={3} placeholder="Describe business relationship, expected volumes, and any relevant credit information..." /></div>
+        </div>
+      </div>
+
+      <div className="form-section">
+        <div className="form-section-hdr">Contacts &amp; Communication</div>
+        <div className="form-grid form-grid-3">
+          <div className="field"><div className="field-label">Phone Number</div>
+            <input className="input" value={form.phone} onChange={e => set('phone', e.target.value)} placeholder="+49 30 12345678" /></div>
+          <div className="field"><div className="field-label">Email Address</div>
+            <input className="input" type="email" value={form.email} onChange={e => set('email', e.target.value)} placeholder="contact@company.com" /></div>
+          <div className="field"><div className="field-label">Website</div>
+            <input className="input" value={form.website} onChange={e => set('website', e.target.value)} placeholder="https://..." /></div>
+          <div className="field col-span-3"><div className="field-label">Additional Notes</div>
+            <textarea className="input" rows={2} value={form.notes} onChange={e => set('notes', e.target.value)} placeholder="Any additional information..." /></div>
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-8 mb-16">
+        <button className="btn btn-secondary" onClick={() => setView(isChange ? 'cust-detail' : 'customers', rec)}>Cancel</button>
+        <button className="btn btn-primary" onClick={handleSubmit}><IcSend size={14} /> Submit for Approval</button>
+      </div>
+    </div>
+  );
+};
+
+/* ─── SUPPLIER CREATE/CHANGE FORM ────────────────────────────── */
+const SupplierForm = ({ rec, mode, setView }) => {
+  const isChange = mode === 'change';
+  const [form, setForm] = useState({
+    name: rec?.name || '', country: rec?.country || 'DE', taxId: rec?.taxId || '',
+    paymentTerms: rec?.paymentTerms || 'Net 30', currency: 'EUR',
+    iban: rec?.bankAccount || '', bic: '', bankName: '',
+    street: '', city: '', postal: '', notes: ''
+  });
+  const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
+
+  const handleSubmit = () => {
+    showToast(isChange ? 'Change request submitted for approval' : 'Supplier request submitted for 1st level approval', 'success');
+    setTimeout(() => setView('suppliers'), 800);
+  };
+
+  return (
+    <div className="page-area">
+      <Breadcrumb items={[
+        { label: 'Home', onClick: () => setView('overview') },
+        { label: 'Supplier Master Data', onClick: () => setView('suppliers') },
+        { label: isChange ? `Change: ${rec?.name}` : 'Create Supplier' }
+      ]} />
+      <div className="page-title-row">
+        <div>
+          <div className="page-title">{isChange ? `Change Supplier: ${rec?.name}` : 'Create New Supplier'}</div>
+          <div className="page-subtitle">Requires 2-level approval before supplier is created in SAP S/4HANA</div>
+        </div>
+        <div className="flex gap-8">
+          <button className="btn btn-secondary btn-sm" onClick={() => setView(isChange ? 'supp-detail' : 'suppliers', rec)}>Cancel</button>
+          <button className="btn btn-primary btn-sm" onClick={handleSubmit}><IcSend size={13} /> Submit for Approval</button>
+        </div>
+      </div>
+
+      <WorkflowSteps steps={SUPP_WF} current={0} />
+
+      <div className="msg-strip msg-info"><IcAlert size={14} /><span>After submission, this request will go through 1st Level → 2nd Level approval before supplier is created in SAP S/4HANA.</span></div>
+
+      <div className="form-section">
+        <div className="form-section-hdr">General Data</div>
+        <div className="form-grid form-grid-3">
+          <div className="field col-span-2"><div className="field-label">Supplier / Company Name <span className="req">*</span></div>
+            <input className="input" value={form.name} onChange={e => set('name', e.target.value)} placeholder="Enter company name" /></div>
+          <div className="field"><div className="field-label">Account Group <span className="req">*</span></div>
+            <select className="input"><option>External Supplier</option><option>Service Provider</option><option>One-Time Supplier</option></select></div>
+          <div className="field"><div className="field-label">Country <span className="req">*</span></div>
+            <select className="input" value={form.country} onChange={e => set('country', e.target.value)}>
+              <option value="DE">Germany (DE)</option><option value="GB">United Kingdom (GB)</option>
+              <option value="FR">France (FR)</option><option value="NL">Netherlands (NL)</option>
+              <option value="ES">Spain (ES)</option><option value="US">United States (US)</option>
+            </select></div>
+          <div className="field"><div className="field-label">Tax ID / VAT Number <span className="req">*</span></div>
+            <input className="input" value={form.taxId} onChange={e => set('taxId', e.target.value)} placeholder="e.g. DE123456789" /></div>
+          <div className="field"><div className="field-label">Currency</div>
+            <select className="input" value={form.currency} onChange={e => set('currency', e.target.value)}>
+              <option>EUR</option><option>USD</option><option>GBP</option>
+            </select></div>
+        </div>
+      </div>
+
+      <div className="form-section">
+        <div className="form-section-hdr">Address</div>
+        <div className="form-grid form-grid-3">
+          <div className="field col-span-2"><div className="field-label">Street / House No. <span className="req">*</span></div>
+            <input className="input" value={form.street} onChange={e => set('street', e.target.value)} placeholder="Street address" /></div>
+          <div className="field"><div className="field-label">Postal Code <span className="req">*</span></div>
+            <input className="input" value={form.postal} onChange={e => set('postal', e.target.value)} placeholder="Postal code" /></div>
+          <div className="field"><div className="field-label">City <span className="req">*</span></div>
+            <input className="input" value={form.city} onChange={e => set('city', e.target.value)} placeholder="City" /></div>
+          <div className="field"><div className="field-label">Region</div><input className="input" placeholder="Region/State" /></div>
+        </div>
+      </div>
+
+      <div className="form-section">
+        <div className="form-section-hdr">Purchasing Data</div>
+        <div className="form-grid form-grid-3">
+          <div className="field"><div className="field-label">Payment Terms <span className="req">*</span></div>
+            <select className="input" value={form.paymentTerms} onChange={e => set('paymentTerms', e.target.value)}>
+              <option>Net 30</option><option>Net 45</option><option>Net 60</option><option>2/10 Net 30</option>
+            </select></div>
+          <div className="field"><div className="field-label">Purchasing Organisation</div>
+            <select className="input"><option>1000 — Germany</option><option>2000 — Group</option></select></div>
+          <div className="field"><div className="field-label">Order Currency</div>
+            <select className="input"><option>EUR</option><option>USD</option><option>GBP</option></select></div>
+          <div className="field"><div className="field-label">Incoterms</div>
+            <select className="input"><option>DAP — Delivered at Place</option><option>EXW — Ex Works</option><option>FCA — Free Carrier</option></select></div>
+          <div className="field"><div className="field-label">Reconciliation Account</div>
+            <input className="input" placeholder="G/L Account No." /></div>
+          <div className="field"><div className="field-label">Sort Key</div>
+            <input className="input" placeholder="e.g. 001" /></div>
+        </div>
+      </div>
+
+      <div className="form-section">
+        <div className="form-section-hdr">Bank Details</div>
+        <div className="form-grid form-grid-3">
+          <div className="field col-span-2"><div className="field-label">IBAN <span className="req">*</span></div>
+            <input className="input" value={form.iban} onChange={e => set('iban', e.target.value)} placeholder="e.g. DE89 3704 0044 0532 0130 00" style={{ fontFamily: 'monospace' }} /></div>
+          <div className="field"><div className="field-label">BIC / SWIFT Code</div>
+            <input className="input" value={form.bic} onChange={e => set('bic', e.target.value)} placeholder="e.g. DEUTDEDB" /></div>
+          <div className="field"><div className="field-label">Bank Name</div>
+            <input className="input" value={form.bankName} onChange={e => set('bankName', e.target.value)} placeholder="Bank name" /></div>
+          <div className="field"><div className="field-label">Account Holder</div>
+            <input className="input" placeholder="Account holder name" /></div>
+        </div>
+      </div>
+
+      <div className="form-section">
+        <div className="form-section-hdr">Additional Information</div>
+        <div className="form-grid form-grid-3">
+          <div className="field"><div className="field-label">Phone</div><input className="input" placeholder="+49 30 12345678" /></div>
+          <div className="field"><div className="field-label">Email</div><input className="input" type="email" placeholder="contact@supplier.com" /></div>
+          <div className="field"><div className="field-label">Website</div><input className="input" placeholder="https://..." /></div>
+          <div className="field col-span-3"><div className="field-label">Notes / Justification</div>
+            <textarea className="input" rows={2} value={form.notes} onChange={e => set('notes', e.target.value)} placeholder="Business justification for onboarding this supplier..." /></div>
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-8 mb-16">
+        <button className="btn btn-secondary" onClick={() => setView(isChange ? 'supp-detail' : 'suppliers', rec)}>Cancel</button>
+        <button className="btn btn-primary" onClick={handleSubmit}><IcSend size={14} /> Submit for Approval</button>
+      </div>
+    </div>
+  );
+};
+
+/* ─── APPROVAL INBOX ─────────────────────────────────────────── */
+const ApprovalInbox = ({ setView }) => {
+  const [filter, setFilter] = useState('all');
+  const rows = filter === 'all' ? APPROVALS : APPROVALS.filter(a => a.type === filter);
+
+  return (
+    <div className="page-area">
+      <Breadcrumb items={[{ label: 'Home', onClick: () => setView('overview') }, { label: 'My Approval Inbox' }]} />
+      <div className="page-title-row">
+        <div>
+          <div className="page-title">My Approval Inbox</div>
+          <div className="page-subtitle">{APPROVALS.length} items awaiting your action</div>
+        </div>
+      </div>
+
+      <div className="flex gap-8 mb-16">
+        {['all', 'customer', 'supplier'].map(f => (
+          <button key={f} className={`btn btn-sm ${filter === f ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setFilter(f)}>
+            {f === 'all' ? 'All' : f === 'customer' ? 'Customers' : 'Suppliers'}
+            {f === 'all' && <span className="badge" style={{ background: '#fff', color: 'var(--sap-color-interactive)', marginLeft: 4, fontWeight: 700 }}>{APPROVALS.length}</span>}
+          </button>
+        ))}
+      </div>
+
+      {rows.map(a => (
+        <div key={a.id} className={`approval-card ${a.subtype === 'Credit' ? 'credit-type' : ''}`}
+          onClick={() => setView(a.type === 'customer' ? 'cust-approval' : 'supp-approval', a)}>
+          <div style={{ flex: 1 }}>
+            <div className="flex items-center gap-8 mb-8">
+              <span className={`tag ${a.type === 'customer' ? 'tag-info' : 'tag-purple'}`}>{a.type === 'customer' ? 'Customer' : 'Supplier'}</span>
+              <span className={`tag ${a.subtype === 'Credit' ? 'tag-credit' : 'tag-draft'}`}>{a.subtype}</span>
+              <span className={`tag ${a.priority === 'High' ? 'tag-error' : 'tag-pending'}`}>{a.priority} Priority</span>
+            </div>
+            <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{a.name}</div>
+            <div className="flex gap-16 fs-12 text-2">
+              <span>Request: <strong>{a.id}</strong></span>
+              <span>Step: <strong>{a.step}</strong></span>
+              <span>Submitted by: <strong>{a.submittedBy}</strong></span>
+              <span>Date: <strong>{a.submittedOn}</strong></span>
+            </div>
+          </div>
+          <div className="flex gap-8 items-center" onClick={e => e.stopPropagation()}>
+            <button className="btn btn-accept btn-sm" onClick={() => { showToast(`${a.name} approved successfully`, 'success'); }}>
+              <IcCheck size={12} /> Approve
+            </button>
+            <button className="btn btn-reject btn-sm" onClick={() => { showToast(`${a.name} returned for revision`, 'error'); }}>
+              <IcX size={12} /> Reject
+            </button>
+            <button className="btn btn-ghost btn-sm" onClick={() => setView(a.type === 'customer' ? 'cust-approval' : 'supp-approval', a)}>
+              <IcEye size={13} /> Review
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+/* ─── APPROVAL DETAIL ────────────────────────────────────────── */
+const ApprovalDetail = ({ rec, type, setView }) => {
+  const [note, setNote] = useState('');
+  const [showReject, setShowReject] = useState(false);
+  const isCust = type === 'customer';
+  const wf = isCust ? CUST_WF : SUPP_WF;
+  const stepIndex = isCust ? 1 : 1;
+
+  return (
+    <div className="page-area">
+      <Breadcrumb items={[
+        { label: 'Home', onClick: () => setView('overview') },
+        { label: 'Approval Inbox', onClick: () => setView('inbox') },
+        { label: rec.name }
+      ]} />
+
+      <div className="obj-header">
+        <div className="obj-title-row">
+          <div>
+            <div className="flex items-center gap-8">
+              <div className="obj-title">{rec.name}</div>
+              <span className={`tag ${isCust ? 'tag-info' : 'tag-purple'}`}>{isCust ? 'Customer' : 'Supplier'}</span>
+              <span className="tag tag-pending">{rec.step}</span>
+            </div>
+            <div className="obj-attrs">
+              <div className="obj-attr"><div className="obj-attr-label">Request ID</div><div className="obj-attr-val">{rec.id}</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Submitted By</div><div className="obj-attr-val">{rec.submittedBy}</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Date</div><div className="obj-attr-val">{rec.submittedOn}</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Priority</div><div className="obj-attr-val"><span className={`tag ${rec.priority === 'High' ? 'tag-error' : 'tag-pending'}`}>{rec.priority}</span></div></div>
+            </div>
+          </div>
+          <div className="flex gap-8">
+            <button className="btn btn-reject" onClick={() => setShowReject(true)}><IcX size={14} /> Reject</button>
+            <button className="btn btn-accept" onClick={() => { showToast('Request approved and forwarded to next level', 'success'); setView('inbox'); }}>
+              <IcCheck size={14} /> Approve
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <WorkflowSteps steps={wf} current={stepIndex} />
+
+      <div className="form-section">
+        <div className="form-section-hdr">Request Details</div>
+        <div className="form-grid form-grid-3">
+          <div className="field"><div className="field-label">Name</div><input className="input" readOnly value={rec.name} /></div>
+          <div className="field"><div className="field-label">Type</div><input className="input" readOnly value={isCust ? 'Customer' : 'Supplier'} /></div>
+          <div className="field"><div className="field-label">Action</div><input className="input" readOnly value={rec.subtype} /></div>
+          <div className="field"><div className="field-label">Submitted By</div><input className="input" readOnly value={rec.submittedBy} /></div>
+          <div className="field"><div className="field-label">Submission Date</div><input className="input" readOnly value={rec.submittedOn} /></div>
+          <div className="field"><div className="field-label">Current Step</div><input className="input" readOnly value={rec.step} /></div>
+        </div>
+      </div>
+
+      {rec.subtype === 'Credit' && (
+        <div className="form-section">
+          <div className="form-section-hdr">Credit Evaluation <span className="tag tag-credit" style={{ marginLeft: 8 }}>Credit Processor Action</span></div>
+          <div className="form-grid form-grid-3">
+            <div className="field"><div className="field-label">Requested Credit Limit</div><input className="input" defaultValue="€250,000" /></div>
+            <div className="field"><div className="field-label">Assigned Credit Rating</div>
+              <select className="input"><option>A</option><option>A-</option><option>B+</option><option selected>B</option><option>B-</option><option>C+</option><option>C</option></select>
+            </div>
+            <div className="field"><div className="field-label">Risk Category</div>
+              <select className="input"><option>Low Risk</option><option selected>Medium Risk</option><option>High Risk</option></select>
+            </div>
+            <div className="field"><div className="field-label">Approved Credit Limit</div><input className="input" defaultValue="€180,000" /></div>
+            <div className="field col-span-2"><div className="field-label">Credit Evaluation Notes</div><input className="input" placeholder="Enter evaluation notes..." /></div>
+          </div>
+        </div>
+      )}
+
+      <div className="form-section">
+        <div className="form-section-hdr">Approval Note</div>
+        <div style={{ padding: 18 }}>
+          <div className="field">
+            <div className="field-label">Comments (optional)</div>
+            <textarea className="input" rows={3} value={note} onChange={e => setNote(e.target.value)} placeholder="Add comments or conditions for this approval..." />
+          </div>
+          <div className="flex gap-8 mt-12">
+            <button className="btn btn-reject" onClick={() => setShowReject(true)}><IcX size={14} /> Reject &amp; Return</button>
+            <button className="btn btn-accept" onClick={() => { showToast('Approved — forwarded to next workflow step', 'success'); setView('inbox'); }}>
+              <IcCheck size={14} /> Approve &amp; Forward
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {showReject && (
+        <Dialog title="Return for Revision" onClose={() => setShowReject(false)}
+          footer={
+            <>
+              <button className="btn btn-secondary" onClick={() => setShowReject(false)}>Cancel</button>
+              <button className="btn btn-reject" onClick={() => { showToast('Request returned for revision', 'error'); setShowReject(false); setView('inbox'); }}>
+                <IcX size={14} /> Confirm Rejection
+              </button>
+            </>
+          }>
+          <div className="field">
+            <div className="field-label">Reason for rejection / return <span className="req">*</span></div>
+            <textarea className="input" rows={4} placeholder="Please provide a reason so the requester can revise and resubmit..." />
+          </div>
+        </Dialog>
+      )}
+    </div>
+  );
+};
+
+/* ─── ADDITIONAL DATA ────────────────────────────────────────── */
+const SALES_ORDERS = [
+  { id: 'SO-100123', customer: 'Acme Corporation', custId: 'C-001', orderDate: '2026-03-01', deliveryDate: '2026-03-15', netValue: '€42,500', currency: 'EUR', status: 'Delivered', invoiceId: 'INV-90011', invoiceDate: '2026-03-16', invoiceAmt: '€42,500', invoiceStatus: 'Open', dueDate: '2026-04-15', daysOverdue: 17 },
+  { id: 'SO-100124', customer: 'Acme Corporation', custId: 'C-001', orderDate: '2026-03-10', deliveryDate: '2026-03-22', netValue: '€18,200', currency: 'EUR', status: 'Delivered', invoiceId: 'INV-90012', invoiceDate: '2026-03-23', invoiceAmt: '€18,200', invoiceStatus: 'Paid', dueDate: '2026-04-22', daysOverdue: 0 },
+  { id: 'SO-100125', customer: 'TechFlow GmbH', custId: 'C-002', orderDate: '2026-03-18', deliveryDate: '2026-04-01', netValue: '€9,800', currency: 'EUR', status: 'In Transit', invoiceId: null, invoiceDate: null, invoiceAmt: null, invoiceStatus: 'Not Invoiced', dueDate: null, daysOverdue: 0 },
+  { id: 'SO-100126', customer: 'Nordic Supplies AS', custId: 'C-004', orderDate: '2026-03-20', deliveryDate: '2026-04-05', netValue: '€67,000', currency: 'EUR', status: 'Processing', invoiceId: null, invoiceDate: null, invoiceAmt: null, invoiceStatus: 'Not Invoiced', dueDate: null, daysOverdue: 0 },
+  { id: 'SO-100127', customer: 'Global Traders Ltd', custId: 'C-003', orderDate: '2026-02-14', deliveryDate: '2026-02-28', netValue: '€31,400', currency: 'EUR', status: 'Delivered', invoiceId: 'INV-90010', invoiceDate: '2026-03-01', invoiceAmt: '€31,400', invoiceStatus: 'Overdue', dueDate: '2026-03-31', daysOverdue: 32 },
+  { id: 'SO-100128', customer: 'Iberia Trade SL', custId: 'C-005', orderDate: '2026-04-01', deliveryDate: '2026-04-14', netValue: '€12,600', currency: 'EUR', status: 'Confirmed', invoiceId: null, invoiceDate: null, invoiceAmt: null, invoiceStatus: 'Not Invoiced', dueDate: null, daysOverdue: 0 },
+];
+
+const AR_INVOICES = SALES_ORDERS.filter(s => s.invoiceId).map(s => ({
+  id: s.invoiceId, soId: s.id, customer: s.customer, custId: s.custId,
+  invoiceDate: s.invoiceDate, dueDate: s.dueDate, amount: s.invoiceAmt,
+  status: s.invoiceStatus, daysOverdue: s.daysOverdue,
+  paymentRef: s.invoiceStatus === 'Paid' ? 'PAY-' + Math.floor(Math.random()*90000+10000) : null,
+}));
+
+const PURCHASE_ORDERS = [
+  { id: 'PO-450001', supplier: 'Raw Materials AG', suppId: 'S-001', orderDate: '2026-03-05', deliveryDate: '2026-04-10', netValue: '€88,000', items: 4, status: 'Open', deliveryStatus: 'Pending', plant: '1000', storeLoc: 'WH01' },
+  { id: 'PO-450002', supplier: 'Logistics Partners BV', suppId: 'S-002', orderDate: '2026-03-12', deliveryDate: '2026-03-28', netValue: '€23,500', items: 2, status: 'Open', deliveryStatus: 'Slot Booked', plant: '1000', storeLoc: 'WH02' },
+  { id: 'PO-450003', supplier: 'IT Services Co.', suppId: 'S-003', orderDate: '2026-03-20', deliveryDate: '2026-04-20', netValue: '€45,000', items: 1, status: 'Open', deliveryStatus: 'Pending', plant: '2000', storeLoc: 'WH01' },
+  { id: 'PO-450004', supplier: 'Packaging Solutions Ltd', suppId: 'S-004', orderDate: '2026-02-20', deliveryDate: '2026-03-10', netValue: '€14,200', items: 6, status: 'Closed', deliveryStatus: 'Delivered', plant: '1000', storeLoc: 'WH03' },
+  { id: 'PO-450005', supplier: 'Raw Materials AG', suppId: 'S-001', orderDate: '2026-04-01', deliveryDate: '2026-04-25', netValue: '€62,400', items: 3, status: 'Open', deliveryStatus: 'Pending', plant: '1000', storeLoc: 'WH01' },
+];
+
+const AP_INVOICES = [
+  { id: 'APINV-7001', poId: 'PO-450004', supplier: 'Packaging Solutions Ltd', suppId: 'S-004', invoiceDate: '2026-03-11', dueDate: '2026-04-10', amount: '€14,200', status: 'Approved', paymentDate: null, paymentRef: null },
+  { id: 'APINV-7002', poId: 'PO-450002', supplier: 'Logistics Partners BV', suppId: 'S-002', invoiceDate: '2026-03-29', dueDate: '2026-04-28', amount: '€23,500', status: 'Under Review', paymentDate: null, paymentRef: null },
+  { id: 'APINV-7003', poId: 'PO-450001', supplier: 'Raw Materials AG', suppId: 'S-001', invoiceDate: '2026-04-11', dueDate: '2026-05-11', amount: '€88,000', status: 'Pending', paymentDate: null, paymentRef: null },
+  { id: 'APINV-7004', poId: 'PO-450004', supplier: 'Packaging Solutions Ltd', suppId: 'S-004', invoiceDate: '2026-01-15', dueDate: '2026-02-14', amount: '€9,750', status: 'Paid', paymentDate: '2026-02-12', paymentRef: 'PMT-33201' },
+];
+
+const SO_STATUS_CLS = { 'Delivered': 'tag-approved', 'In Transit': 'tag-info', 'Processing': 'tag-pending', 'Confirmed': 'tag-pending', 'Cancelled': 'tag-error' };
+const INV_STATUS_CLS = { 'Open': 'tag-info', 'Paid': 'tag-approved', 'Overdue': 'tag-error', 'Not Invoiced': 'tag-neutral', 'Under Review': 'tag-pending', 'Approved': 'tag-success', 'Pending': 'tag-pending' };
+const PO_DEL_CLS = { 'Pending': 'tag-pending', 'Slot Booked': 'tag-info', 'Delivered': 'tag-approved', 'Cancelled': 'tag-error' };
+
+/* ─── CUSTOMER: SALES ORDERS PAGE ───────────────────────────── */
+const CustomerSalesOrders = ({ setView }) => {
+  const [q, setQ] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedSO, setSelectedSO] = useState(null);
+
+  const rows = SALES_ORDERS.filter(s => {
+    const matchQ = s.id.includes(q) || s.customer.toLowerCase().includes(q.toLowerCase());
+    const matchS = statusFilter === 'all' || s.status === statusFilter;
+    return matchQ && matchS;
+  });
+
+  const statusDots = [
+    { label: 'Order', color: 'var(--sap-color-positive)' },
+    { label: 'Picking', color: 'var(--sap-color-interactive)' },
+    { label: 'Shipped', color: 'var(--sap-color-interactive)' },
+    { label: 'Delivered', color: 'var(--sap-color-positive)' },
+    { label: 'Invoiced', color: 'var(--sap-color-positive)' },
+  ];
+
+  return (
+    <div className="page-area">
+      <Breadcrumb items={[{ label: 'Home', onClick: () => setView('overview') }, { label: 'Sales Orders' }]} />
+      <div className="page-title-row">
+        <div>
+          <div className="page-title">Sales Orders</div>
+          <div className="page-subtitle">Track your orders from creation to invoice</div>
+        </div>
+      </div>
+
+      {/* KPIs */}
+      <div className="kpi-strip" style={{ gridTemplateColumns: 'repeat(5,1fr)' }}>
+        <div className="kpi-card kpi-card-blue">
+          <div className="kpi-icon" style={{ background: '#EDF6FF' }}><IcList size={16} stroke="var(--sap-color-interactive)" /></div>
+          <div className="kpi-val">{SALES_ORDERS.length}</div>
+          <div className="kpi-label">Total Orders</div>
+        </div>
+        <div className="kpi-card kpi-card-green">
+          <div className="kpi-icon" style={{ background: '#e6f9ee' }}><IcCheck size={16} stroke="var(--sap-color-positive)" /></div>
+          <div className="kpi-val">{SALES_ORDERS.filter(s => s.status === 'Delivered').length}</div>
+          <div className="kpi-label">Delivered</div>
+        </div>
+        <div className="kpi-card kpi-card-yellow">
+          <div className="kpi-icon" style={{ background: '#FFF3B8' }}><IcTruck size={16} stroke="var(--sap-color-warning)" /></div>
+          <div className="kpi-val">{SALES_ORDERS.filter(s => s.status === 'In Transit').length}</div>
+          <div className="kpi-label">In Transit</div>
+        </div>
+        <div className="kpi-card" style={{ borderTop: '3px solid var(--sap-color-negative)' }}>
+          <div className="kpi-icon" style={{ background: '#FFDBEF' }}><IcCredit size={16} stroke="var(--sap-color-negative)" /></div>
+          <div className="kpi-val">{SALES_ORDERS.filter(s => s.invoiceStatus === 'Overdue').length}</div>
+          <div className="kpi-label">Overdue Invoices</div>
+        </div>
+        <div className="kpi-card kpi-card-purple">
+          <div className="kpi-icon" style={{ background: '#EEE4F8' }}><IcAlert size={16} stroke="#8B5CF6" /></div>
+          <div className="kpi-val">€{(42500+31400).toLocaleString()}</div>
+          <div className="kpi-label">Outstanding AR</div>
+        </div>
+      </div>
+
+      {/* Overdue warning */}
+      {SALES_ORDERS.some(s => s.invoiceStatus === 'Overdue') && (
+        <div className="msg-strip msg-error">
+          <IcAlert size={14} />
+          <span><strong>Overdue invoices detected.</strong> {SALES_ORDERS.filter(s => s.invoiceStatus === 'Overdue').length} invoice(s) are past due date. <span className="text-link" onClick={() => setView('cust-ar')}>View outstanding invoices →</span></span>
+        </div>
+      )}
+
+      <div className="table-wrap">
+        <div className="table-toolbar">
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+            <div className="search-field" style={{ width: 260 }}>
+              <IcSearch size={14} stroke="var(--sap-color-text-2)" />
+              <input placeholder="Search by order or customer..." value={q} onChange={e => setQ(e.target.value)} />
+            </div>
+            {['all', 'Processing', 'Confirmed', 'In Transit', 'Delivered'].map(f => (
+              <button key={f} className={`btn btn-sm ${statusFilter === f ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setStatusFilter(f)}>
+                {f === 'all' ? 'All' : f}
+              </button>
+            ))}
+          </div>
+          <span className="fs-12 text-2">{rows.length} orders</span>
+        </div>
+        <table className="sap-table">
+          <thead>
+            <tr>
+              <th>Order ID</th><th>Customer</th><th>Order Date</th><th>Delivery Date</th>
+              <th>Net Value</th><th>Order Status</th><th>Invoice</th><th>Invoice Status</th><th>Due Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(s => (
+              <tr key={s.id} onClick={() => setSelectedSO(s)}>
+                <td><a>{s.id}</a></td>
+                <td style={{ fontWeight: 600 }}>{s.customer}</td>
+                <td>{s.orderDate}</td>
+                <td>{s.deliveryDate}</td>
+                <td style={{ fontWeight: 700 }}>{s.netValue}</td>
+                <td><span className={`tag ${SO_STATUS_CLS[s.status] || 'tag-draft'}`}>{s.status}</span></td>
+                <td>{s.invoiceId ? <a onClick={e => { e.stopPropagation(); setView('cust-ar'); }}>{s.invoiceId}</a> : <span className="text-2 fs-12">—</span>}</td>
+                <td><span className={`tag ${INV_STATUS_CLS[s.invoiceStatus] || 'tag-draft'}`}>{s.invoiceStatus}</span></td>
+                <td style={{ color: s.daysOverdue > 0 ? 'var(--sap-color-negative)' : '', fontWeight: s.daysOverdue > 0 ? 700 : 400 }}>
+                  {s.dueDate || '—'}{s.daysOverdue > 0 && <span style={{ fontSize: 11, marginLeft: 4 }}>({s.daysOverdue}d)</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="table-footer">
+          <span>{rows.length} records</span>
+          <button className="btn btn-ghost btn-sm" onClick={() => setView('cust-ar')}>View Outstanding Invoices →</button>
+        </div>
+      </div>
+
+      {/* SO Detail Dialog */}
+      {selectedSO && (
+        <Dialog title={`Sales Order ${selectedSO.id}`} onClose={() => setSelectedSO(null)} wide
+          footer={<button className="btn btn-secondary" onClick={() => setSelectedSO(null)}>Close</button>}>
+          {/* Order progress track */}
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--sap-color-text-2)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12 }}>Order Progress</div>
+            <div className="wf-steps">
+              {['Order Confirmed', 'Picking & Packing', 'Shipped', 'Delivered', 'Invoiced'].map((lbl, i) => {
+                const stMap = { 'Confirmed': 1, 'Processing': 2, 'In Transit': 3, 'Delivered': selectedSO.invoiceId ? 5 : 4 };
+                const cur = stMap[selectedSO.status] || 1;
+                const st = i < cur ? 'done' : i === cur ? 'active' : '';
+                return (
+                  <div key={i} className={`wf-step ${st}`}>
+                    <div className="wf-circle">{i < cur ? <IcCheck size={10} /> : i + 1}</div>
+                    <div className="wf-label" style={{ fontSize: 10 }}>{lbl}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 20px' }}>
+            <div className="field"><div className="field-label">Order ID</div><input className="input" readOnly value={selectedSO.id} /></div>
+            <div className="field"><div className="field-label">Customer</div><input className="input" readOnly value={selectedSO.customer} /></div>
+            <div className="field"><div className="field-label">Order Date</div><input className="input" readOnly value={selectedSO.orderDate} /></div>
+            <div className="field"><div className="field-label">Delivery Date</div><input className="input" readOnly value={selectedSO.deliveryDate} /></div>
+            <div className="field"><div className="field-label">Net Value</div><input className="input" readOnly value={selectedSO.netValue} style={{ fontWeight: 700 }} /></div>
+            <div className="field"><div className="field-label">Status</div><input className="input" readOnly value={selectedSO.status} /></div>
+            {selectedSO.invoiceId && <>
+              <div className="field"><div className="field-label">Invoice ID</div><input className="input" readOnly value={selectedSO.invoiceId} /></div>
+              <div className="field"><div className="field-label">Invoice Date</div><input className="input" readOnly value={selectedSO.invoiceDate} /></div>
+              <div className="field"><div className="field-label">Invoice Amount</div><input className="input" readOnly value={selectedSO.invoiceAmt} style={{ fontWeight: 700 }} /></div>
+              <div className="field"><div className="field-label">Due Date</div><input className="input" readOnly value={selectedSO.dueDate}
+                style={{ color: selectedSO.daysOverdue > 0 ? 'var(--sap-color-negative)' : '', fontWeight: selectedSO.daysOverdue > 0 ? 700 : 400 }} /></div>
+            </>}
+          </div>
+        </Dialog>
+      )}
+    </div>
+  );
+};
+
+/* ─── CUSTOMER: AR OUTSTANDING INVOICES ──────────────────────── */
+const CustomerAR = ({ setView }) => {
+  const [filter, setFilter] = useState('all');
+  const rows = filter === 'all' ? AR_INVOICES : AR_INVOICES.filter(i => i.status === filter);
+  const outstanding = AR_INVOICES.filter(i => i.status !== 'Paid');
+  const overdue = AR_INVOICES.filter(i => i.status === 'Overdue');
+  const totalOutstanding = '€73,900';
+  const totalOverdue = '€31,400';
+
+  return (
+    <div className="page-area">
+      <Breadcrumb items={[{ label: 'Home', onClick: () => setView('overview') }, { label: 'Sales Orders', onClick: () => setView('cust-so') }, { label: 'Outstanding Invoices' }]} />
+      <div className="page-title-row">
+        <div>
+          <div className="page-title">Outstanding Invoices (AR)</div>
+          <div className="page-subtitle">Customer invoices pending payment</div>
+        </div>
+        <div className="flex gap-8">
+          <button className="btn btn-secondary btn-sm"><IcRefresh size={13} /> Refresh</button>
+        </div>
+      </div>
+
+      <div className="kpi-strip" style={{ gridTemplateColumns: 'repeat(4,1fr)' }}>
+        <div className="kpi-card kpi-card-blue">
+          <div className="kpi-icon" style={{ background: '#EDF6FF' }}><IcCredit size={16} stroke="var(--sap-color-interactive)" /></div>
+          <div className="kpi-val">{AR_INVOICES.length}</div>
+          <div className="kpi-label">Total Invoices</div>
+        </div>
+        <div className="kpi-card" style={{ borderTop: '3px solid var(--sap-color-negative)' }}>
+          <div className="kpi-icon" style={{ background: '#FFDBEF' }}><IcAlert size={16} stroke="var(--sap-color-negative)" /></div>
+          <div className="kpi-val" style={{ color: 'var(--sap-color-negative)' }}>{overdue.length}</div>
+          <div className="kpi-label">Overdue</div>
+        </div>
+        <div className="kpi-card kpi-card-yellow">
+          <div className="kpi-icon" style={{ background: '#FFF3B8' }}><IcCredit size={16} stroke="var(--sap-color-warning)" /></div>
+          <div className="kpi-val">{totalOutstanding}</div>
+          <div className="kpi-label">Total Outstanding</div>
+        </div>
+        <div className="kpi-card" style={{ borderTop: '3px solid var(--sap-color-negative)' }}>
+          <div className="kpi-icon" style={{ background: '#FFDBEF' }}><IcAlert size={16} stroke="var(--sap-color-negative)" /></div>
+          <div className="kpi-val" style={{ color: 'var(--sap-color-negative)', fontSize: 20 }}>{totalOverdue}</div>
+          <div className="kpi-label">Overdue Amount</div>
+        </div>
+      </div>
+
+      {overdue.length > 0 && (
+        <div className="msg-strip msg-error">
+          <IcAlert size={14} />
+          <div>
+            <strong>{overdue.length} invoice(s) are overdue.</strong> Longest overdue: <strong>{Math.max(...overdue.map(i => i.daysOverdue))} days</strong>.
+            Please arrange payment or contact your account manager.
+          </div>
+        </div>
+      )}
+
+      <div className="table-wrap">
+        <div className="table-toolbar">
+          <div className="flex gap-8">
+            {['all', 'Open', 'Overdue', 'Paid'].map(f => (
+              <button key={f} className={`btn btn-sm ${filter === f ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setFilter(f)}>{f === 'all' ? 'All' : f}</button>
+            ))}
+          </div>
+          <span className="fs-12 text-2">{rows.length} invoices</span>
+        </div>
+        <table className="sap-table">
+          <thead>
+            <tr>
+              <th>Invoice No.</th><th>Sales Order</th><th>Customer</th><th>Invoice Date</th>
+              <th>Due Date</th><th>Amount</th><th>Status</th><th>Days Overdue</th><th>Payment Ref</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(inv => (
+              <tr key={inv.id}>
+                <td><a>{inv.id}</a></td>
+                <td><a onClick={() => setView('cust-so')}>{inv.soId}</a></td>
+                <td style={{ fontWeight: 600 }}>{inv.customer}</td>
+                <td>{inv.invoiceDate}</td>
+                <td style={{ color: inv.daysOverdue > 0 ? 'var(--sap-color-negative)' : '', fontWeight: inv.daysOverdue > 0 ? 700 : 400 }}>{inv.dueDate}</td>
+                <td style={{ fontWeight: 700 }}>{inv.amount}</td>
+                <td><span className={`tag ${INV_STATUS_CLS[inv.status] || 'tag-draft'}`}>{inv.status}</span></td>
+                <td>
+                  {inv.daysOverdue > 0
+                    ? <span style={{ color: 'var(--sap-color-negative)', fontWeight: 700 }}>{inv.daysOverdue} days</span>
+                    : <span className="text-2">—</span>}
+                </td>
+                <td className="text-2 fs-12">{inv.paymentRef || '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="table-footer">
+          <span>{rows.length} invoices shown</span>
+          <div style={{ fontWeight: 700, fontSize: 13 }}>
+            Outstanding: <span style={{ color: 'var(--sap-color-negative)' }}>{totalOutstanding}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ─── SUPPLIER: OPEN PURCHASE ORDERS ─────────────────────────── */
+const SupplierPO = ({ setView }) => {
+  const [q, setQ] = useState('');
+  const [statusFilter, setStatusFilter] = useState('Open');
+  const [bookSlot, setBookSlot] = useState(null);
+  const [slotDate, setSlotDate] = useState('');
+  const [slotTime, setSlotTime] = useState('09:00');
+  const [slotTruck, setSlotTruck] = useState('');
+
+  const rows = PURCHASE_ORDERS.filter(p => {
+    const matchQ = p.id.includes(q) || p.supplier.toLowerCase().includes(q.toLowerCase());
+    const matchS = statusFilter === 'all' || p.status === statusFilter;
+    return matchQ && matchS;
+  });
+
+  const handleBook = () => {
+    showToast(`Delivery slot booked for ${bookSlot.id} on ${slotDate} at ${slotTime}`, 'success');
+    setBookSlot(null);
+  };
+
+  return (
+    <div className="page-area">
+      <Breadcrumb items={[{ label: 'Home', onClick: () => setView('overview') }, { label: 'Open Purchase Orders' }]} />
+      <div className="page-title-row">
+        <div>
+          <div className="page-title">Open Purchase Orders</div>
+          <div className="page-subtitle">View your POs and book delivery slots</div>
+        </div>
+      </div>
+
+      <div className="kpi-strip" style={{ gridTemplateColumns: 'repeat(4,1fr)' }}>
+        <div className="kpi-card kpi-card-blue">
+          <div className="kpi-icon" style={{ background: '#EDF6FF' }}><IcList size={16} stroke="var(--sap-color-interactive)" /></div>
+          <div className="kpi-val">{PURCHASE_ORDERS.filter(p => p.status === 'Open').length}</div>
+          <div className="kpi-label">Open POs</div>
+        </div>
+        <div className="kpi-card kpi-card-yellow">
+          <div className="kpi-icon" style={{ background: '#FFF3B8' }}><IcTruck size={16} stroke="var(--sap-color-warning)" /></div>
+          <div className="kpi-val">{PURCHASE_ORDERS.filter(p => p.deliveryStatus === 'Pending').length}</div>
+          <div className="kpi-label">Pending Delivery</div>
+        </div>
+        <div className="kpi-card kpi-card-green">
+          <div className="kpi-icon" style={{ background: '#e6f9ee' }}><IcCheck size={16} stroke="var(--sap-color-positive)" /></div>
+          <div className="kpi-val">{PURCHASE_ORDERS.filter(p => p.deliveryStatus === 'Slot Booked').length}</div>
+          <div className="kpi-label">Slots Booked</div>
+        </div>
+        <div className="kpi-card kpi-card-purple">
+          <div className="kpi-icon" style={{ background: '#EEE4F8' }}><IcCredit size={16} stroke="#8B5CF6" /></div>
+          <div className="kpi-val">{PURCHASE_ORDERS.filter(p => p.status === 'Closed').length}</div>
+          <div className="kpi-label">Closed POs</div>
+        </div>
+      </div>
+
+      <div className="table-wrap">
+        <div className="table-toolbar">
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div className="search-field" style={{ width: 240 }}>
+              <IcSearch size={14} stroke="var(--sap-color-text-2)" />
+              <input placeholder="Search PO or supplier..." value={q} onChange={e => setQ(e.target.value)} />
+            </div>
+            {['all', 'Open', 'Closed'].map(f => (
+              <button key={f} className={`btn btn-sm ${statusFilter === f ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setStatusFilter(f)}>
+                {f === 'all' ? 'All' : f}
+              </button>
+            ))}
+          </div>
+          <span className="fs-12 text-2">{rows.length} POs</span>
+        </div>
+        <table className="sap-table">
+          <thead>
+            <tr>
+              <th>PO Number</th><th>Supplier</th><th>Order Date</th><th>Required Delivery</th>
+              <th>Net Value</th><th>Items</th><th>Plant</th><th>PO Status</th><th>Delivery Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(po => (
+              <tr key={po.id}>
+                <td><a>{po.id}</a></td>
+                <td style={{ fontWeight: 600 }}>{po.supplier}</td>
+                <td>{po.orderDate}</td>
+                <td style={{ fontWeight: 600 }}>{po.deliveryDate}</td>
+                <td style={{ fontWeight: 700 }}>{po.netValue}</td>
+                <td>{po.items}</td>
+                <td>{po.plant}</td>
+                <td><span className={`tag ${po.status === 'Open' ? 'tag-info' : 'tag-approved'}`}>{po.status}</span></td>
+                <td><span className={`tag ${PO_DEL_CLS[po.deliveryStatus] || 'tag-draft'}`}>{po.deliveryStatus}</span></td>
+                <td onClick={e => e.stopPropagation()}>
+                  {po.status === 'Open' && po.deliveryStatus === 'Pending' && (
+                    <button className="btn btn-primary btn-sm" onClick={() => { setBookSlot(po); setSlotDate(po.deliveryDate); }}>
+                      <IcTruck size={12} /> Book Slot
+                    </button>
+                  )}
+                  {po.deliveryStatus === 'Slot Booked' && (
+                    <button className="btn btn-secondary btn-sm" onClick={() => { setBookSlot(po); setSlotDate(po.deliveryDate); }}>
+                      <IcEdit size={12} /> Change Slot
+                    </button>
+                  )}
+                  {po.status === 'Closed' && (
+                    <button className="btn btn-ghost btn-sm" onClick={() => setView('supp-ap')}><IcCredit size={12} /> Invoice</button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="table-footer">
+          <span>{rows.length} records</span>
+          <button className="btn btn-ghost btn-sm" onClick={() => setView('supp-ap')}>View AP Invoices →</button>
+        </div>
+      </div>
+
+      {/* Book Delivery Slot Dialog */}
+      {bookSlot && (
+        <Dialog title={`Book Delivery Slot — ${bookSlot.id}`} onClose={() => setBookSlot(null)}
+          footer={
+            <>
+              <button className="btn btn-secondary" onClick={() => setBookSlot(null)}>Cancel</button>
+              <button className="btn btn-primary" onClick={handleBook}><IcCheck size={13} /> Confirm Slot</button>
+            </>
+          }>
+          <div className="msg-strip msg-info" style={{ marginBottom: 16 }}>
+            <IcAlert size={14} />
+            <span>Select your preferred delivery date and time. Our warehouse team will confirm within 24h.</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 20px' }}>
+            <div className="field"><div className="field-label">PO Number</div><input className="input" readOnly value={bookSlot.id} /></div>
+            <div className="field"><div className="field-label">Supplier</div><input className="input" readOnly value={bookSlot.supplier} /></div>
+            <div className="field"><div className="field-label">Required by Date</div><input className="input" readOnly value={bookSlot.deliveryDate} /></div>
+            <div className="field"><div className="field-label">Plant / Location</div><input className="input" readOnly value={`${bookSlot.plant} / ${bookSlot.storeLoc}`} /></div>
+            <div className="field"><div className="field-label">Requested Delivery Date <span style={{ color: 'var(--sap-color-negative)' }}>*</span></div>
+              <input className="input" type="date" value={slotDate} onChange={e => setSlotDate(e.target.value)} />
+            </div>
+            <div className="field"><div className="field-label">Preferred Time Slot <span style={{ color: 'var(--sap-color-negative)' }}>*</span></div>
+              <select className="input" value={slotTime} onChange={e => setSlotTime(e.target.value)}>
+                <option value="07:00">07:00 – 09:00</option>
+                <option value="09:00">09:00 – 11:00</option>
+                <option value="11:00">11:00 – 13:00</option>
+                <option value="13:00">13:00 – 15:00</option>
+                <option value="15:00">15:00 – 17:00</option>
+              </select>
+            </div>
+            <div className="field"><div className="field-label">Truck Plate / Reference</div>
+              <input className="input" placeholder="e.g. B-XY 1234" value={slotTruck} onChange={e => setSlotTruck(e.target.value)} />
+            </div>
+            <div className="field"><div className="field-label">No. of Pallets / Weight</div>
+              <input className="input" placeholder="e.g. 12 pallets / 4,200 kg" />
+            </div>
+            <div className="field" style={{ gridColumn: 'span 2' }}><div className="field-label">Special Instructions</div>
+              <textarea className="input" rows={2} placeholder="Fragile goods, temperature requirements, unloading instructions..." />
+            </div>
+          </div>
+        </Dialog>
+      )}
+    </div>
+  );
+};
+
+/* ─── SUPPLIER: AP INVOICES ──────────────────────────────────── */
+const SupplierAP = ({ setView }) => {
+  const [filter, setFilter] = useState('all');
+  const rows = filter === 'all' ? AP_INVOICES : AP_INVOICES.filter(i => i.status === filter);
+  const pending = AP_INVOICES.filter(i => i.status !== 'Paid');
+  const totalPending = '€125,700';
+
+  return (
+    <div className="page-area">
+      <Breadcrumb items={[{ label: 'Home', onClick: () => setView('overview') }, { label: 'Open POs', onClick: () => setView('supp-po') }, { label: 'AP Invoices' }]} />
+      <div className="page-title-row">
+        <div>
+          <div className="page-title">Outstanding AP Invoices</div>
+          <div className="page-subtitle">Invoices awaiting payment from buyer</div>
+        </div>
+        <div className="flex gap-8">
+          <button className="btn btn-secondary btn-sm"><IcRefresh size={13} /> Refresh</button>
+        </div>
+      </div>
+
+      <div className="kpi-strip" style={{ gridTemplateColumns: 'repeat(4,1fr)' }}>
+        <div className="kpi-card kpi-card-blue">
+          <div className="kpi-icon" style={{ background: '#EDF6FF' }}><IcCredit size={16} stroke="var(--sap-color-interactive)" /></div>
+          <div className="kpi-val">{AP_INVOICES.length}</div>
+          <div className="kpi-label">Total Invoices</div>
+        </div>
+        <div className="kpi-card kpi-card-yellow">
+          <div className="kpi-icon" style={{ background: '#FFF3B8' }}><IcAlert size={16} stroke="var(--sap-color-warning)" /></div>
+          <div className="kpi-val">{pending.length}</div>
+          <div className="kpi-label">Pending Payment</div>
+        </div>
+        <div className="kpi-card kpi-card-purple">
+          <div className="kpi-icon" style={{ background: '#EEE4F8' }}><IcCredit size={16} stroke="#8B5CF6" /></div>
+          <div className="kpi-val" style={{ fontSize: 20 }}>{totalPending}</div>
+          <div className="kpi-label">Total Pending Amount</div>
+        </div>
+        <div className="kpi-card kpi-card-green">
+          <div className="kpi-icon" style={{ background: '#e6f9ee' }}><IcCheck size={16} stroke="var(--sap-color-positive)" /></div>
+          <div className="kpi-val">{AP_INVOICES.filter(i => i.status === 'Paid').length}</div>
+          <div className="kpi-label">Paid</div>
+        </div>
+      </div>
+
+      {AP_INVOICES.some(i => i.status === 'Approved') && (
+        <div className="msg-strip msg-success">
+          <IcCheck size={14} />
+          <span><strong>{AP_INVOICES.filter(i => i.status === 'Approved').length} invoice(s) approved</strong> and scheduled for payment on next payment run.</span>
+        </div>
+      )}
+
+      <div className="table-wrap">
+        <div className="table-toolbar">
+          <div className="flex gap-8">
+            {['all', 'Pending', 'Under Review', 'Approved', 'Paid'].map(f => (
+              <button key={f} className={`btn btn-sm ${filter === f ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setFilter(f)}>
+                {f === 'all' ? 'All' : f}
+              </button>
+            ))}
+          </div>
+          <span className="fs-12 text-2">{rows.length} invoices</span>
+        </div>
+        <table className="sap-table">
+          <thead>
+            <tr>
+              <th>Invoice No.</th><th>PO Reference</th><th>Supplier</th><th>Invoice Date</th>
+              <th>Due Date</th><th>Amount</th><th>Status</th><th>Payment Date</th><th>Payment Ref</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(inv => (
+              <tr key={inv.id}>
+                <td><a>{inv.id}</a></td>
+                <td><a onClick={() => setView('supp-po')}>{inv.poId}</a></td>
+                <td style={{ fontWeight: 600 }}>{inv.supplier}</td>
+                <td>{inv.invoiceDate}</td>
+                <td>{inv.dueDate}</td>
+                <td style={{ fontWeight: 700 }}>{inv.amount}</td>
+                <td>
+                  <span className={`tag ${INV_STATUS_CLS[inv.status] || 'tag-draft'}`}>{inv.status}</span>
+                </td>
+                <td className={inv.paymentDate ? 'text-pos' : 'text-2'}>{inv.paymentDate || '—'}</td>
+                <td className="text-2 fs-12">{inv.paymentRef || '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="table-footer">
+          <span>{rows.length} invoices shown</span>
+          <div style={{ fontWeight: 700, fontSize: 13 }}>
+            Pending: <span style={{ color: 'var(--sap-color-warning)', fontWeight: 700 }}>{totalPending}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Invoice payment timeline legend */}
+      <div className="card mt-16">
+        <div className="card-header"><span className="card-title">Payment Process</span></div>
+        <div className="card-body">
+          <div className="wf-steps">
+            {[
+              { label: 'Invoice Submitted', role: 'Supplier' },
+              { label: 'Under Review', role: 'AP Team' },
+              { label: 'Approved', role: 'Finance' },
+              { label: 'Payment Run', role: 'Treasury' },
+              { label: 'Paid', role: 'Bank' },
+            ].map((s, i) => (
+              <div key={i} className={`wf-step ${i <= 2 ? 'done' : i === 3 ? 'active' : ''}`}>
+                <div className="wf-circle">{i <= 2 ? <IcCheck size={10} /> : i + 1}</div>
+                <div className="wf-label">{s.label}</div>
+                <div className="wf-role">{s.role}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ─── PROCUREMENT: DELIVERY SLOT MANAGEMENT ─────────────────── */
+const SLOT_DATA = [
+  { id: 'DS-001', poId: 'PO-450001', supplier: 'Raw Materials AG', suppEmail: 'delivery@rawmaterials.de', reqDate: '2026-04-10', reqTime: '09:00', plant: '1000', storeLoc: 'WH01', pallets: 12, weight: '4,200 kg', truckRef: 'B-RM 2201', status: 'Pending', notified: false, notes: 'Standard delivery' },
+  { id: 'DS-002', poId: 'PO-450002', supplier: 'Logistics Partners BV', suppEmail: 'ops@logisticspartners.nl', reqDate: '2026-03-28', reqTime: '13:00', plant: '1000', storeLoc: 'WH02', pallets: 6, weight: '1,800 kg', truckRef: 'NL-LP 5544', status: 'Confirmed', notified: true, notes: '' },
+  { id: 'DS-003', poId: 'PO-450003', supplier: 'IT Services Co.', suppEmail: 'contact@itservices.fr', reqDate: '2026-04-20', reqTime: '11:00', plant: '2000', storeLoc: 'WH01', pallets: 2, weight: '320 kg', truckRef: '', status: 'Pending', notified: false, notes: 'Fragile — server equipment' },
+  { id: 'DS-004', poId: 'PO-450005', supplier: 'Raw Materials AG', suppEmail: 'delivery@rawmaterials.de', reqDate: '2026-04-25', reqTime: '07:00', plant: '1000', storeLoc: 'WH01', pallets: 18, weight: '6,100 kg', truckRef: 'B-RM 3302', status: 'Rejected', notified: true, notes: 'Rescheduled — dock full' },
+];
+
+const SLOT_STATUS_CLS = { 'Pending': 'tag-pending', 'Confirmed': 'tag-approved', 'Rejected': 'tag-error', 'Cancelled': 'tag-neutral' };
+
+const ProcurementSlots = ({ setView }) => {
+  const { useState: useLS } = React;
+  const [slots, setSlots] = useLS([...SLOT_DATA]);
+  const [filter, setFilter] = useLS('all');
+  const [showAdd, setShowAdd] = useLS(false);
+  const [showEmail, setShowEmail] = useLS(null); // slot to send email for
+  const [emailSent, setEmailSent] = useLS({}); // id -> true
+  const [showDetail, setShowDetail] = useLS(null);
+  const [newSlot, setNewSlot] = useLS({
+    poId: '', supplier: '', suppEmail: '', reqDate: '', reqTime: '09:00',
+    plant: '1000', storeLoc: 'WH01', pallets: '', weight: '', truckRef: '', notes: ''
+  });
+  const setNS = (k, v) => setNewSlot(p => ({ ...p, [k]: v }));
+
+  const rows = filter === 'all' ? slots : slots.filter(s => s.status === filter);
+
+  const handleConfirm = (id) => {
+    setSlots(prev => prev.map(s => s.id === id ? { ...s, status: 'Confirmed' } : s));
+    showToast('Slot confirmed — email notification queued', 'success');
+  };
+  const handleReject = (id) => {
+    setSlots(prev => prev.map(s => s.id === id ? { ...s, status: 'Rejected' } : s));
+    showToast('Slot rejected', 'error');
+  };
+  const handleSendEmail = (slot) => {
+    setEmailSent(p => ({ ...p, [slot.id]: true }));
+    setSlots(prev => prev.map(s => s.id === slot.id ? { ...s, notified: true } : s));
+    setShowEmail(null);
+    showToast(`Email sent to ${slot.suppEmail}`, 'success');
+  };
+  const handleAddSlot = () => {
+    const id = 'DS-00' + (slots.length + 1);
+    setSlots(prev => [...prev, { ...newSlot, id, status: 'Pending', notified: false }]);
+    setShowAdd(false);
+    setNewSlot({ poId: '', supplier: '', suppEmail: '', reqDate: '', reqTime: '09:00', plant: '1000', storeLoc: 'WH01', pallets: '', weight: '', truckRef: '', notes: '' });
+    showToast('Delivery slot created and supplier notified', 'success');
+  };
+
+  const pendingCount = slots.filter(s => s.status === 'Pending').length;
+  const unnotified = slots.filter(s => !s.notified && s.status === 'Confirmed').length;
+
+  return (
+    <div className="page-area">
+      <Breadcrumb items={[{ label: 'Home', onClick: () => setView('overview') }, { label: 'Delivery Slot Management' }]} />
+      <div className="page-title-row">
+        <div>
+          <div className="page-title">Delivery Slot Management</div>
+          <div className="page-subtitle">Internal procurement — manage inbound delivery slots &amp; notify suppliers</div>
+        </div>
+        <div className="flex gap-8">
+          <button className="btn btn-secondary btn-sm"><IcRefresh size={13} /> Refresh</button>
+          <button className="btn btn-primary btn-sm" onClick={() => setShowAdd(true)}>
+            <IcPlus size={13} /> Add Slot
+          </button>
+        </div>
+      </div>
+
+      {/* KPIs */}
+      <div className="kpi-strip" style={{ gridTemplateColumns: 'repeat(4,1fr)' }}>
+        <div className="kpi-card kpi-card-blue">
+          <div className="kpi-icon" style={{ background: '#EDF6FF' }}><IcCalendar size={16} stroke="var(--sap-color-interactive)" /></div>
+          <div className="kpi-val">{slots.length}</div>
+          <div className="kpi-label">Total Slots</div>
+        </div>
+        <div className="kpi-card kpi-card-yellow">
+          <div className="kpi-icon" style={{ background: '#FFF3B8' }}><IcAlert size={16} stroke="var(--sap-color-warning)" /></div>
+          <div className="kpi-val">{pendingCount}</div>
+          <div className="kpi-label">Awaiting Confirmation</div>
+        </div>
+        <div className="kpi-card kpi-card-green">
+          <div className="kpi-icon" style={{ background: '#e6f9ee' }}><IcCheck size={16} stroke="var(--sap-color-positive)" /></div>
+          <div className="kpi-val">{slots.filter(s => s.status === 'Confirmed').length}</div>
+          <div className="kpi-label">Confirmed</div>
+        </div>
+        <div className="kpi-card kpi-card-purple">
+          <div className="kpi-icon" style={{ background: '#EEE4F8' }}><IcSend size={16} stroke="#8B5CF6" /></div>
+          <div className="kpi-val">{slots.filter(s => s.notified).length}</div>
+          <div className="kpi-label">Suppliers Notified</div>
+        </div>
+      </div>
+
+      {unnotified > 0 && (
+        <div className="msg-strip msg-warning">
+          <IcAlert size={14} />
+          <span><strong>{unnotified} confirmed slot(s)</strong> have not yet been emailed to the supplier. Use the <strong>Notify</strong> button to send.</span>
+        </div>
+      )}
+      {pendingCount > 0 && (
+        <div className="msg-strip msg-info">
+          <IcAlert size={14} />
+          <span><strong>{pendingCount} slot(s)</strong> are awaiting your confirmation. Review and confirm or reject below.</span>
+        </div>
+      )}
+
+      {/* Filter tabs */}
+      <div className="flex gap-8 mb-16">
+        {['all', 'Pending', 'Confirmed', 'Rejected'].map(f => (
+          <button key={f} className={`btn btn-sm ${filter === f ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setFilter(f)}>
+            {f === 'all' ? 'All' : f}
+            {f === 'Pending' && pendingCount > 0 && <span className="badge" style={{ marginLeft: 6, background: 'rgba(255,255,255,0.3)', fontSize: 10 }}>{pendingCount}</span>}
+          </button>
+        ))}
+      </div>
+
+      <div className="table-wrap">
+        <table className="sap-table">
+          <thead>
+            <tr>
+              <th>Slot ID</th><th>PO No.</th><th>Supplier</th><th>Delivery Date</th><th>Time</th>
+              <th>Plant / WH</th><th>Pallets</th><th>Truck Ref</th><th>Status</th><th>Notified</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(slot => (
+              <tr key={slot.id} onClick={() => setShowDetail(slot)}>
+                <td><a>{slot.id}</a></td>
+                <td><a onClick={e => { e.stopPropagation(); setView('supp-po'); }}>{slot.poId}</a></td>
+                <td style={{ fontWeight: 600 }}>{slot.supplier}</td>
+                <td style={{ fontWeight: 600 }}>{slot.reqDate}</td>
+                <td>{slot.reqTime} – {(() => { const [h] = slot.reqTime.split(':'); return `${String(+h+2).padStart(2,'0')}:00`; })()}</td>
+                <td>{slot.plant} / {slot.storeLoc}</td>
+                <td>{slot.pallets || '—'}</td>
+                <td className="text-2 fs-12">{slot.truckRef || '—'}</td>
+                <td><span className={`tag ${SLOT_STATUS_CLS[slot.status]}`}>{slot.status}</span></td>
+                <td>
+                  {slot.notified
+                    ? <span className="tag tag-approved"><IcCheck size={10} /> Sent</span>
+                    : <span className="tag tag-neutral">Not sent</span>}
+                </td>
+                <td onClick={e => e.stopPropagation()} style={{ whiteSpace: 'nowrap' }}>
+                  <div className="flex gap-4">
+                    {slot.status === 'Pending' && <>
+                      <button className="btn btn-accept btn-sm" onClick={() => handleConfirm(slot.id)}><IcCheck size={12} /></button>
+                      <button className="btn btn-reject btn-sm" onClick={() => handleReject(slot.id)}><IcX size={12} /></button>
+                    </>}
+                    {!slot.notified && slot.status === 'Confirmed' && (
+                      <button className="btn btn-primary btn-sm" onClick={() => setShowEmail(slot)}>
+                        <IcSend size={12} /> Notify
+                      </button>
+                    )}
+                    {slot.notified && (
+                      <button className="btn btn-secondary btn-sm" onClick={() => setShowEmail(slot)}>
+                        <IcSend size={12} /> Resend
+                      </button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="table-footer">
+          <span>{rows.length} slots</span>
+        </div>
+      </div>
+
+      {/* ── Add New Slot Dialog ── */}
+      {showAdd && (
+        <Dialog title="Add Delivery Slot" onClose={() => setShowAdd(false)} wide
+          footer={
+            <>
+              <button className="btn btn-secondary" onClick={() => setShowAdd(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={handleAddSlot}><IcPlus size={13} /> Create &amp; Notify Supplier</button>
+            </>
+          }>
+          <div className="msg-strip msg-info" style={{ marginBottom: 14 }}>
+            <IcAlert size={14} />
+            <span>Slot will be created and an email notification will be sent to the supplier automatically.</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 20px' }}>
+            <div className="field"><div className="field-label">PO Number <span style={{ color: 'var(--sap-color-negative)' }}>*</span></div>
+              <select className="input" value={newSlot.poId} onChange={e => {
+                const po = PURCHASE_ORDERS.find(p => p.id === e.target.value);
+                setNS('poId', e.target.value);
+                if (po) { setNS('supplier', po.supplier); setNS('plant', po.plant); setNS('storeLoc', po.storeLoc); setNS('reqDate', po.deliveryDate); }
+              }}>
+                <option value="">Select PO...</option>
+                {PURCHASE_ORDERS.filter(p => p.status === 'Open').map(p => (
+                  <option key={p.id} value={p.id}>{p.id} — {p.supplier}</option>
+                ))}
+              </select>
+            </div>
+            <div className="field"><div className="field-label">Supplier</div>
+              <input className="input" readOnly value={newSlot.supplier} placeholder="Auto-filled from PO" />
+            </div>
+            <div className="field" style={{ gridColumn: 'span 2' }}><div className="field-label">Supplier Email <span style={{ color: 'var(--sap-color-negative)' }}>*</span></div>
+              <input className="input" type="email" value={newSlot.suppEmail} onChange={e => setNS('suppEmail', e.target.value)} placeholder="e.g. delivery@supplier.com" />
+            </div>
+            <div className="field"><div className="field-label">Delivery Date <span style={{ color: 'var(--sap-color-negative)' }}>*</span></div>
+              <input className="input" type="date" value={newSlot.reqDate} onChange={e => setNS('reqDate', e.target.value)} />
+            </div>
+            <div className="field"><div className="field-label">Time Slot <span style={{ color: 'var(--sap-color-negative)' }}>*</span></div>
+              <select className="input" value={newSlot.reqTime} onChange={e => setNS('reqTime', e.target.value)}>
+                <option value="07:00">07:00 – 09:00</option>
+                <option value="09:00">09:00 – 11:00</option>
+                <option value="11:00">11:00 – 13:00</option>
+                <option value="13:00">13:00 – 15:00</option>
+                <option value="15:00">15:00 – 17:00</option>
+              </select>
+            </div>
+            <div className="field"><div className="field-label">Plant</div>
+              <select className="input" value={newSlot.plant} onChange={e => setNS('plant', e.target.value)}>
+                <option value="1000">1000 — Berlin</option>
+                <option value="2000">2000 — Hamburg</option>
+              </select>
+            </div>
+            <div className="field"><div className="field-label">Storage Location</div>
+              <select className="input" value={newSlot.storeLoc} onChange={e => setNS('storeLoc', e.target.value)}>
+                <option value="WH01">WH01 — Main Warehouse</option>
+                <option value="WH02">WH02 — Cold Storage</option>
+                <option value="WH03">WH03 — Overflow</option>
+              </select>
+            </div>
+            <div className="field"><div className="field-label">No. of Pallets</div>
+              <input className="input" type="number" value={newSlot.pallets} onChange={e => setNS('pallets', e.target.value)} placeholder="e.g. 12" />
+            </div>
+            <div className="field"><div className="field-label">Total Weight</div>
+              <input className="input" value={newSlot.weight} onChange={e => setNS('weight', e.target.value)} placeholder="e.g. 4,200 kg" />
+            </div>
+            <div className="field"><div className="field-label">Truck / Vehicle Ref</div>
+              <input className="input" value={newSlot.truckRef} onChange={e => setNS('truckRef', e.target.value)} placeholder="e.g. B-XY 1234" />
+            </div>
+            <div className="field"><div className="field-label">Special Instructions</div>
+              <input className="input" value={newSlot.notes} onChange={e => setNS('notes', e.target.value)} placeholder="Fragile, temperature, unloading..." />
+            </div>
+          </div>
+        </Dialog>
+      )}
+
+      {/* ── Send Email Dialog ── */}
+      {showEmail && (
+        <Dialog title={`Send Email Notification — ${showEmail.id}`} onClose={() => setShowEmail(null)}
+          footer={
+            <>
+              <button className="btn btn-secondary" onClick={() => setShowEmail(null)}>Cancel</button>
+              <button className="btn btn-primary" onClick={() => handleSendEmail(showEmail)}>
+                <IcSend size={13} /> Send Email
+              </button>
+            </>
+          }>
+          <div style={{ background: 'var(--sap-color-bg-shell)', border: '1px solid var(--sap-color-border-2)', borderRadius: 8, padding: 16, marginBottom: 16, fontFamily: 'monospace', fontSize: 13, lineHeight: 1.7 }}>
+            <div style={{ marginBottom: 10, paddingBottom: 10, borderBottom: '1px solid var(--sap-color-border-2)' }}>
+              <div><strong>To:</strong> {showEmail.suppEmail}</div>
+              <div><strong>From:</strong> procurement@company.com</div>
+              <div><strong>Subject:</strong> Delivery Slot Confirmation — {showEmail.poId} / {showEmail.id}</div>
+            </div>
+            <div style={{ fontFamily: 'var(--sap-font-family)', fontSize: 14, lineHeight: 1.8 }}>
+              <p>Dear {showEmail.supplier},</p>
+              <br />
+              <p>We are pleased to confirm your delivery slot for the following purchase order:</p>
+              <br />
+              <div style={{ background: '#fff', border: '1px solid var(--sap-color-border-2)', borderRadius: 6, padding: '12px 16px', margin: '8px 0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 20px', fontSize: 13 }}>
+                <div><strong>PO Number:</strong> {showEmail.poId}</div>
+                <div><strong>Slot ID:</strong> {showEmail.id}</div>
+                <div><strong>Delivery Date:</strong> {showEmail.reqDate}</div>
+                <div><strong>Time Window:</strong> {showEmail.reqTime} – {(() => { const [h] = showEmail.reqTime.split(':'); return `${String(+h+2).padStart(2,'0')}:00`; })()}</div>
+                <div><strong>Plant:</strong> {showEmail.plant}</div>
+                <div><strong>Warehouse:</strong> {showEmail.storeLoc}</div>
+                {showEmail.pallets && <div><strong>Pallets:</strong> {showEmail.pallets}</div>}
+                {showEmail.truckRef && <div><strong>Truck Ref:</strong> {showEmail.truckRef}</div>}
+              </div>
+              <br />
+              {showEmail.notes && <p><strong>Special Instructions:</strong> {showEmail.notes}</p>}
+              <br />
+              <p>Please ensure your driver arrives at the goods receiving area at the scheduled time. Contact us at <strong>warehouse@company.com</strong> for any changes.</p>
+              <br />
+              <p>Best regards,<br /><strong>Procurement Team</strong><br />Company Name</p>
+            </div>
+          </div>
+          <div className="field">
+            <div className="field-label">Additional Message (optional)</div>
+            <textarea className="input" rows={2} placeholder="Add any extra notes to include in the email..." />
+          </div>
+        </Dialog>
+      )}
+
+      {/* ── Slot Detail Dialog ── */}
+      {showDetail && (
+        <Dialog title={`Slot Details — ${showDetail.id}`} onClose={() => setShowDetail(null)}
+          footer={
+            <div className="flex gap-8 justify-between w-full" style={{ width: '100%' }}>
+              <div className="flex gap-8">
+                {showDetail.status === 'Pending' && <>
+                  <button className="btn btn-accept btn-sm" onClick={() => { handleConfirm(showDetail.id); setShowDetail(null); }}><IcCheck size={12} /> Confirm</button>
+                  <button className="btn btn-reject btn-sm" onClick={() => { handleReject(showDetail.id); setShowDetail(null); }}><IcX size={12} /> Reject</button>
+                </>}
+              </div>
+              <div className="flex gap-8">
+                <button className="btn btn-secondary" onClick={() => setShowDetail(null)}>Close</button>
+                <button className="btn btn-primary" onClick={() => { setShowDetail(null); setShowEmail(showDetail); }}>
+                  <IcSend size={13} /> {showDetail.notified ? 'Resend Email' : 'Send Notification'}
+                </button>
+              </div>
+            </div>
+          }>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 20px' }}>
+            <div className="field"><div className="field-label">Slot ID</div><input className="input" readOnly value={showDetail.id} /></div>
+            <div className="field"><div className="field-label">PO Number</div><input className="input" readOnly value={showDetail.poId} /></div>
+            <div className="field"><div className="field-label">Supplier</div><input className="input" readOnly value={showDetail.supplier} /></div>
+            <div className="field"><div className="field-label">Email</div><input className="input" readOnly value={showDetail.suppEmail} /></div>
+            <div className="field"><div className="field-label">Delivery Date</div><input className="input" readOnly value={showDetail.reqDate} /></div>
+            <div className="field"><div className="field-label">Time</div><input className="input" readOnly value={`${showDetail.reqTime} – ${(() => { const [h] = showDetail.reqTime.split(':'); return `${String(+h+2).padStart(2,'0')}:00`; })()}`} /></div>
+            <div className="field"><div className="field-label">Plant</div><input className="input" readOnly value={showDetail.plant} /></div>
+            <div className="field"><div className="field-label">Warehouse</div><input className="input" readOnly value={showDetail.storeLoc} /></div>
+            <div className="field"><div className="field-label">Pallets</div><input className="input" readOnly value={showDetail.pallets || '—'} /></div>
+            <div className="field"><div className="field-label">Weight</div><input className="input" readOnly value={showDetail.weight || '—'} /></div>
+            <div className="field"><div className="field-label">Truck Reference</div><input className="input" readOnly value={showDetail.truckRef || '—'} /></div>
+            <div className="field"><div className="field-label">Status</div>
+              <div style={{ display: 'flex', alignItems: 'center', height: 36 }}>
+                <span className={`tag ${SLOT_STATUS_CLS[showDetail.status]}`}>{showDetail.status}</span>
+              </div>
+            </div>
+            {showDetail.notes && (
+              <div className="field" style={{ gridColumn: 'span 2' }}>
+                <div className="field-label">Special Instructions</div>
+                <input className="input" readOnly value={showDetail.notes} />
+              </div>
+            )}
+          </div>
+        </Dialog>
+      )}
+    </div>
+  );
+};
+
+/* ─── SALES DATA ────────────────────────────────────────────── */
+const SALES_GROUPS = [
+  { id: 'SG-01', name: 'Asia Pacific Export', region: 'APAC', currency: 'USD', manager: 'James Tan' },
+  { id: 'SG-02', name: 'Europe Domestic', region: 'EMEA', currency: 'EUR', manager: 'Maria Gonzalez' },
+  { id: 'SG-03', name: 'Middle East Export', region: 'MEA', currency: 'USD', manager: 'Ahmed Al-Rashid' },
+  { id: 'SG-04', name: 'Americas Export', region: 'AMER', currency: 'USD', manager: 'Linda Chen' },
+];
+
+const BILLING_DATA = [
+  { id: 'BL-5001', soId: 'SO-100123', customer: 'Acme Corporation', custId: 'C-001', salesGroup: 'SG-02', salesRep: 'Klaus Bauer', orderDate: '2026-03-01', billingDate: '2026-03-16', netValue: 42500, currency: 'EUR', billingStatus: 'Billed', paymentStatus: 'Overdue', paymentDate: null, dueDate: '2026-04-15', daysOverdue: 17, paymentTerms: 'Net 30', incoterms: 'DAP', paymentMethod: 'Bank Transfer' },
+  { id: 'BL-5002', soId: 'SO-100124', customer: 'Acme Corporation', custId: 'C-001', salesGroup: 'SG-02', salesRep: 'Klaus Bauer', orderDate: '2026-03-10', billingDate: '2026-03-23', netValue: 18200, currency: 'EUR', billingStatus: 'Billed', paymentStatus: 'Paid', paymentDate: '2026-04-10', dueDate: '2026-04-22', daysOverdue: 0, paymentTerms: 'Net 30', incoterms: 'DAP', paymentMethod: 'Bank Transfer' },
+  { id: 'BL-5003', soId: 'SO-100125', customer: 'TechFlow GmbH', custId: 'C-002', salesGroup: 'SG-02', salesRep: 'Anna Weber', orderDate: '2026-03-18', billingDate: null, netValue: 9800, currency: 'EUR', billingStatus: 'Pending', paymentStatus: 'Not Due', paymentDate: null, dueDate: null, daysOverdue: 0, paymentTerms: 'Net 30', incoterms: 'EXW', paymentMethod: 'Bank Transfer' },
+  { id: 'BL-5004', soId: 'SO-100126', customer: 'Nordic Supplies AS', custId: 'C-004', salesGroup: 'SG-01', salesRep: 'James Tan', orderDate: '2026-03-20', billingDate: null, netValue: 67000, currency: 'USD', billingStatus: 'Pending', paymentStatus: 'Not Due', paymentDate: null, dueDate: null, daysOverdue: 0, paymentTerms: 'Cash in Advance', incoterms: 'CIF', paymentMethod: 'Telegraphic Transfer' },
+  { id: 'BL-5005', soId: 'SO-100127', customer: 'Global Traders Ltd', custId: 'C-003', salesGroup: 'SG-03', salesRep: 'Ahmed Al-Rashid', orderDate: '2026-02-14', billingDate: '2026-03-01', netValue: 31400, currency: 'USD', billingStatus: 'Billed', paymentStatus: 'Overdue', paymentDate: null, dueDate: '2026-03-31', daysOverdue: 32, paymentTerms: 'Cash in Advance', incoterms: 'CIF', paymentMethod: 'Letter of Credit' },
+  { id: 'BL-5006', soId: 'SO-100128', customer: 'Iberia Trade SL', custId: 'C-005', salesGroup: 'SG-02', salesRep: 'Carlos Ruiz', orderDate: '2026-04-01', billingDate: null, netValue: 12600, currency: 'EUR', billingStatus: 'Pending', paymentStatus: 'Not Due', paymentDate: null, dueDate: null, daysOverdue: 0, paymentTerms: 'Net 60', incoterms: 'DAP', paymentMethod: 'Bank Transfer' },
+  { id: 'BL-5007', soId: 'SO-200011', customer: 'Singapore Parts Co.', custId: 'C-006', salesGroup: 'SG-01', salesRep: 'James Tan', orderDate: '2026-03-25', billingDate: null, netValue: 95000, currency: 'USD', billingStatus: 'Pending', paymentStatus: 'Awaiting Payment', paymentDate: null, dueDate: '2026-04-01', daysOverdue: 0, paymentTerms: 'Cash in Advance', incoterms: 'FOB', paymentMethod: 'Telegraphic Transfer' },
+  { id: 'BL-5008', soId: 'SO-200012', customer: 'Dubai Trading LLC', custId: 'C-007', salesGroup: 'SG-03', salesRep: 'Ahmed Al-Rashid', orderDate: '2026-04-02', billingDate: null, netValue: 148000, currency: 'USD', billingStatus: 'Pending', paymentStatus: 'Awaiting Payment', paymentDate: null, dueDate: '2026-04-15', daysOverdue: 0, paymentTerms: 'Cash in Advance', incoterms: 'CIF', paymentMethod: 'Letter of Credit' },
+  { id: 'BL-5009', soId: 'SO-200013', customer: 'NY Imports Inc.', custId: 'C-008', salesGroup: 'SG-04', salesRep: 'Linda Chen', orderDate: '2026-04-05', billingDate: null, netValue: 54200, currency: 'USD', billingStatus: 'Pending', paymentStatus: 'Awaiting Payment', paymentDate: null, dueDate: '2026-04-20', daysOverdue: 0, paymentTerms: 'Cash in Advance', incoterms: 'DAP', paymentMethod: 'Telegraphic Transfer' },
+];
+
+const USERS = [
+  { id: 'U-001', name: 'Klaus Bauer', email: 'k.bauer@company.com', role: 'Sales Rep', salesGroups: ['SG-02'], active: true, lastLogin: '2026-05-01' },
+  { id: 'U-002', name: 'Anna Weber', email: 'a.weber@company.com', role: 'Sales Rep', salesGroups: ['SG-02'], active: true, lastLogin: '2026-05-02' },
+  { id: 'U-003', name: 'James Tan', email: 'j.tan@company.com', role: 'Sales Manager', salesGroups: ['SG-01', 'SG-04'], active: true, lastLogin: '2026-05-01' },
+  { id: 'U-004', name: 'Ahmed Al-Rashid', email: 'a.rashid@company.com', role: 'Sales Rep', salesGroups: ['SG-03'], active: true, lastLogin: '2026-04-30' },
+  { id: 'U-005', name: 'Linda Chen', email: 'l.chen@company.com', role: 'Sales Manager', salesGroups: ['SG-04', 'SG-01'], active: true, lastLogin: '2026-04-29' },
+  { id: 'U-006', name: 'Carlos Ruiz', email: 'c.ruiz@company.com', role: 'Sales Rep', salesGroups: ['SG-02'], active: false, lastLogin: '2026-03-15' },
+  { id: 'U-007', name: 'John Müller', email: 'j.muller@company.com', role: 'Admin', salesGroups: ['SG-01','SG-02','SG-03','SG-04'], active: true, lastLogin: '2026-05-02' },
+];
+
+// Simulated current user — Sales Rep for SG-01 (APAC)
+const CURRENT_USER = USERS[2]; // James Tan — SG-01, SG-04
+
+const BILL_PAY_CLS = { 'Paid': 'tag-approved', 'Overdue': 'tag-error', 'Awaiting Payment': 'tag-pending', 'Not Due': 'tag-neutral', 'Partial': 'tag-warning' };
+const BILL_STATUS_CLS = { 'Billed': 'tag-info', 'Pending': 'tag-pending', 'Cancelled': 'tag-error' };
+
+const fmt = (n, cur = 'EUR') => cur === 'USD' ? `$${n.toLocaleString()}` : `€${n.toLocaleString()}`;
+
+/* ─── SALES: BILLING REPORT ──────────────────────────────────── */
+const SalesBillingReport = ({ setView, currentUser = CURRENT_USER }) => {
+  const [sgFilter, setSgFilter] = useState(currentUser.salesGroups[0]);
+  const [payFilter, setPayFilter] = useState('all');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [q, setQ] = useState('');
+  const [selected, setSelected] = useState(null);
+  const isAdmin = currentUser.role === 'Admin';
+
+  // Authorization: only show sales groups user has access to
+  const allowedGroups = isAdmin ? SALES_GROUPS : SALES_GROUPS.filter(sg => currentUser.salesGroups.includes(sg.id));
+
+  const rows = BILLING_DATA.filter(b => {
+    const sgOk = isAdmin ? (sgFilter === 'all' || b.salesGroup === sgFilter) : currentUser.salesGroups.includes(b.salesGroup) && (sgFilter === 'all' || b.salesGroup === sgFilter);
+    const payOk = payFilter === 'all' || b.paymentStatus === payFilter;
+    const qOk = !q || b.customer.toLowerCase().includes(q.toLowerCase()) || b.soId.includes(q) || b.id.includes(q);
+    const dateOk = (!dateFrom || (b.billingDate && b.billingDate >= dateFrom)) && (!dateTo || (b.billingDate && b.billingDate <= dateTo));
+    return sgOk && payOk && qOk && dateOk;
+  });
+
+  const totalBilled = rows.filter(r => r.billingStatus === 'Billed').reduce((s, r) => s + r.netValue, 0);
+  const totalPaid = rows.filter(r => r.paymentStatus === 'Paid').reduce((s, r) => s + r.netValue, 0);
+  const totalOverdue = rows.filter(r => r.paymentStatus === 'Overdue').reduce((s, r) => s + r.netValue, 0);
+  const totalPending = rows.filter(r => r.paymentStatus === 'Awaiting Payment').reduce((s, r) => s + r.netValue, 0);
+
+  return (
+    <div className="page-area">
+      <Breadcrumb items={[{ label: 'Home', onClick: () => setView('overview') }, { label: 'Sales Billing Report' }]} />
+      <div className="page-title-row">
+        <div>
+          <div className="page-title">Sales Billing Report</div>
+          <div className="page-subtitle">Transactions from Sales Order to Invoice to Payment · {currentUser.name} — {currentUser.role}</div>
+        </div>
+        <div className="flex gap-8">
+          <button className="btn btn-secondary btn-sm"><IcRefresh size={13} /> Refresh</button>
+          <button className="btn btn-ghost btn-sm" onClick={() => setView('sales-cia')}><IcDollar size={13} /> Cash-in-Advance →</button>
+        </div>
+      </div>
+
+      {/* Auth notice */}
+      {!isAdmin && (
+        <div className="msg-strip msg-info">
+          <IcAlert size={14} />
+          <span>You are viewing data for your authorized sales group(s): <strong>{allowedGroups.map(g => g.name).join(', ')}</strong>. Contact Admin to change access.</span>
+        </div>
+      )}
+
+      {/* KPIs */}
+      <div className="kpi-strip" style={{ gridTemplateColumns: 'repeat(4,1fr)' }}>
+        <div className="kpi-card kpi-card-blue">
+          <div className="kpi-icon" style={{ background: '#EDF6FF' }}><IcList size={16} stroke="var(--sap-color-interactive)" /></div>
+          <div className="kpi-val">{rows.length}</div>
+          <div className="kpi-label">Total Transactions</div>
+        </div>
+        <div className="kpi-card kpi-card-green">
+          <div className="kpi-icon" style={{ background: '#e6f9ee' }}><IcCheck size={16} stroke="var(--sap-color-positive)" /></div>
+          <div className="kpi-val" style={{ fontSize: 20 }}>{fmt(totalPaid)}</div>
+          <div className="kpi-label">Total Paid</div>
+        </div>
+        <div className="kpi-card" style={{ borderTop: '3px solid var(--sap-color-negative)' }}>
+          <div className="kpi-icon" style={{ background: '#FFDBEF' }}><IcAlert size={16} stroke="var(--sap-color-negative)" /></div>
+          <div className="kpi-val" style={{ fontSize: 20, color: 'var(--sap-color-negative)' }}>{fmt(totalOverdue)}</div>
+          <div className="kpi-label">Overdue</div>
+        </div>
+        <div className="kpi-card kpi-card-yellow">
+          <div className="kpi-icon" style={{ background: '#FFF3B8' }}><IcCredit size={16} stroke="var(--sap-color-warning)" /></div>
+          <div className="kpi-val" style={{ fontSize: 20 }}>{fmt(totalPending, 'USD')}</div>
+          <div className="kpi-label">Awaiting Payment</div>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="form-section" style={{ marginBottom: 14 }}>
+        <div className="form-section-hdr">Filters</div>
+        <div className="form-grid form-grid-3" style={{ paddingTop: 14 }}>
+          <div className="field">
+            <div className="field-label">Sales Group</div>
+            <select className="input" value={sgFilter} onChange={e => setSgFilter(e.target.value)}>
+              {isAdmin && <option value="all">All Sales Groups</option>}
+              {allowedGroups.map(sg => <option key={sg.id} value={sg.id}>{sg.id} — {sg.name}</option>)}
+            </select>
+          </div>
+          <div className="field">
+            <div className="field-label">Payment Status</div>
+            <select className="input" value={payFilter} onChange={e => setPayFilter(e.target.value)}>
+              <option value="all">All Statuses</option>
+              <option>Paid</option><option>Overdue</option><option>Awaiting Payment</option><option>Not Due</option>
+            </select>
+          </div>
+          <div className="field">
+            <div className="field-label">Search</div>
+            <div className="search-field">
+              <IcSearch size={14} stroke="var(--sap-color-text-2)" />
+              <input placeholder="SO, Billing Doc, Customer..." value={q} onChange={e => setQ(e.target.value)} />
+            </div>
+          </div>
+          <div className="field">
+            <div className="field-label">Billing Date From</div>
+            <input className="input" type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
+          </div>
+          <div className="field">
+            <div className="field-label">Billing Date To</div>
+            <input className="input" type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} />
+          </div>
+          <div className="field" style={{ display: 'flex', alignItems: 'flex-end' }}>
+            <button className="btn btn-secondary btn-sm w-full" onClick={() => { setSgFilter(currentUser.salesGroups[0]); setPayFilter('all'); setDateFrom(''); setDateTo(''); setQ(''); }}>Clear Filters</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="table-wrap">
+        <div className="table-toolbar">
+          <span style={{ fontWeight: 700, fontSize: 13 }}>{rows.length} transactions · Billed: <span style={{ color: 'var(--sap-color-interactive)' }}>{fmt(totalBilled)}</span></span>
+          <button className="btn btn-secondary btn-sm"><IcRefresh size={12} /> Export</button>
+        </div>
+        <table className="sap-table">
+          <thead>
+            <tr>
+              <th>Billing Doc</th><th>Sales Order</th><th>Customer</th><th>Sales Group</th>
+              <th>Sales Rep</th><th>Order Date</th><th>Billing Date</th><th>Net Value</th>
+              <th>Incoterms</th><th>Payment Terms</th><th>Billing Status</th><th>Payment Status</th><th>Due Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(b => (
+              <tr key={b.id} onClick={() => setSelected(b)}>
+                <td><a>{b.id}</a></td>
+                <td><a onClick={e => { e.stopPropagation(); setView('cust-so'); }}>{b.soId}</a></td>
+                <td style={{ fontWeight: 600 }}>{b.customer}</td>
+                <td><span className="tag tag-neutral">{b.salesGroup}</span></td>
+                <td>{b.salesRep}</td>
+                <td>{b.orderDate}</td>
+                <td>{b.billingDate || <span className="text-2">—</span>}</td>
+                <td style={{ fontWeight: 700 }}>{fmt(b.netValue, b.currency)}</td>
+                <td className="fs-12">{b.incoterms}</td>
+                <td className="fs-12">{b.paymentTerms}</td>
+                <td><span className={`tag ${BILL_STATUS_CLS[b.billingStatus]}`}>{b.billingStatus}</span></td>
+                <td><span className={`tag ${BILL_PAY_CLS[b.paymentStatus] || 'tag-neutral'}`}>{b.paymentStatus}</span></td>
+                <td style={{ color: b.daysOverdue > 0 ? 'var(--sap-color-negative)' : '', fontWeight: b.daysOverdue > 0 ? 700 : 400 }}>
+                  {b.dueDate || '—'}{b.daysOverdue > 0 && <span style={{ fontSize: 11, marginLeft: 4 }}>({b.daysOverdue}d)</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="table-footer">
+          <span>{rows.length} records</span>
+          <div style={{ fontWeight: 700, fontSize: 13, display: 'flex', gap: 20 }}>
+            <span>Paid: <span style={{ color: 'var(--sap-color-positive-dark)' }}>{fmt(totalPaid)}</span></span>
+            <span>Overdue: <span style={{ color: 'var(--sap-color-negative)' }}>{fmt(totalOverdue)}</span></span>
+          </div>
+        </div>
+      </div>
+
+      {/* Detail Dialog */}
+      {selected && (
+        <Dialog title={`Billing Document ${selected.id}`} onClose={() => setSelected(null)} wide
+          footer={<button className="btn btn-secondary" onClick={() => setSelected(null)}>Close</button>}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 20px' }}>
+            <div className="field"><div className="field-label">Billing Doc</div><input className="input" readOnly value={selected.id} /></div>
+            <div className="field"><div className="field-label">Sales Order</div><input className="input" readOnly value={selected.soId} /></div>
+            <div className="field"><div className="field-label">Customer</div><input className="input" readOnly value={selected.customer} /></div>
+            <div className="field"><div className="field-label">Sales Group</div><input className="input" readOnly value={`${selected.salesGroup} — ${SALES_GROUPS.find(s=>s.id===selected.salesGroup)?.name}`} /></div>
+            <div className="field"><div className="field-label">Sales Rep</div><input className="input" readOnly value={selected.salesRep} /></div>
+            <div className="field"><div className="field-label">Net Value</div><input className="input" readOnly value={fmt(selected.netValue, selected.currency)} style={{ fontWeight: 700 }} /></div>
+            <div className="field"><div className="field-label">Incoterms</div><input className="input" readOnly value={selected.incoterms} /></div>
+            <div className="field"><div className="field-label">Payment Method</div><input className="input" readOnly value={selected.paymentMethod} /></div>
+            <div className="field"><div className="field-label">Payment Terms</div><input className="input" readOnly value={selected.paymentTerms} /></div>
+            <div className="field"><div className="field-label">Billing Date</div><input className="input" readOnly value={selected.billingDate || '—'} /></div>
+            <div className="field"><div className="field-label">Due Date</div><input className="input" readOnly value={selected.dueDate || '—'} style={{ color: selected.daysOverdue > 0 ? 'var(--sap-color-negative)' : '' }} /></div>
+            <div className="field"><div className="field-label">Payment Date</div><input className="input" readOnly value={selected.paymentDate || '—'} style={{ color: selected.paymentDate ? 'var(--sap-color-positive-dark)' : '' }} /></div>
+            <div className="field"><div className="field-label">Billing Status</div><div style={{ display:'flex', alignItems:'center', height:36 }}><span className={`tag ${BILL_STATUS_CLS[selected.billingStatus]}`}>{selected.billingStatus}</span></div></div>
+            <div className="field"><div className="field-label">Payment Status</div><div style={{ display:'flex', alignItems:'center', height:36 }}><span className={`tag ${BILL_PAY_CLS[selected.paymentStatus] || 'tag-neutral'}`}>{selected.paymentStatus}</span></div></div>
+          </div>
+        </Dialog>
+      )}
+    </div>
+  );
+};
+
+/* ─── SALES: CASH-IN-ADVANCE PENDING ─────────────────────────── */
+const SalesCashInAdvance = ({ setView, currentUser = CURRENT_USER }) => {
+  const [sgFilter, setSgFilter] = useState(currentUser.salesGroups[0]);
+  const [q, setQ] = useState('');
+  const [selected, setSelected] = useState(null);
+  const [showChase, setShowChase] = useState(null);
+  const isAdmin = currentUser.role === 'Admin';
+  const allowedGroups = isAdmin ? SALES_GROUPS : SALES_GROUPS.filter(sg => currentUser.salesGroups.includes(sg.id));
+
+  const ciaRows = BILLING_DATA.filter(b => {
+    const isCIA = b.paymentTerms === 'Cash in Advance';
+    const isPending = b.paymentStatus !== 'Paid';
+    const sgOk = isAdmin ? (sgFilter === 'all' || b.salesGroup === sgFilter) : currentUser.salesGroups.includes(b.salesGroup) && (sgFilter === 'all' || b.salesGroup === sgFilter);
+    const qOk = !q || b.customer.toLowerCase().includes(q.toLowerCase()) || b.soId.includes(q);
+    return isCIA && isPending && sgOk && qOk;
+  });
+
+  const totalAwaiting = ciaRows.reduce((s, r) => s + r.netValue, 0);
+  const overdue = ciaRows.filter(r => r.paymentStatus === 'Overdue');
+
+  return (
+    <div className="page-area">
+      <Breadcrumb items={[{ label: 'Home', onClick: () => setView('overview') }, { label: 'Sales Billing', onClick: () => setView('sales-billing') }, { label: 'Cash-in-Advance Pending' }]} />
+      <div className="page-title-row">
+        <div>
+          <div className="page-title">Cash-in-Advance — Pending Payment</div>
+          <div className="page-subtitle">Export orders awaiting upfront payment before goods are released · {currentUser.name}</div>
+        </div>
+        <div className="flex gap-8">
+          <button className="btn btn-ghost btn-sm" onClick={() => setView('sales-billing')}>← Billing Report</button>
+        </div>
+      </div>
+
+      {!isAdmin && (
+        <div className="msg-strip msg-info">
+          <IcAlert size={14} />
+          <span>Restricted to your authorized sales group(s): <strong>{allowedGroups.map(g => g.name).join(', ')}</strong>.</span>
+        </div>
+      )}
+      {overdue.length > 0 && (
+        <div className="msg-strip msg-error">
+          <IcAlert size={14} />
+          <span><strong>{overdue.length} order(s) are overdue</strong> — payment deadline passed. Goods must not be released until payment is confirmed.</span>
+        </div>
+      )}
+
+      <div className="kpi-strip" style={{ gridTemplateColumns: 'repeat(4,1fr)' }}>
+        <div className="kpi-card kpi-card-blue">
+          <div className="kpi-icon" style={{ background: '#EDF6FF' }}><IcList size={16} stroke="var(--sap-color-interactive)" /></div>
+          <div className="kpi-val">{ciaRows.length}</div>
+          <div className="kpi-label">Pending CIA Orders</div>
+        </div>
+        <div className="kpi-card kpi-card-yellow">
+          <div className="kpi-icon" style={{ background: '#FFF3B8' }}><IcDollar size={16} stroke="var(--sap-color-warning)" /></div>
+          <div className="kpi-val" style={{ fontSize: 20 }}>${totalAwaiting.toLocaleString()}</div>
+          <div className="kpi-label">Total Awaiting</div>
+        </div>
+        <div className="kpi-card" style={{ borderTop: '3px solid var(--sap-color-negative)' }}>
+          <div className="kpi-icon" style={{ background: '#FFDBEF' }}><IcAlert size={16} stroke="var(--sap-color-negative)" /></div>
+          <div className="kpi-val" style={{ color: 'var(--sap-color-negative)' }}>{overdue.length}</div>
+          <div className="kpi-label">Overdue</div>
+        </div>
+        <div className="kpi-card kpi-card-green">
+          <div className="kpi-icon" style={{ background: '#e6f9ee' }}><IcTruck size={16} stroke="var(--sap-color-positive)" /></div>
+          <div className="kpi-val">{ciaRows.filter(r => r.paymentStatus === 'Awaiting Payment').length}</div>
+          <div className="kpi-label">Awaiting TT/LC</div>
+        </div>
+      </div>
+
+      <div className="flex gap-8 mb-16">
+        <select className="input" style={{ width: 260, height: 36 }} value={sgFilter} onChange={e => setSgFilter(e.target.value)}>
+          {isAdmin && <option value="all">All Sales Groups</option>}
+          {allowedGroups.map(sg => <option key={sg.id} value={sg.id}>{sg.id} — {sg.name}</option>)}
+        </select>
+        <div className="search-field" style={{ width: 240 }}>
+          <IcSearch size={14} stroke="var(--sap-color-text-2)" />
+          <input placeholder="Search order or customer..." value={q} onChange={e => setQ(e.target.value)} />
+        </div>
+      </div>
+
+      <div className="table-wrap">
+        <table className="sap-table">
+          <thead>
+            <tr>
+              <th>Sales Order</th><th>Customer</th><th>Sales Group</th><th>Sales Rep</th>
+              <th>Order Date</th><th>Net Value</th><th>Currency</th>
+              <th>Incoterms</th><th>Pay Method</th><th>Due Date</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {ciaRows.map(b => (
+              <tr key={b.id} onClick={() => setSelected(b)}>
+                <td><a>{b.soId}</a></td>
+                <td style={{ fontWeight: 600 }}>{b.customer}</td>
+                <td><span className="tag tag-neutral">{b.salesGroup}</span></td>
+                <td>{b.salesRep}</td>
+                <td>{b.orderDate}</td>
+                <td style={{ fontWeight: 700 }}>{fmt(b.netValue, b.currency)}</td>
+                <td>{b.currency}</td>
+                <td className="fs-12">{b.incoterms}</td>
+                <td className="fs-12">{b.paymentMethod}</td>
+                <td style={{ color: b.daysOverdue > 0 ? 'var(--sap-color-negative)' : '', fontWeight: b.daysOverdue > 0 ? 700 : 400 }}>
+                  {b.dueDate || '—'}{b.daysOverdue > 0 && <span style={{ fontSize: 11 }}> ({b.daysOverdue}d)</span>}
+                </td>
+                <td><span className={`tag ${BILL_PAY_CLS[b.paymentStatus] || 'tag-neutral'}`}>{b.paymentStatus}</span></td>
+                <td onClick={e => e.stopPropagation()}>
+                  <div className="flex gap-4">
+                    <button className="btn btn-primary btn-sm" onClick={() => { showToast(`Payment confirmed for ${b.soId}`, 'success'); }}
+                      title="Mark payment received">
+                      <IcCheck size={12} /> Received
+                    </button>
+                    <button className="btn btn-secondary btn-sm" onClick={() => setShowChase(b)}
+                      title="Send payment chase email">
+                      <IcSend size={12} /> Chase
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="table-footer">
+          <span>{ciaRows.length} pending CIA orders</span>
+          <div style={{ fontWeight: 700, fontSize: 13 }}>Total: <span style={{ color: 'var(--sap-color-warning)' }}>${totalAwaiting.toLocaleString()}</span></div>
+        </div>
+      </div>
+
+      {/* Detail */}
+      {selected && (
+        <Dialog title={`CIA Order — ${selected.soId}`} onClose={() => setSelected(null)}
+          footer={<button className="btn btn-secondary" onClick={() => setSelected(null)}>Close</button>}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 20px' }}>
+            <div className="field"><div className="field-label">Sales Order</div><input className="input" readOnly value={selected.soId} /></div>
+            <div className="field"><div className="field-label">Customer</div><input className="input" readOnly value={selected.customer} /></div>
+            <div className="field"><div className="field-label">Net Value</div><input className="input" readOnly value={fmt(selected.netValue, selected.currency)} style={{ fontWeight: 700 }} /></div>
+            <div className="field"><div className="field-label">Currency</div><input className="input" readOnly value={selected.currency} /></div>
+            <div className="field"><div className="field-label">Payment Method</div><input className="input" readOnly value={selected.paymentMethod} /></div>
+            <div className="field"><div className="field-label">Incoterms</div><input className="input" readOnly value={selected.incoterms} /></div>
+            <div className="field"><div className="field-label">Due Date</div><input className="input" readOnly value={selected.dueDate || '—'} /></div>
+            <div className="field"><div className="field-label">Status</div>
+              <div style={{ display:'flex', alignItems:'center', height:36 }}><span className={`tag ${BILL_PAY_CLS[selected.paymentStatus] || 'tag-neutral'}`}>{selected.paymentStatus}</span></div>
+            </div>
+          </div>
+          <div style={{ marginTop: 16 }}>
+            <div className="msg-strip msg-warning"><IcAlert size={14} /><span><strong>CIA Policy:</strong> Goods must not be shipped until full payment is confirmed in the system.</span></div>
+          </div>
+        </Dialog>
+      )}
+
+      {/* Chase email */}
+      {showChase && (
+        <Dialog title={`Payment Chase — ${showChase.soId}`} onClose={() => setShowChase(null)}
+          footer={<>
+            <button className="btn btn-secondary" onClick={() => setShowChase(null)}>Cancel</button>
+            <button className="btn btn-primary" onClick={() => { showToast(`Chase email sent for ${showChase.soId}`, 'success'); setShowChase(null); }}>
+              <IcSend size={13} /> Send Chase Email
+            </button>
+          </>}>
+          <div style={{ background: 'var(--sap-color-bg-shell)', border: '1px solid var(--sap-color-border-2)', borderRadius: 8, padding: 16, fontFamily: 'var(--sap-font-family)', fontSize: 14, lineHeight: 1.8, marginBottom: 14 }}>
+            <div style={{ marginBottom: 10, paddingBottom: 10, borderBottom: '1px solid var(--sap-color-border-2)', fontSize: 13 }}>
+              <div><strong>To:</strong> accounts@{showChase.customer.toLowerCase().replace(/ /g,'-')}.com</div>
+              <div><strong>Subject:</strong> Payment Reminder — Sales Order {showChase.soId} · {fmt(showChase.netValue, showChase.currency)}</div>
+            </div>
+            <p>Dear {showChase.customer},</p><br />
+            <p>This is a reminder that payment for the following export order is outstanding:</p><br />
+            <div style={{ background: '#fff', border: '1px solid var(--sap-color-border-2)', borderRadius: 6, padding: '10px 14px', fontSize: 13, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 20px' }}>
+              <div><strong>Sales Order:</strong> {showChase.soId}</div>
+              <div><strong>Amount:</strong> {fmt(showChase.netValue, showChase.currency)}</div>
+              <div><strong>Payment Method:</strong> {showChase.paymentMethod}</div>
+              <div><strong>Due Date:</strong> {showChase.dueDate || 'Immediate'}</div>
+              <div><strong>Incoterms:</strong> {showChase.incoterms}</div>
+            </div>
+            <br />
+            <p><strong>Please note:</strong> As per our Cash-in-Advance terms, goods cannot be released until full payment is received and confirmed.</p>
+            <br />
+            <p>Please arrange payment at your earliest convenience and send remittance advice to <strong>treasury@company.com</strong>.</p>
+            <br />
+            <p>Best regards,<br /><strong>{showChase.salesRep}</strong><br />Sales Department</p>
+          </div>
+          <div className="field"><div className="field-label">Additional Note</div>
+            <textarea className="input" rows={2} placeholder="Add any extra context..." />
+          </div>
+        </Dialog>
+      )}
+    </div>
+  );
+};
+
+/* ─── ADMIN: AUTHORIZATION MANAGEMENT ───────────────────────── */
+const AdminAuthorization = ({ setView }) => {
+  const [users, setUsers] = useState([...USERS]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [editGroups, setEditGroups] = useState([]);
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [newUser, setNewUser] = useState({ name: '', email: '', role: 'Sales Rep', salesGroups: [] });
+  const [q, setQ] = useState('');
+  const setNU = (k, v) => setNewUser(p => ({ ...p, [k]: v }));
+
+  const filtered = users.filter(u => !q || u.name.toLowerCase().includes(q.toLowerCase()) || u.email.toLowerCase().includes(q.toLowerCase()));
+
+  const toggleGroup = (id, arr, setArr) => setArr(prev => prev.includes(id) ? prev.filter(g => g !== id) : [...prev, id]);
+
+  const openEdit = (u) => { setSelectedUser(u); setEditGroups([...u.salesGroups]); };
+  const saveEdit = () => {
+    setUsers(prev => prev.map(u => u.id === selectedUser.id ? { ...u, salesGroups: editGroups } : u));
+    showToast(`Authorization updated for ${selectedUser.name}`, 'success');
+    setSelectedUser(null);
+  };
+  const toggleActive = (id) => {
+    setUsers(prev => prev.map(u => u.id === id ? { ...u, active: !u.active } : u));
+    const u = users.find(u => u.id === id);
+    showToast(`${u.name} ${u.active ? 'deactivated' : 'activated'}`, u.active ? 'error' : 'success');
+  };
+  const addUser = () => {
+    const id = 'U-00' + (users.length + 1);
+    setUsers(prev => [...prev, { ...newUser, id, active: true, lastLogin: '—' }]);
+    setShowAddUser(false);
+    setNewUser({ name: '', email: '', role: 'Sales Rep', salesGroups: [] });
+    showToast(`User ${newUser.name} created`, 'success');
+  };
+
+  const ROLE_CLS = { 'Admin': 'tag-error', 'Sales Manager': 'tag-credit', 'Sales Rep': 'tag-info' };
+
+  return (
+    <div className="page-area">
+      <Breadcrumb items={[{ label: 'Home', onClick: () => setView('overview') }, { label: 'Admin' }, { label: 'Authorization Management' }]} />
+      <div className="page-title-row">
+        <div>
+          <div className="page-title">Authorization Management</div>
+          <div className="page-subtitle">Maintain user access and sales group assignments · Admin only</div>
+        </div>
+        <div className="flex gap-8">
+          <button className="btn btn-primary btn-sm" onClick={() => setShowAddUser(true)}><IcPlus size={13} /> Add User</button>
+        </div>
+      </div>
+
+      <div className="msg-strip msg-warning">
+        <IcAlert size={14} />
+        <span><strong>Admin Access Required.</strong> Changes to user authorization take effect immediately. Sales reps can only view data for their assigned sales groups.</span>
+      </div>
+
+      {/* Sales Group Overview */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 16 }}>
+        {SALES_GROUPS.map(sg => {
+          const count = users.filter(u => u.salesGroups.includes(sg.id) && u.active).length;
+          return (
+            <div key={sg.id} className="card">
+              <div className="card-body" style={{ padding: '14px 16px' }}>
+                <div className="flex items-center justify-between mb-8">
+                  <span className="tag tag-neutral">{sg.id}</span>
+                  <span style={{ fontSize: 11, color: 'var(--sap-color-text-2)' }}>{sg.region}</span>
+                </div>
+                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 2 }}>{sg.name}</div>
+                <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)', marginBottom: 8 }}>Manager: {sg.manager}</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--sap-color-interactive)' }}>{count} active user{count !== 1 ? 's' : ''}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* User Table */}
+      <div className="table-wrap">
+        <div className="table-toolbar">
+          <div className="search-field" style={{ width: 280 }}>
+            <IcSearch size={14} stroke="var(--sap-color-text-2)" />
+            <input placeholder="Search users..." value={q} onChange={e => setQ(e.target.value)} />
+          </div>
+          <span className="fs-12 text-2">{filtered.length} users · {users.filter(u => u.active).length} active</span>
+        </div>
+        <table className="sap-table">
+          <thead>
+            <tr>
+              <th>User ID</th><th>Name</th><th>Email</th><th>Role</th>
+              <th>Sales Groups</th><th>Last Login</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map(u => (
+              <tr key={u.id}>
+                <td className="text-2 fs-12">{u.id}</td>
+                <td style={{ fontWeight: 600 }}>{u.name}</td>
+                <td className="fs-12 text-2">{u.email}</td>
+                <td><span className={`tag ${ROLE_CLS[u.role] || 'tag-neutral'}`}>{u.role}</span></td>
+                <td>
+                  <div className="flex gap-4" style={{ flexWrap: 'wrap' }}>
+                    {u.salesGroups.length > 0
+                      ? u.salesGroups.map(sg => <span key={sg} className="tag tag-neutral">{sg}</span>)
+                      : <span className="text-2 fs-12">None</span>}
+                  </div>
+                </td>
+                <td className="fs-12 text-2">{u.lastLogin}</td>
+                <td>
+                  <span className={`tag ${u.active ? 'tag-approved' : 'tag-error'}`}>{u.active ? 'Active' : 'Inactive'}</span>
+                </td>
+                <td onClick={e => e.stopPropagation()}>
+                  <div className="flex gap-4">
+                    <button className="btn btn-ghost btn-sm" onClick={() => openEdit(u)} title="Edit access"><IcEdit size={13} /></button>
+                    <button className={`btn btn-sm ${u.active ? 'btn-reject' : 'btn-accept'}`}
+                      onClick={() => toggleActive(u.id)}
+                      title={u.active ? 'Deactivate' : 'Activate'}>
+                      {u.active ? <IcX size={12} /> : <IcCheck size={12} />}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Edit User Dialog */}
+      {selectedUser && (
+        <Dialog title={`Edit Access — ${selectedUser.name}`} onClose={() => setSelectedUser(null)}
+          footer={<>
+            <button className="btn btn-secondary" onClick={() => setSelectedUser(null)}>Cancel</button>
+            <button className="btn btn-primary" onClick={saveEdit}><IcCheck size={13} /> Save Changes</button>
+          </>}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 20px', marginBottom: 16 }}>
+            <div className="field"><div className="field-label">Name</div><input className="input" readOnly value={selectedUser.name} /></div>
+            <div className="field"><div className="field-label">Email</div><input className="input" readOnly value={selectedUser.email} /></div>
+            <div className="field"><div className="field-label">Role</div>
+              <select className="input" defaultValue={selectedUser.role}>
+                <option>Sales Rep</option><option>Sales Manager</option><option>Admin</option>
+              </select>
+            </div>
+            <div className="field"><div className="field-label">Status</div>
+              <div style={{ display:'flex', alignItems:'center', height:36 }}>
+                <span className={`tag ${selectedUser.active ? 'tag-approved' : 'tag-error'}`}>{selectedUser.active ? 'Active' : 'Inactive'}</span>
+              </div>
+            </div>
+          </div>
+          <div className="field">
+            <div className="field-label" style={{ marginBottom: 10 }}>Sales Group Access <span style={{ fontWeight: 400, color: 'var(--sap-color-text-2)' }}>(select all that apply)</span></div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              {SALES_GROUPS.map(sg => {
+                const checked = editGroups.includes(sg.id);
+                return (
+                  <div key={sg.id}
+                    onClick={() => toggleGroup(sg.id, editGroups, setEditGroups)}
+                    style={{ padding: '12px 16px', border: `2px solid ${checked ? 'var(--sap-color-interactive)' : 'var(--sap-color-border-2)'}`, borderRadius: 8, cursor: 'pointer', background: checked ? '#EDF6FF' : '#fff', transition: 'all 0.12s' }}>
+                    <div className="flex items-center justify-between">
+                      <span style={{ fontWeight: 700, fontSize: 13 }}>{sg.id}</span>
+                      {checked && <IcCheck size={14} stroke="var(--sap-color-interactive)" />}
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)', marginTop: 2 }}>{sg.name}</div>
+                    <div style={{ fontSize: 11, color: 'var(--sap-color-text-3)', marginTop: 1 }}>{sg.region} · {sg.currency}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </Dialog>
+      )}
+
+      {/* Add User Dialog */}
+      {showAddUser && (
+        <Dialog title="Add New User" onClose={() => setShowAddUser(false)}
+          footer={<>
+            <button className="btn btn-secondary" onClick={() => setShowAddUser(false)}>Cancel</button>
+            <button className="btn btn-primary" onClick={addUser}><IcPlus size={13} /> Create User</button>
+          </>}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 20px', marginBottom: 16 }}>
+            <div className="field"><div className="field-label">Full Name <span style={{ color: 'var(--sap-color-negative)' }}>*</span></div>
+              <input className="input" value={newUser.name} onChange={e => setNU('name', e.target.value)} placeholder="e.g. John Smith" /></div>
+            <div className="field"><div className="field-label">Email <span style={{ color: 'var(--sap-color-negative)' }}>*</span></div>
+              <input className="input" type="email" value={newUser.email} onChange={e => setNU('email', e.target.value)} placeholder="user@company.com" /></div>
+            <div className="field" style={{ gridColumn: 'span 2' }}><div className="field-label">Role</div>
+              <select className="input" value={newUser.role} onChange={e => setNU('role', e.target.value)}>
+                <option>Sales Rep</option><option>Sales Manager</option><option>Admin</option>
+              </select>
+            </div>
+          </div>
+          <div className="field">
+            <div className="field-label" style={{ marginBottom: 10 }}>Sales Group Access</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              {SALES_GROUPS.map(sg => {
+                const checked = newUser.salesGroups.includes(sg.id);
+                return (
+                  <div key={sg.id}
+                    onClick={() => setNU('salesGroups', checked ? newUser.salesGroups.filter(g => g !== sg.id) : [...newUser.salesGroups, sg.id])}
+                    style={{ padding: '12px 16px', border: `2px solid ${checked ? 'var(--sap-color-interactive)' : 'var(--sap-color-border-2)'}`, borderRadius: 8, cursor: 'pointer', background: checked ? '#EDF6FF' : '#fff', transition: 'all 0.12s' }}>
+                    <div className="flex items-center justify-between">
+                      <span style={{ fontWeight: 700, fontSize: 13 }}>{sg.id}</span>
+                      {checked && <IcCheck size={14} stroke="var(--sap-color-interactive)" />}
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)', marginTop: 2 }}>{sg.name}</div>
+                    <div style={{ fontSize: 11, color: 'var(--sap-color-text-3)', marginTop: 1 }}>{sg.region}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </Dialog>
+      )}
+    </div>
+  );
+};
+
+/* ─── SHELL BAR ──────────────────────────────────────────────── */
+const ShellBar = ({ navOpen, setNavOpen }) => (
+  <div className="shell-bar">
+    <div className="flex items-center" style={{ gap: 0 }}>
+      <button className="shell-btn" onClick={() => setNavOpen(o => !o)}>
+        <IcMenu size={18} />
+      </button>
+      <div className="shell-logo">
+        <SapLogo />
+        <div className="shell-divider" />
+        <span className="shell-product">Partner Portal</span>
+      </div>
+    </div>
+    <div className="flex items-center" style={{ gap: 4 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, height: 36, padding: '0 10px', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, background: 'rgba(255,255,255,0.08)', width: 200 }}>
+        <IcSearch size={14} stroke="rgba(255,255,255,0.6)" />
+        <input placeholder="Search..." style={{ border: 'none', outline: 'none', background: 'transparent', color: '#fff', fontSize: 13, fontFamily: '72, Arial, sans-serif', flex: 1 }} />
+      </div>
+      <div className="notif-wrap">
+        <button className="shell-btn"><IcBell size={18} /></button>
+        <div className="notif-badge" />
+      </div>
+      <button className="shell-btn" title="Settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+      <div className="avatar" style={{ width: 32, height: 32 }}>JM</div>
+    </div>
+  </div>
+);
+
+/* ─── SIDE NAV ───────────────────────────────────────────────── */
+const SideNav = ({ view, setView, navOpen }) => {
+  const isActive = (...v) => v.includes(view);
+  return (
+    <nav className={`side-nav ${navOpen ? '' : 'collapsed'}`}>
+      <div style={{ height: 8 }} />
+      <div className={`nav-item ${isActive('overview') ? 'active' : ''}`} onClick={() => setView('overview')}>
+        <IcHome size={18} /><span className="nav-label">Overview</span>
+      </div>
+      <div className="nav-section-title">Master Data</div>
+      <div className={`nav-item ${isActive('customers','cust-detail','cust-create','cust-change') ? 'active' : ''}`} onClick={() => setView('customers')}>
+        <IcUsers size={18} /><span className="nav-label">Customer Master Data</span>
+      </div>
+      <div className={`nav-item ${isActive('suppliers','supp-detail','supp-create','supp-change') ? 'active' : ''}`} onClick={() => setView('suppliers')}>
+        <IcTruck size={18} /><span className="nav-label">Supplier Master Data</span>
+      </div>
+      <div className="nav-section-title">Customer Portal</div>
+      <div className={`nav-item ${isActive('cust-so') ? 'active' : ''}`} onClick={() => setView('cust-so')}>
+        <IcShoppingCart size={18} /><span className="nav-label">Sales Orders</span>
+      </div>
+      <div className={`nav-item ${isActive('cust-ar') ? 'active' : ''}`} onClick={() => setView('cust-ar')}>
+        <IcDollar size={18} /><span className="nav-label">Outstanding Invoices</span>
+      </div>
+      <div className="nav-section-title">Procurement</div>
+      <div className={`nav-item ${isActive('proc-slots') ? 'active' : ''}`} onClick={() => setView('proc-slots')}>
+        <IcCalendar size={18} /><span className="nav-label">Delivery Slot Mgmt</span>
+      </div>
+      <div className="nav-section-title">Supplier Portal</div>
+      <div className={`nav-item ${isActive('supp-po') ? 'active' : ''}`} onClick={() => setView('supp-po')}>
+        <IcFileInv size={18} /><span className="nav-label">Open Purchase Orders</span>
+      </div>
+      <div className={`nav-item ${isActive('supp-ap') ? 'active' : ''}`} onClick={() => setView('supp-ap')}>
+        <IcCalendar size={18} /><span className="nav-label">AP Invoices</span>
+      </div>
+      <div className="nav-section-title">Sales</div>
+      <div className={`nav-item ${isActive('sales-billing') ? 'active' : ''}`} onClick={() => setView('sales-billing')}>
+        <IcList size={18} /><span className="nav-label">Sales Billing Report</span>
+      </div>
+      <div className={`nav-item ${isActive('sales-cia') ? 'active' : ''}`} onClick={() => setView('sales-cia')}>
+        <IcDollar size={18} /><span className="nav-label">Cash-in-Advance</span>
+      </div>
+      <div className="nav-section-title">Workflow</div>
+      <div className={`nav-item ${isActive('inbox','cust-approval','supp-approval') ? 'active' : ''}`} onClick={() => setView('inbox')}>
+        <IcInbox size={18} /><span className="nav-label">Approval Inbox</span>
+        {navOpen && <span className="badge" style={{ marginLeft: 'auto' }}>{APPROVALS.length}</span>}
+      </div>
+      <div className={`nav-item ${isActive('requests') ? 'active' : ''}`}>
+        <IcList size={18} /><span className="nav-label">My Requests</span>
+      </div>
+      <div className="nav-section-title">Admin</div>
+      <div className={`nav-item ${isActive('admin-auth') ? 'active' : ''}`} onClick={() => setView('admin-auth')}>
+        <IcUsers size={18} /><span className="nav-label">Authorization</span>
+      </div>
+      <div className="nav-item">
+        <IcClipboard size={18} /><span className="nav-label">Audit Log</span>
+      </div>
+    </nav>
+  );
+};
+
+/* ─── APP ROOT ───────────────────────────────────────────────── */
+const App = () => {
+  const [navOpen, setNavOpen] = useState(true);
+  const [viewState, setViewState] = useState({ view: 'overview', rec: null });
+  const setView = (view, rec = null) => setViewState({ view, rec });
+  const { view, rec } = viewState;
+
+  const renderPage = () => {
+    switch (view) {
+      case 'overview':       return <OverviewPage setView={setView} />;
+      case 'customers':      return <CustomerList setView={setView} />;
+      case 'suppliers':      return <SupplierList setView={setView} />;
+      case 'cust-detail':    return <CustomerDetail rec={rec} setView={setView} />;
+      case 'supp-detail':    return <SupplierDetail rec={rec} setView={setView} />;
+      case 'cust-create':    return <CustomerForm rec={null} mode="create" setView={setView} />;
+      case 'cust-change':    return <CustomerForm rec={rec} mode="change" setView={setView} />;
+      case 'supp-create':    return <SupplierForm rec={null} mode="create" setView={setView} />;
+      case 'supp-change':    return <SupplierForm rec={rec} mode="change" setView={setView} />;
+      case 'inbox':          return <ApprovalInbox setView={setView} />;
+      case 'cust-approval':  return <ApprovalDetail rec={rec} type="customer" setView={setView} />;
+      case 'supp-approval':  return <ApprovalDetail rec={rec} type="supplier" setView={setView} />;
+      case 'cust-so':        return <CustomerSalesOrders setView={setView} />;
+      case 'cust-ar':        return <CustomerAR setView={setView} />;
+      case 'supp-po':        return <SupplierPO setView={setView} />;
+      case 'supp-ap':        return <SupplierAP setView={setView} />;
+      case 'proc-slots':     return <ProcurementSlots setView={setView} />;
+      case 'sales-billing':   return <SalesBillingReport setView={setView} />;
+      case 'sales-cia':       return <SalesCashInAdvance setView={setView} />;
+      case 'admin-auth':      return <AdminAuthorization setView={setView} />;
+      default:               return <OverviewPage setView={setView} />;
+    }
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+      <ShellBar navOpen={navOpen} setNavOpen={setNavOpen} />
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        <SideNav view={view} setView={setView} navOpen={navOpen} />
+        <div style={{ flex: 1, overflowY: 'auto' }}>
+          {renderPage()}
+        </div>
+      </div>
+      <Toast />
+    </div>
+  );
+};
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>

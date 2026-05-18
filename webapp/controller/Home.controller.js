@@ -33,6 +33,12 @@ sap.ui.define([
 						title: oBundle.getText("demoSalesBkkTitle"),
 						description: oBundle.getText("demoSalesBkkDesc"),
 						icon: "sap-icon://sales-order"
+					},
+					{
+						key: "partnerPortalDemo",
+						title: oBundle.getText("demoPartnerPortalTitle"),
+						description: oBundle.getText("demoPartnerPortalDesc"),
+						icon: "sap-icon://customer"
 					}
 				]
 			});
