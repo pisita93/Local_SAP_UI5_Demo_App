@@ -72,6 +72,11 @@
           "pattern": "demo/chart",
           "name": "chartDemo",
           "target": "chartDemo"
+        },
+        {
+          "pattern": "demo/sales-bkk",
+          "name": "salesBkkDemo",
+          "target": "salesBkkDemo"
         }
       ],
       "targets": {
@@ -89,6 +94,10 @@
         },
         "chartDemo": {
           "viewName": "demos.ChartDemo",
+          "viewLevel": 1
+        },
+        "salesBkkDemo": {
+          "viewName": "demos.SalesBkkDemo",
           "viewLevel": 1
         }
       }

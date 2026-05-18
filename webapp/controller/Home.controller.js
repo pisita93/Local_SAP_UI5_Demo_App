@@ -27,6 +27,12 @@ sap.ui.define([
 						title: oBundle.getText("demoChartTitle"),
 						description: oBundle.getText("demoChartDesc"),
 						icon: "sap-icon://bar-chart"
+					},
+					{
+						key: "salesBkkDemo",
+						title: oBundle.getText("demoSalesBkkTitle"),
+						description: oBundle.getText("demoSalesBkkDesc"),
+						icon: "sap-icon://sales-order"
 					}
 				]
 			});

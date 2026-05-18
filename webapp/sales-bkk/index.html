@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=1440"/>
+  <title>Sales BKK · Payment Settlement</title>
+  <link rel="stylesheet" href="colors_and_type.css"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: '72', 'IBM Plex Sans', system-ui, sans-serif;
+      font-size: 14px; color: var(--sap-color-text);
+      background: var(--sap-color-bg-shell);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    :root {
+      --bg: #FFFFFF; --bg-shell: #F5F6F7;
+      --text: #131E29; --text2: #556B82; --text3: #7F8C9A;
+      --blue: #0070F2; --blue-h: #0064D9; --blue-a: #0057BF;
+      --neg: #AA0808; --warn: #FF9900; --pos: #30914C; --pos-dark: #25713A;
+      --dark-nav: #1D2D3E; --dark-nav-h: #29405A;
+      --border: #BCC3CA; --border2: #D9D9D9; --border3: #EAE4EE;
+      --sh0: 0 2px 4px rgba(34,53,72,.16), 0 0 2px rgba(34,53,72,.16);
+      --sh1: 0 4px 12px rgba(34,53,72,.18), 0 0 0 1px rgba(34,53,72,.18);
+      --sh-pop: 0 24px 80px rgba(34,53,72,.25), 0 0 0 1px rgba(34,53,72,.35);
+    }
+    button { font-family: inherit; }
+    .input {
+      height: 32px; padding: 0 10px; border-radius: 6px;
+      border: 1px solid var(--border); font-size: 13px; font-family: inherit;
+      color: var(--text); background: var(--bg); outline: none; width: 100%;
+    }
+    .input:focus { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(0,112,242,.15); }
+    .input::placeholder { color: var(--text3); }
+    .field-label { font-size: 12px; font-weight: 700; color: var(--text); }
+    .field-hint  { font-size: 11px; color: var(--text2); }
+
+    .msg-strip { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px;
+                 border-radius: 6px; font-size: 13px; border-left: 3px solid transparent; }
+    .msg-strip-title { font-weight: 700; margin-bottom: 2px; }
+    .msg-info    { background: #D1EFFF; border-left-color: var(--blue-h); color: #0F3A6A; }
+    .msg-success { background: #C2FCEE; border-left-color: var(--pos);    color: #0E3A1F; }
+    .msg-warn    { background: #FFF3B8; border-left-color: var(--warn);   color: #4C2E00; }
+    .msg-error   { background: #FFDBEF; border-left-color: var(--neg);    color: #4C0808; }
+
+    /* density-aware tweaks */
+    body[data-density="compact"] .twk-only-cozy { display: none; }
+    @keyframes sp-rot { to { transform: rotate(360deg); } }
+
+    /* PRINT mode — only the .print-paper renders */
+    @media print {
+      @page { size: A4 portrait; margin: 0; }
+      body { background: #fff; }
+      body > #root > * { visibility: hidden; }
+      .print-overlay { position: static !important; background: #fff !important; inset: auto !important; }
+      .print-overlay, .print-overlay * { visibility: visible !important; }
+      .no-print { display: none !important; }
+      .print-scroll { overflow: visible !important; padding: 0 !important; background: #fff !important; }
+      .print-paper {
+        width: 100% !important; margin: 0 !important; padding: 14mm 12mm !important;
+        box-shadow: none !important; transform: none !important;
+      }
+      .print-paper * { transform: none !important; box-shadow: none !important; }
+    }
+
+    /* tabular numbers throughout amounts */
+    [style*="tabular-nums"] { font-variant-numeric: tabular-nums; }
+
+    /* selection */
+    ::selection { background: #D1EFFF; color: var(--text); }
+
+    /* scrollbars (light, fiori-ish) */
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #C5CDD6; border-radius: 5px; border: 2px solid var(--bg-shell); background-clip: padding-box; }
+    ::-webkit-scrollbar-thumb:hover { background: #94A0AE; border: 2px solid var(--bg-shell); background-clip: padding-box; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React + Babel -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <!-- Data + utilities -->
+  <script type="text/babel" src="data.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+
+  <!-- Components and views -->
+  <script type="text/babel" src="components.jsx"></script>
+  <script type="text/babel" src="admin-report.jsx"></script>
+  <script type="text/babel" src="evidence.jsx"></script>
+  <script type="text/babel" src="admin-detail.jsx"></script>
+  <script type="text/babel" src="cashier.jsx"></script>
+  <script type="text/babel" src="admin-permissions.jsx"></script>
+
+  <!-- App root -->
+  <script type="text/babel" src="app.jsx"></script>
+</body>
+</html>
