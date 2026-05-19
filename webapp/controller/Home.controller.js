@@ -45,6 +45,18 @@ sap.ui.define([
 						title: oBundle.getText("demoDeliveryTrackingTitle"),
 						description: oBundle.getText("demoDeliveryTrackingDesc"),
 						icon: "sap-icon://shipping-status"
+					},
+					{
+						key: "salesOrderDemo",
+						title: oBundle.getText("demoSalesOrderTitle"),
+						description: oBundle.getText("demoSalesOrderDesc"),
+						icon: "sap-icon://sales-order-item"
+					},
+					{
+						key: "etaxInvoiceDemo",
+						title: oBundle.getText("demoEtaxInvoiceTitle"),
+						description: oBundle.getText("demoEtaxInvoiceDesc"),
+						icon: "sap-icon://document-text"
 					}
 				]
 			});

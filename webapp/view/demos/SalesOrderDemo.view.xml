@@ -1,0 +1,22 @@
+<mvc:View
+	controllerName="com.myorg.myapp.controller.demos.SalesOrderDemo"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page
+		id="salesOrderPage"
+		title="{i18n>demoSalesOrderTitle}"
+		showNavButton="true"
+		navButtonPress=".onNavBack"
+		enableScrolling="false">
+		<headerContent>
+			<Button
+				icon="sap-icon://action"
+				tooltip="{i18n>demoSalesOrderOpenStandalone}"
+				press=".onOpenStandalone" />
+		</headerContent>
+		<content>
+			<core:HTML id="salesOrderFrame" />
+		</content>
+	</Page>
+</mvc:View>

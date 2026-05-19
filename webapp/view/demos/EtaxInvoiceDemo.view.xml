@@ -1,0 +1,22 @@
+<mvc:View
+	controllerName="com.myorg.myapp.controller.demos.EtaxInvoiceDemo"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page
+		id="etaxInvoicePage"
+		title="{i18n>demoEtaxInvoiceTitle}"
+		showNavButton="true"
+		navButtonPress=".onNavBack"
+		enableScrolling="false">
+		<headerContent>
+			<Button
+				icon="sap-icon://action"
+				tooltip="{i18n>demoEtaxInvoiceOpenStandalone}"
+				press=".onOpenStandalone" />
+		</headerContent>
+		<content>
+			<core:HTML id="etaxInvoiceFrame" />
+		</content>
+	</Page>
+</mvc:View>
