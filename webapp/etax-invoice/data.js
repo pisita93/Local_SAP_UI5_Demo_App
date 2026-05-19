@@ -29,15 +29,18 @@ window.MOCK_DATA = (() => {
     { shipTo: "20008441", soldTo: "10008441", name: "Foodland Phloen Chit", nameTh: "ฟู้ดแลนด์ เพลินจิต", address: "1037 Phloen Chit Rd., Lumpini, Bangkok 10330", requiresDeliveryNote: true },
   ];
 
-  // Materials catalog (Greenspot product line — drinks)
+  // Materials catalog — Vitamilk / V-Soy
+  // Sourced from GreenSpot_Integrated_Demo_Dataset.xlsx → Material Master
+  // Price: per CASE (THB), MT01-HYPER reference tier from Sales Pricing
   const materials = [
-    { code: "GS-EQ-325-24", desc: "Equal น้ำผลไม้รวมเพื่อสุขภาพ 325ml × 24", descEn: "Equal Mixed Fruit Juice 325ml × 24", uom: "CASE", unitPrice: 480.00 },
-    { code: "GS-OR-325-24", desc: "Greenspot น้ำส้ม 325ml × 24", descEn: "Greenspot Orange 325ml × 24", uom: "CASE", unitPrice: 444.00 },
-    { code: "GS-LY-325-24", desc: "Greenspot ลิ้นจี่ 325ml × 24", descEn: "Greenspot Lychee 325ml × 24", uom: "CASE", unitPrice: 456.00 },
-    { code: "GS-CR-325-24", desc: "Greenspot ครีมโซดา 325ml × 24", descEn: "Greenspot Cream Soda 325ml × 24", uom: "CASE", unitPrice: 432.00 },
-    { code: "GS-WT-600-12", desc: "น้ำดื่มกรีนสปอต 600ml × 12", descEn: "Greenspot Drinking Water 600ml × 12", uom: "CASE", unitPrice: 84.00 },
-    { code: "GS-EQ-1L-12", desc: "Equal น้ำส้ม 1L × 12", descEn: "Equal Orange Juice 1L × 12", uom: "CASE", unitPrice: 588.00 },
-    { code: "GS-VT-180-30", desc: "Veggie น้ำผักรวม 180ml × 30", descEn: "Veggie Mixed Vegetable 180ml × 30", uom: "CASE", unitPrice: 540.00 },
+    { code: "GS-VTG-01", desc: "ไวตามิ้ลค์ ทูโก ช็อกโก แกรนเด 300 มล. X 24 ขวด",                       descEn: "Vitamilk Togo Choco Grande 300ml x 24 bottles",         uom: "CASE", unitPrice: 355.68 },
+    { code: "GS-VTG-02", desc: "ไวตามิ้ลค์ ทูโก รอยัล ไทย ที 300 มล. X 24 ขวด",                        descEn: "Vitamilk Togo Royal Thai Tea 300ml x 24 bottles",       uom: "CASE", unitPrice: 355.68 },
+    { code: "GS-VTG-05", desc: "ไวตามิ้ลค์ นมถั่วเหลือง ทูโก ออริจินัล 300 มล. X 24 ขวด",              descEn: "Vitamilk Togo Original 300ml x 24 bottles",             uom: "CASE", unitPrice: 299.52 },
+    { code: "GS-VTG-06", desc: "ไวตามิ้ลค์ ไลท์ สูตรออริจินัล น้ำตาลน้อยลง 50% 300 มล. X 24 ขวด",     descEn: "Vitamilk Light Original 50% Less Sugar 300ml x 24",     uom: "CASE", unitPrice: 355.68 },
+    { code: "GS-VUH-03", desc: "ไวตามิ้ลค์ ยูเอชที สูตรน้ำตาลน้อยกว่า 250 มล. X 36 กล่อง",             descEn: "Vitamilk UHT Less Sugar (Lactose Free) 250ml x 36",     uom: "CASE", unitPrice: 280.80 },
+    { code: "GS-VUH-04", desc: "ไวตามิ้ลค์ ยูเอชที สูตรออริจินัล 300 มล. X 36 กล่อง",                  descEn: "Vitamilk UHT Original 300ml x 36 cartons",              uom: "CASE", unitPrice: 336.96 },
+    { code: "GS-VSY-01", desc: "วีซอย นมถั่วเหลือง สูตรงามอลต์ 180 มล. X 36 กล่อง",                    descEn: "V-Soy Sesame Malt 180ml x 36 cartons",                  uom: "CASE", unitPrice: 421.20 },
+    { code: "GS-VSY-03", desc: "วีซอย นมถั่วเหลือง สูตรอัลมอนด์ 1,000 มล. X 12 กล่อง",                descEn: "V-Soy Almond 1000ml x 12 cartons",                      uom: "CASE", unitPrice: 702.00 },
   ];
 
   // Helper to build a delivery
@@ -90,23 +93,23 @@ window.MOCK_DATA = (() => {
   };
 
   const deliveries = [
-    mkDelivery(0, { id: "D-0001", delivery: "0080145201", po: "PO-2026-08821", pgiDate: "2026-05-04", soldTo: "10001245", shipTo: "20001245", items: [{ code: "GS-EQ-325-24", qty: 240 }, { code: "GS-OR-325-24", qty: 180 }, { code: "GS-CR-325-24", qty: 120 }], status: "ready" }),
-    mkDelivery(1, { id: "D-0002", delivery: "0080145202", po: "PO-2026-08822", pgiDate: "2026-05-04", soldTo: "10001245", shipTo: "20001246", items: [{ code: "GS-WT-600-12", qty: 800 }], status: "ready" }),
-    mkDelivery(2, { id: "D-0003", delivery: "0080145203", po: "PO-2026-08823", pgiDate: "2026-05-04", soldTo: "10001245", shipTo: "20001247", items: [{ code: "GS-LY-325-24", qty: 96 }, { code: "GS-CR-325-24", qty: 72 }], status: "ready" }),
-    mkDelivery(3, { id: "D-0004", delivery: "0080145210", po: "PO-2026-08840", pgiDate: "2026-05-04", soldTo: "10002387", shipTo: "20002387", items: [{ code: "GS-EQ-325-24", qty: 360 }, { code: "GS-VT-180-30", qty: 96 }], status: "ready" }),
-    mkDelivery(4, { id: "D-0005", delivery: "0080145211", po: "PO-2026-08841", pgiDate: "2026-05-04", soldTo: "10002387", shipTo: "20002388", items: [{ code: "GS-OR-325-24", qty: 240 }, { code: "GS-LY-325-24", qty: 192 }], status: "ready" }),
-    mkDelivery(5, { id: "D-0006", delivery: "0080145220", po: "PO-2026-08855", pgiDate: "2026-05-04", soldTo: "10003411", shipTo: "20003411", items: [{ code: "GS-EQ-1L-12", qty: 144 }, { code: "GS-WT-600-12", qty: 1200 }, { code: "GS-CR-325-24", qty: 96 }], status: "ready" }),
-    mkDelivery(6, { id: "D-0007", delivery: "0080145221", po: "PO-2026-08856", pgiDate: "2026-05-04", soldTo: "10003411", shipTo: "20003412", items: [{ code: "GS-EQ-325-24", qty: 480 }], status: "ready" }),
-    mkDelivery(7, { id: "D-0008", delivery: "0080145230", po: "—", pgiDate: "2026-05-04", soldTo: "10004102", shipTo: "20004102", items: [{ code: "GS-OR-325-24", qty: 144 }, { code: "GS-VT-180-30", qty: 60 }], status: "ready" }),
-    mkDelivery(8, { id: "D-0009", delivery: "0080145240", po: "—", pgiDate: "2026-05-04", soldTo: "10005523", shipTo: "20005523", items: [{ code: "GS-WT-600-12", qty: 600 }, { code: "GS-EQ-325-24", qty: 96 }], status: "ready" }),
-    mkDelivery(9, { id: "D-0010", delivery: "0080145245", po: "—", pgiDate: "2026-05-03", soldTo: "10006108", shipTo: "20006108", items: [{ code: "GS-CR-325-24", qty: 48 }], status: "ready" }),
-    mkDelivery(10, { id: "D-0011", delivery: "0080145250", po: "—", pgiDate: "2026-05-03", soldTo: "10007220", shipTo: "20007220", items: [{ code: "GS-LY-325-24", qty: 24 }, { code: "GS-EQ-1L-12", qty: 36 }], status: "ready" }),
-    mkDelivery(11, { id: "D-0012", delivery: "0080145260", po: "—", pgiDate: "2026-05-03", soldTo: "10008441", shipTo: "20008441", items: [{ code: "GS-EQ-325-24", qty: 144 }, { code: "GS-OR-325-24", qty: 96 }], status: "ready" }),
+    mkDelivery(0, { id: "D-0001", delivery: "0080145201", po: "PO-2026-08821", pgiDate: "2026-05-04", soldTo: "10001245", shipTo: "20001245", items: [{ code: "GS-VTG-01", qty: 240 }, { code: "GS-VUH-04", qty: 180 }, { code: "GS-VTG-05", qty: 120 }], status: "ready" }),
+    mkDelivery(1, { id: "D-0002", delivery: "0080145202", po: "PO-2026-08822", pgiDate: "2026-05-04", soldTo: "10001245", shipTo: "20001246", items: [{ code: "GS-VUH-03", qty: 800 }], status: "ready" }),
+    mkDelivery(2, { id: "D-0003", delivery: "0080145203", po: "PO-2026-08823", pgiDate: "2026-05-04", soldTo: "10001245", shipTo: "20001247", items: [{ code: "GS-VTG-02", qty: 96 }, { code: "GS-VTG-05", qty: 72 }], status: "ready" }),
+    mkDelivery(3, { id: "D-0004", delivery: "0080145210", po: "PO-2026-08840", pgiDate: "2026-05-04", soldTo: "10002387", shipTo: "20002387", items: [{ code: "GS-VTG-01", qty: 360 }, { code: "GS-VSY-01", qty: 96 }], status: "ready" }),
+    mkDelivery(4, { id: "D-0005", delivery: "0080145211", po: "PO-2026-08841", pgiDate: "2026-05-04", soldTo: "10002387", shipTo: "20002388", items: [{ code: "GS-VUH-04", qty: 240 }, { code: "GS-VTG-02", qty: 192 }], status: "ready" }),
+    mkDelivery(5, { id: "D-0006", delivery: "0080145220", po: "PO-2026-08855", pgiDate: "2026-05-04", soldTo: "10003411", shipTo: "20003411", items: [{ code: "GS-VSY-03", qty: 144 }, { code: "GS-VUH-03", qty: 1200 }, { code: "GS-VTG-05", qty: 96 }], status: "ready" }),
+    mkDelivery(6, { id: "D-0007", delivery: "0080145221", po: "PO-2026-08856", pgiDate: "2026-05-04", soldTo: "10003411", shipTo: "20003412", items: [{ code: "GS-VTG-01", qty: 480 }], status: "ready" }),
+    mkDelivery(7, { id: "D-0008", delivery: "0080145230", po: "—", pgiDate: "2026-05-04", soldTo: "10004102", shipTo: "20004102", items: [{ code: "GS-VUH-04", qty: 144 }, { code: "GS-VSY-01", qty: 60 }], status: "ready" }),
+    mkDelivery(8, { id: "D-0009", delivery: "0080145240", po: "—", pgiDate: "2026-05-04", soldTo: "10005523", shipTo: "20005523", items: [{ code: "GS-VUH-03", qty: 600 }, { code: "GS-VTG-01", qty: 96 }], status: "ready" }),
+    mkDelivery(9, { id: "D-0010", delivery: "0080145245", po: "—", pgiDate: "2026-05-03", soldTo: "10006108", shipTo: "20006108", items: [{ code: "GS-VTG-05", qty: 48 }], status: "ready" }),
+    mkDelivery(10, { id: "D-0011", delivery: "0080145250", po: "—", pgiDate: "2026-05-03", soldTo: "10007220", shipTo: "20007220", items: [{ code: "GS-VTG-02", qty: 24 }, { code: "GS-VSY-03", qty: 36 }], status: "ready" }),
+    mkDelivery(11, { id: "D-0012", delivery: "0080145260", po: "—", pgiDate: "2026-05-03", soldTo: "10008441", shipTo: "20008441", items: [{ code: "GS-VTG-01", qty: 144 }, { code: "GS-VUH-04", qty: 96 }], status: "ready" }),
     // Some already-billed for variety
-    mkDelivery(12, { id: "D-0013", delivery: "0080145100", po: "PO-2026-08800", pgiDate: "2026-05-03", soldTo: "10001245", shipTo: "20001245", items: [{ code: "GS-EQ-325-24", qty: 120 }], status: "sent", billingDoc: "9100021456", inetStatus: "certified", printCount: 5 }),
-    mkDelivery(13, { id: "D-0014", delivery: "0080145105", po: "PO-2026-08805", pgiDate: "2026-05-03", soldTo: "10003411", shipTo: "20003412", items: [{ code: "GS-WT-600-12", qty: 480 }], status: "sent", billingDoc: "9100021460", inetStatus: "submitted" }),
-    mkDelivery(14, { id: "D-0015", delivery: "0080145090", po: "PO-2026-08790", pgiDate: "2026-05-02", soldTo: "10002387", shipTo: "20002387", items: [{ code: "GS-EQ-325-24", qty: 240 }], status: "error", billingDoc: "9100021450", inetStatus: "rejected" }),
-    mkDelivery(15, { id: "D-0016", delivery: "0080145080", po: "PO-2026-08780", pgiDate: "2026-05-02", soldTo: "10004102", shipTo: "20004102", items: [{ code: "GS-OR-325-24", qty: 96 }], status: "draft" }),
+    mkDelivery(12, { id: "D-0013", delivery: "0080145100", po: "PO-2026-08800", pgiDate: "2026-05-03", soldTo: "10001245", shipTo: "20001245", items: [{ code: "GS-VTG-01", qty: 120 }], status: "sent", billingDoc: "9100021456", inetStatus: "certified", printCount: 5 }),
+    mkDelivery(13, { id: "D-0014", delivery: "0080145105", po: "PO-2026-08805", pgiDate: "2026-05-03", soldTo: "10003411", shipTo: "20003412", items: [{ code: "GS-VUH-03", qty: 480 }], status: "sent", billingDoc: "9100021460", inetStatus: "submitted" }),
+    mkDelivery(14, { id: "D-0015", delivery: "0080145090", po: "PO-2026-08790", pgiDate: "2026-05-02", soldTo: "10002387", shipTo: "20002387", items: [{ code: "GS-VTG-01", qty: 240 }], status: "error", billingDoc: "9100021450", inetStatus: "rejected" }),
+    mkDelivery(15, { id: "D-0016", delivery: "0080145080", po: "PO-2026-08780", pgiDate: "2026-05-02", soldTo: "10004102", shipTo: "20004102", items: [{ code: "GS-VUH-04", qty: 96 }], status: "draft" }),
   ];
 
   return { customers, shipTos, materials, deliveries };
