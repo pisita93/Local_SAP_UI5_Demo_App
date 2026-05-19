@@ -82,6 +82,11 @@
           "pattern": "demo/partner-portal",
           "name": "partnerPortalDemo",
           "target": "partnerPortalDemo"
+        },
+        {
+          "pattern": "demo/delivery-tracking",
+          "name": "deliveryTrackingDemo",
+          "target": "deliveryTrackingDemo"
         }
       ],
       "targets": {
@@ -107,6 +112,10 @@
         },
         "partnerPortalDemo": {
           "viewName": "demos.PartnerPortalDemo",
+          "viewLevel": 1
+        },
+        "deliveryTrackingDemo": {
+          "viewName": "demos.DeliveryTrackingDemo",
           "viewLevel": 1
         }
       }
