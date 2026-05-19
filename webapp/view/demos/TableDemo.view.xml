@@ -43,7 +43,7 @@
 					<ColumnListItem>
 						<cells>
 							<ObjectIdentifier title="{name}" text="{category}" />
-							<ObjectNumber number="{price}" unit="USD" />
+							<ObjectNumber number="{price}" unit="THB" />
 							<Text text="{stock}" />
 							<ObjectStatus text="{statusText}" state="{statusState}" />
 						</cells>

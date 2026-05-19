@@ -6,19 +6,33 @@ sap.ui.define([
 ], function (Controller, JSONModel, Filter, FilterOperator) {
 	"use strict";
 
+	// Source: GreenSpot_Integrated_Demo_Dataset.xlsx → Material Master
+	// Price column: per CASE (THB) — MT01-HYPER reference from Sales Pricing
 	var PRODUCTS = [
-		{ name: "Notebook 14\"",        category: "Electronics", price: 1199.00, stock: 24, statusText: "In Stock",  statusState: "Success" },
-		{ name: "Wireless Mouse",       category: "Accessories", price:   29.90, stock: 80, statusText: "In Stock",  statusState: "Success" },
-		{ name: "USB-C Hub",            category: "Accessories", price:   45.50, stock:  5, statusText: "Low Stock", statusState: "Warning" },
-		{ name: "27\" Monitor",         category: "Electronics", price:  349.00, stock: 12, statusText: "In Stock",  statusState: "Success" },
-		{ name: "Mechanical Keyboard",  category: "Accessories", price:  129.00, stock:  0, statusText: "Sold Out",  statusState: "Error"   },
-		{ name: "Webcam HD",            category: "Electronics", price:   79.00, stock: 18, statusText: "In Stock",  statusState: "Success" },
-		{ name: "Desk Lamp",            category: "Office",      price:   39.99, stock: 33, statusText: "In Stock",  statusState: "Success" },
-		{ name: "Office Chair",         category: "Furniture",   price:  279.00, stock:  2, statusText: "Low Stock", statusState: "Warning" },
-		{ name: "Standing Desk",        category: "Furniture",   price:  599.00, stock:  4, statusText: "Low Stock", statusState: "Warning" },
-		{ name: "Headphones",           category: "Accessories", price:  199.00, stock: 27, statusText: "In Stock",  statusState: "Success" },
-		{ name: "Tablet 10\"",          category: "Electronics", price:  499.00, stock:  9, statusText: "In Stock",  statusState: "Success" },
-		{ name: "External SSD 1TB",     category: "Electronics", price:  149.00, stock: 41, statusText: "In Stock",  statusState: "Success" }
+		{ name: "GS-VTG-01 · Vitamilk Togo Choco Grande 300ml x 24 bottles",         category: "Vitamilk Togo",     price: 355.68, stock: 240, statusText: "In Stock",  statusState: "Success" },
+		{ name: "GS-VTG-02 · Vitamilk Togo Royal Thai Tea 300ml x 24 bottles",       category: "Vitamilk Togo",     price: 355.68, stock: 180, statusText: "In Stock",  statusState: "Success" },
+		{ name: "GS-VTG-03 · Vitamilk Togo Barley & Malt 300ml x 24 bottles",        category: "Vitamilk Togo",     price: 299.52, stock:  60, statusText: "In Stock",  statusState: "Success" },
+		{ name: "GS-VTG-04 · Vitamilk Togo Black Sesame & Riceberry 300ml x 24",     category: "Vitamilk Togo",     price: 299.52, stock:  18, statusText: "Low Stock", statusState: "Warning" },
+		{ name: "GS-VTG-05 · Vitamilk Togo Original 300ml x 24 bottles",             category: "Vitamilk Togo",     price: 299.52, stock: 320, statusText: "In Stock",  statusState: "Success" },
+		{ name: "GS-VTG-06 · Vitamilk Light Original 50% Less Sugar 300ml x 24",     category: "Vitamilk Light",    price: 355.68, stock:   0, statusText: "Sold Out",  statusState: "Error"   },
+		{ name: "GS-VUH-01 · Vitamilk UHT Barley & Malt 300ml x 36 cartons",         category: "Vitamilk UHT",      price: 336.96, stock: 120, statusText: "In Stock",  statusState: "Success" },
+		{ name: "GS-VUH-02 · Vitamilk UHT Black Sesame & Riceberry 300ml x 36",      category: "Vitamilk UHT",      price: 336.96, stock:  96, statusText: "In Stock",  statusState: "Success" },
+		{ name: "GS-VUH-03 · Vitamilk UHT Less Sugar (Lactose Free) 250ml x 36",     category: "Vitamilk UHT",      price: 280.80, stock:  24, statusText: "Low Stock", statusState: "Warning" },
+		{ name: "GS-VUH-04 · Vitamilk UHT Original 300ml x 36 cartons",              category: "Vitamilk UHT",      price: 336.96, stock: 480, statusText: "In Stock",  statusState: "Success" },
+		{ name: "GS-VUH-05 · Vitamilk UHT Vegetarian (Jay) 250ml x 36",              category: "Vitamilk UHT",      price: 280.80, stock:  72, statusText: "In Stock",  statusState: "Success" },
+		{ name: "GS-VUH-06 · Vitamilk UHT Vitamin Plus Black Sesame 180ml x 48",     category: "Vitamilk UHT",      price: 449.28, stock:  48, statusText: "In Stock",  statusState: "Success" },
+		{ name: "GS-VUH-07 · Vitamilk UHT Vitamin Plus Almond 180ml x 48",           category: "Vitamilk UHT",      price: 449.28, stock:  36, statusText: "In Stock",  statusState: "Success" },
+		{ name: "GS-VUH-08 · Vitamilk UHT Vitamin Plus Malt 180ml x 48",             category: "Vitamilk UHT",      price: 449.28, stock:   0, statusText: "Sold Out",  statusState: "Error"   },
+		{ name: "GS-VUH-09 · Vitamilk Light UHT Original Less Sugar 250ml x 36",     category: "Vitamilk Light",    price: 374.40, stock:  30, statusText: "In Stock",  statusState: "Success" },
+		{ name: "GS-VCH-01 · Vitamilk Champ Unsweetened Lactose Free 180ml x 48",    category: "Vitamilk Champ",    price: 449.28, stock:  24, statusText: "Low Stock", statusState: "Warning" },
+		{ name: "GS-VCH-02 · Vitamilk Champ Less Sugar Lactose Free 180ml x 48",     category: "Vitamilk Champ",    price: 449.28, stock:  24, statusText: "Low Stock", statusState: "Warning" },
+		{ name: "GS-VSY-01 · V-Soy Sesame Malt 180ml x 36 cartons",                  category: "V-Soy",             price: 421.20, stock:  72, statusText: "In Stock",  statusState: "Success" },
+		{ name: "GS-VSY-02 · V-Soy Pistachio 180ml x 36 cartons",                    category: "V-Soy",             price: 421.20, stock:  36, statusText: "In Stock",  statusState: "Success" },
+		{ name: "GS-VSY-03 · V-Soy Almond 1000ml x 12 cartons",                      category: "V-Soy",             price: 702.00, stock:  30, statusText: "In Stock",  statusState: "Success" },
+		{ name: "GS-VSY-04 · V-Soy Almond 180ml x 36 cartons",                       category: "V-Soy",             price: 421.20, stock:  60, statusText: "In Stock",  statusState: "Success" },
+		{ name: "GS-VSY-05 · V-Soy Hi-Calcium Unsweetened 1000ml x 12",              category: "V-Soy Hi-Calcium",  price: 552.24, stock:  24, statusText: "Low Stock", statusState: "Warning" },
+		{ name: "GS-VSY-06 · V-Soy Hi-Calcium Unsweetened 230ml x 36",               category: "V-Soy Hi-Calcium",  price: 421.20, stock:  48, statusText: "In Stock",  statusState: "Success" },
+		{ name: "GS-VSY-07 · V-Soy Hi-Calcium Multigrain 230ml x 36",                category: "V-Soy Hi-Calcium",  price: 421.20, stock:  36, statusText: "In Stock",  statusState: "Success" }
 	];
 
 	return Controller.extend("com.myorg.myapp.controller.demos.TableDemo", {
