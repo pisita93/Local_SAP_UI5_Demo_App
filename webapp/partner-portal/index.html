@@ -124,12 +124,13 @@ const Dialog = ({ title, onClose, footer, children, wide }) => (
 );
 
 /* ─── DATA ───────────────────────────────────────────────────── */
+// Sourced from GreenSpot_Integrated_Demo_Dataset.xlsx → Sold-to Master.
 const CUSTOMERS = [
-  { id: 'C-001', name: 'Acme Corporation', country: 'DE', taxId: 'DE123456789', paymentTerms: 'Net 30', creditLimit: '€500,000', creditRating: 'A', status: 'Active', requestedBy: 'John Müller', createdOn: '2025-01-10', step: 4 },
-  { id: 'C-002', name: 'TechFlow GmbH', country: 'DE', taxId: 'DE987654321', paymentTerms: 'Net 60', creditLimit: '€250,000', creditRating: 'B+', status: 'Pending', requestedBy: 'Sarah Schmidt', createdOn: '2025-01-14', step: 1 },
-  { id: 'C-003', name: 'Global Traders Ltd', country: 'GB', taxId: 'GB334455667', paymentTerms: 'Net 45', creditLimit: '€180,000', creditRating: 'B', status: 'Pending', requestedBy: 'Michael Brown', createdOn: '2025-01-15', step: 2 },
-  { id: 'C-004', name: 'Nordic Supplies AS', country: 'NO', taxId: 'NO112233445', paymentTerms: 'Net 30', creditLimit: '€320,000', creditRating: 'A-', status: 'Active', requestedBy: 'Lars Hansen', createdOn: '2024-12-20', step: 4 },
-  { id: 'C-005', name: 'Iberia Trade SL', country: 'ES', taxId: 'ES-B44556677', paymentTerms: 'Net 60', creditLimit: '€90,000', creditRating: 'C+', status: 'Rejected', requestedBy: 'Carlos Ruiz', createdOn: '2025-01-05', step: 0 },
+  { id: 'C-001', name: "Lotus's Stores (Thailand) Co., Ltd.",       country: 'TH', taxId: '0105500000111',  paymentTerms: 'Net 45', creditLimit: '฿50,000,000', creditRating: 'A',  status: 'Active',   requestedBy: 'Ploy Suwanwong',   createdOn: '2025-01-10', step: 4 },
+  { id: 'C-002', name: 'Big C Supercenter Public Co., Ltd.',         country: 'TH', taxId: '0107500000222',  paymentTerms: 'Net 60', creditLimit: '฿45,000,000', creditRating: 'B+', status: 'Pending',  requestedBy: 'Pim Charoenkul',   createdOn: '2025-01-14', step: 1 },
+  { id: 'C-003', name: 'CP All Public Co., Ltd. (7-Eleven)',         country: 'TH', taxId: '0107500000333',  paymentTerms: 'Net 30', creditLimit: '฿80,000,000', creditRating: 'A+', status: 'Pending',  requestedBy: 'Nattaya Boonsom',  createdOn: '2025-01-15', step: 2 },
+  { id: 'C-004', name: 'The Mall Group Co., Ltd. (Gourmet Market)',  country: 'TH', taxId: '0105500000444',  paymentTerms: 'Net 45', creditLimit: '฿25,000,000', creditRating: 'A-', status: 'Active',   requestedBy: 'Apinya Tantipanichkit', createdOn: '2024-12-20', step: 4 },
+  { id: 'C-005', name: 'Siam Makro Public Co., Ltd.',                country: 'TH', taxId: '0107500000555',  paymentTerms: 'Net 30', creditLimit: '฿60,000,000', creditRating: 'A',  status: 'Rejected', requestedBy: 'Suchart Inthorn',  createdOn: '2025-01-05', step: 0 },
 ];
 
 const SUPPLIERS = [
@@ -140,8 +141,8 @@ const SUPPLIERS = [
 ];
 
 const APPROVALS = [
-  { id: 'AP-001', type: 'customer', subtype: 'Create', name: 'TechFlow GmbH', id2: 'C-002', priority: 'High', submittedBy: 'Sarah Schmidt', submittedOn: '2025-01-14', step: '1st Level Approval' },
-  { id: 'AP-002', type: 'customer', subtype: 'Credit', name: 'Global Traders Ltd', id2: 'C-003', priority: 'Normal', submittedBy: 'Michael Brown', submittedOn: '2025-01-15', step: 'Credit Evaluation' },
+  { id: 'AP-001', type: 'customer', subtype: 'Create', name: 'Big C Supercenter Public Co., Ltd.', id2: 'C-002', priority: 'High', submittedBy: 'Pim Charoenkul', submittedOn: '2025-01-14', step: '1st Level Approval' },
+  { id: 'AP-002', type: 'customer', subtype: 'Credit', name: 'CP All Public Co., Ltd. (7-Eleven)', id2: 'C-003', priority: 'Normal', submittedBy: 'Nattaya Boonsom', submittedOn: '2025-01-15', step: 'Credit Evaluation' },
   { id: 'AP-003', type: 'supplier', subtype: 'Create', name: 'Logistics Partners BV', id2: 'S-002', priority: 'Normal', submittedBy: 'Jan Visser', submittedOn: '2025-01-12', step: '1st Level Approval' },
   { id: 'AP-004', type: 'supplier', subtype: 'Change', name: 'IT Services Co.', id2: 'S-003', priority: 'High', submittedBy: 'Sophie Martin', submittedOn: '2025-01-16', step: '2nd Level Approval' },
 ];
@@ -1190,13 +1191,15 @@ const ApprovalDetail = ({ rec, type, setView }) => {
 };
 
 /* ─── ADDITIONAL DATA ────────────────────────────────────────── */
+// SALES_ORDERS — Green Spot demo. Customers from Sold-to Master; net values
+// derived from MT01-HYPER list prices (Sales Pricing) on Vitamilk / V-Soy lines.
 const SALES_ORDERS = [
-  { id: 'SO-100123', customer: 'Acme Corporation', custId: 'C-001', orderDate: '2026-03-01', deliveryDate: '2026-03-15', netValue: '€42,500', currency: 'EUR', status: 'Delivered', invoiceId: 'INV-90011', invoiceDate: '2026-03-16', invoiceAmt: '€42,500', invoiceStatus: 'Open', dueDate: '2026-04-15', daysOverdue: 17 },
-  { id: 'SO-100124', customer: 'Acme Corporation', custId: 'C-001', orderDate: '2026-03-10', deliveryDate: '2026-03-22', netValue: '€18,200', currency: 'EUR', status: 'Delivered', invoiceId: 'INV-90012', invoiceDate: '2026-03-23', invoiceAmt: '€18,200', invoiceStatus: 'Paid', dueDate: '2026-04-22', daysOverdue: 0 },
-  { id: 'SO-100125', customer: 'TechFlow GmbH', custId: 'C-002', orderDate: '2026-03-18', deliveryDate: '2026-04-01', netValue: '€9,800', currency: 'EUR', status: 'In Transit', invoiceId: null, invoiceDate: null, invoiceAmt: null, invoiceStatus: 'Not Invoiced', dueDate: null, daysOverdue: 0 },
-  { id: 'SO-100126', customer: 'Nordic Supplies AS', custId: 'C-004', orderDate: '2026-03-20', deliveryDate: '2026-04-05', netValue: '€67,000', currency: 'EUR', status: 'Processing', invoiceId: null, invoiceDate: null, invoiceAmt: null, invoiceStatus: 'Not Invoiced', dueDate: null, daysOverdue: 0 },
-  { id: 'SO-100127', customer: 'Global Traders Ltd', custId: 'C-003', orderDate: '2026-02-14', deliveryDate: '2026-02-28', netValue: '€31,400', currency: 'EUR', status: 'Delivered', invoiceId: 'INV-90010', invoiceDate: '2026-03-01', invoiceAmt: '€31,400', invoiceStatus: 'Overdue', dueDate: '2026-03-31', daysOverdue: 32 },
-  { id: 'SO-100128', customer: 'Iberia Trade SL', custId: 'C-005', orderDate: '2026-04-01', deliveryDate: '2026-04-14', netValue: '€12,600', currency: 'EUR', status: 'Confirmed', invoiceId: null, invoiceDate: null, invoiceAmt: null, invoiceStatus: 'Not Invoiced', dueDate: null, daysOverdue: 0 },
+  { id: 'SO-100123', customer: "Lotus's Stores (Thailand) Co., Ltd.",      custId: 'C-001', orderDate: '2026-03-01', deliveryDate: '2026-03-15', netValue: '฿1,620,500', currency: 'THB', status: 'Delivered',  invoiceId: 'INV-90011', invoiceDate: '2026-03-16', invoiceAmt: '฿1,620,500', invoiceStatus: 'Open',         dueDate: '2026-04-30', daysOverdue: 17 },
+  { id: 'SO-100124', customer: "Lotus's Stores (Thailand) Co., Ltd.",      custId: 'C-001', orderDate: '2026-03-10', deliveryDate: '2026-03-22', netValue: '฿692,640',   currency: 'THB', status: 'Delivered',  invoiceId: 'INV-90012', invoiceDate: '2026-03-23', invoiceAmt: '฿692,640',   invoiceStatus: 'Paid',         dueDate: '2026-05-07', daysOverdue: 0  },
+  { id: 'SO-100125', customer: 'Big C Supercenter Public Co., Ltd.',       custId: 'C-002', orderDate: '2026-03-18', deliveryDate: '2026-04-01', netValue: '฿1,250,000', currency: 'THB', status: 'In Transit', invoiceId: null,       invoiceDate: null,         invoiceAmt: null,         invoiceStatus: 'Not Invoiced', dueDate: null,         daysOverdue: 0  },
+  { id: 'SO-100126', customer: 'Siam Makro Public Co., Ltd.',              custId: 'C-005', orderDate: '2026-03-20', deliveryDate: '2026-04-05', netValue: '฿2,540,800', currency: 'THB', status: 'Processing', invoiceId: null,       invoiceDate: null,         invoiceAmt: null,         invoiceStatus: 'Not Invoiced', dueDate: null,         daysOverdue: 0  },
+  { id: 'SO-100127', customer: 'CP All Public Co., Ltd. (7-Eleven)',       custId: 'C-003', orderDate: '2026-02-14', deliveryDate: '2026-02-28', netValue: '฿1,236,400', currency: 'THB', status: 'Delivered',  invoiceId: 'INV-90010', invoiceDate: '2026-03-01', invoiceAmt: '฿1,236,400', invoiceStatus: 'Overdue',      dueDate: '2026-03-31', daysOverdue: 32 },
+  { id: 'SO-100128', customer: 'The Mall Group Co., Ltd. (Gourmet Market)',custId: 'C-004', orderDate: '2026-04-01', deliveryDate: '2026-04-14', netValue: '฿486,720',   currency: 'THB', status: 'Confirmed',  invoiceId: null,       invoiceDate: null,         invoiceAmt: null,         invoiceStatus: 'Not Invoiced', dueDate: null,         daysOverdue: 0  },
 ];
 
 const AR_INVOICES = SALES_ORDERS.filter(s => s.invoiceId).map(s => ({
@@ -1279,7 +1282,7 @@ const CustomerSalesOrders = ({ setView }) => {
         </div>
         <div className="kpi-card kpi-card-purple">
           <div className="kpi-icon" style={{ background: '#EEE4F8' }}><IcAlert size={16} stroke="#8B5CF6" /></div>
-          <div className="kpi-val">€{(42500+31400).toLocaleString()}</div>
+          <div className="kpi-val">฿{(1620500+1236400).toLocaleString()}</div>
           <div className="kpi-label">Outstanding AR</div>
         </div>
       </div>
@@ -1386,8 +1389,8 @@ const CustomerAR = ({ setView }) => {
   const rows = filter === 'all' ? AR_INVOICES : AR_INVOICES.filter(i => i.status === filter);
   const outstanding = AR_INVOICES.filter(i => i.status !== 'Paid');
   const overdue = AR_INVOICES.filter(i => i.status === 'Overdue');
-  const totalOutstanding = '€73,900';
-  const totalOverdue = '€31,400';
+  const totalOutstanding = '฿2,856,900';
+  const totalOverdue = '฿1,236,400';
 
   return (
     <div className="page-area">
@@ -2096,22 +2099,23 @@ const ProcurementSlots = ({ setView }) => {
 
 /* ─── SALES DATA ────────────────────────────────────────────── */
 const SALES_GROUPS = [
-  { id: 'SG-01', name: 'Asia Pacific Export', region: 'APAC', currency: 'USD', manager: 'James Tan' },
-  { id: 'SG-02', name: 'Europe Domestic', region: 'EMEA', currency: 'EUR', manager: 'Maria Gonzalez' },
-  { id: 'SG-03', name: 'Middle East Export', region: 'MEA', currency: 'USD', manager: 'Ahmed Al-Rashid' },
-  { id: 'SG-04', name: 'Americas Export', region: 'AMER', currency: 'USD', manager: 'Linda Chen' },
+  { id: 'SG-01', name: 'Thailand Modern Trade',          region: 'TH-MT',  currency: 'THB', manager: 'James Tan' },
+  { id: 'SG-02', name: 'Thailand Traditional & HoReCa',  region: 'TH-TT',  currency: 'THB', manager: 'Maria Gonzalez' },
+  { id: 'SG-03', name: 'ASEAN & Africa Export',          region: 'EXPORT', currency: 'USD', manager: 'Ahmed Al-Rashid' },
+  { id: 'SG-04', name: 'Provincial Distributors',        region: 'TH-PRV', currency: 'THB', manager: 'Linda Chen' },
 ];
 
+// BILLING_DATA — Thai domestic + ASEAN/Africa export customers from Sold-to Master.
 const BILLING_DATA = [
-  { id: 'BL-5001', soId: 'SO-100123', customer: 'Acme Corporation', custId: 'C-001', salesGroup: 'SG-02', salesRep: 'Klaus Bauer', orderDate: '2026-03-01', billingDate: '2026-03-16', netValue: 42500, currency: 'EUR', billingStatus: 'Billed', paymentStatus: 'Overdue', paymentDate: null, dueDate: '2026-04-15', daysOverdue: 17, paymentTerms: 'Net 30', incoterms: 'DAP', paymentMethod: 'Bank Transfer' },
-  { id: 'BL-5002', soId: 'SO-100124', customer: 'Acme Corporation', custId: 'C-001', salesGroup: 'SG-02', salesRep: 'Klaus Bauer', orderDate: '2026-03-10', billingDate: '2026-03-23', netValue: 18200, currency: 'EUR', billingStatus: 'Billed', paymentStatus: 'Paid', paymentDate: '2026-04-10', dueDate: '2026-04-22', daysOverdue: 0, paymentTerms: 'Net 30', incoterms: 'DAP', paymentMethod: 'Bank Transfer' },
-  { id: 'BL-5003', soId: 'SO-100125', customer: 'TechFlow GmbH', custId: 'C-002', salesGroup: 'SG-02', salesRep: 'Anna Weber', orderDate: '2026-03-18', billingDate: null, netValue: 9800, currency: 'EUR', billingStatus: 'Pending', paymentStatus: 'Not Due', paymentDate: null, dueDate: null, daysOverdue: 0, paymentTerms: 'Net 30', incoterms: 'EXW', paymentMethod: 'Bank Transfer' },
-  { id: 'BL-5004', soId: 'SO-100126', customer: 'Nordic Supplies AS', custId: 'C-004', salesGroup: 'SG-01', salesRep: 'James Tan', orderDate: '2026-03-20', billingDate: null, netValue: 67000, currency: 'USD', billingStatus: 'Pending', paymentStatus: 'Not Due', paymentDate: null, dueDate: null, daysOverdue: 0, paymentTerms: 'Cash in Advance', incoterms: 'CIF', paymentMethod: 'Telegraphic Transfer' },
-  { id: 'BL-5005', soId: 'SO-100127', customer: 'Global Traders Ltd', custId: 'C-003', salesGroup: 'SG-03', salesRep: 'Ahmed Al-Rashid', orderDate: '2026-02-14', billingDate: '2026-03-01', netValue: 31400, currency: 'USD', billingStatus: 'Billed', paymentStatus: 'Overdue', paymentDate: null, dueDate: '2026-03-31', daysOverdue: 32, paymentTerms: 'Cash in Advance', incoterms: 'CIF', paymentMethod: 'Letter of Credit' },
-  { id: 'BL-5006', soId: 'SO-100128', customer: 'Iberia Trade SL', custId: 'C-005', salesGroup: 'SG-02', salesRep: 'Carlos Ruiz', orderDate: '2026-04-01', billingDate: null, netValue: 12600, currency: 'EUR', billingStatus: 'Pending', paymentStatus: 'Not Due', paymentDate: null, dueDate: null, daysOverdue: 0, paymentTerms: 'Net 60', incoterms: 'DAP', paymentMethod: 'Bank Transfer' },
-  { id: 'BL-5007', soId: 'SO-200011', customer: 'Singapore Parts Co.', custId: 'C-006', salesGroup: 'SG-01', salesRep: 'James Tan', orderDate: '2026-03-25', billingDate: null, netValue: 95000, currency: 'USD', billingStatus: 'Pending', paymentStatus: 'Awaiting Payment', paymentDate: null, dueDate: '2026-04-01', daysOverdue: 0, paymentTerms: 'Cash in Advance', incoterms: 'FOB', paymentMethod: 'Telegraphic Transfer' },
-  { id: 'BL-5008', soId: 'SO-200012', customer: 'Dubai Trading LLC', custId: 'C-007', salesGroup: 'SG-03', salesRep: 'Ahmed Al-Rashid', orderDate: '2026-04-02', billingDate: null, netValue: 148000, currency: 'USD', billingStatus: 'Pending', paymentStatus: 'Awaiting Payment', paymentDate: null, dueDate: '2026-04-15', daysOverdue: 0, paymentTerms: 'Cash in Advance', incoterms: 'CIF', paymentMethod: 'Letter of Credit' },
-  { id: 'BL-5009', soId: 'SO-200013', customer: 'NY Imports Inc.', custId: 'C-008', salesGroup: 'SG-04', salesRep: 'Linda Chen', orderDate: '2026-04-05', billingDate: null, netValue: 54200, currency: 'USD', billingStatus: 'Pending', paymentStatus: 'Awaiting Payment', paymentDate: null, dueDate: '2026-04-20', daysOverdue: 0, paymentTerms: 'Cash in Advance', incoterms: 'DAP', paymentMethod: 'Telegraphic Transfer' },
+  { id: 'BL-5001', soId: 'SO-100123', customer: "Lotus's Stores (Thailand) Co., Ltd.",       custId: 'C-001', salesGroup: 'SG-02', salesRep: 'Klaus Bauer',     orderDate: '2026-03-01', billingDate: '2026-03-16', netValue: 1620500, currency: 'THB', billingStatus: 'Billed',  paymentStatus: 'Overdue',          paymentDate: null,        dueDate: '2026-04-30', daysOverdue: 17, paymentTerms: 'Net 45',          incoterms: 'DAP', paymentMethod: 'Bank Transfer' },
+  { id: 'BL-5002', soId: 'SO-100124', customer: "Lotus's Stores (Thailand) Co., Ltd.",       custId: 'C-001', salesGroup: 'SG-02', salesRep: 'Klaus Bauer',     orderDate: '2026-03-10', billingDate: '2026-03-23', netValue: 692640,  currency: 'THB', billingStatus: 'Billed',  paymentStatus: 'Paid',             paymentDate: '2026-04-22',dueDate: '2026-05-07', daysOverdue: 0,  paymentTerms: 'Net 45',          incoterms: 'DAP', paymentMethod: 'Bank Transfer' },
+  { id: 'BL-5003', soId: 'SO-100125', customer: 'Big C Supercenter Public Co., Ltd.',         custId: 'C-002', salesGroup: 'SG-02', salesRep: 'Anna Weber',      orderDate: '2026-03-18', billingDate: null,         netValue: 1250000, currency: 'THB', billingStatus: 'Pending', paymentStatus: 'Not Due',          paymentDate: null,        dueDate: null,         daysOverdue: 0,  paymentTerms: 'Net 60',          incoterms: 'DAP', paymentMethod: 'Bank Transfer' },
+  { id: 'BL-5004', soId: 'SO-100126', customer: 'Siam Makro Public Co., Ltd.',                custId: 'C-005', salesGroup: 'SG-01', salesRep: 'James Tan',       orderDate: '2026-03-20', billingDate: null,         netValue: 2540800, currency: 'THB', billingStatus: 'Pending', paymentStatus: 'Not Due',          paymentDate: null,        dueDate: null,         daysOverdue: 0,  paymentTerms: 'Net 30',          incoterms: 'EXW', paymentMethod: 'Bank Transfer' },
+  { id: 'BL-5005', soId: 'SO-100127', customer: 'CP All Public Co., Ltd. (7-Eleven)',         custId: 'C-003', salesGroup: 'SG-01', salesRep: 'James Tan',       orderDate: '2026-02-14', billingDate: '2026-03-01', netValue: 1236400, currency: 'THB', billingStatus: 'Billed',  paymentStatus: 'Overdue',          paymentDate: null,        dueDate: '2026-03-31', daysOverdue: 32, paymentTerms: 'Net 30',          incoterms: 'DAP', paymentMethod: 'Bank Transfer' },
+  { id: 'BL-5006', soId: 'SO-100128', customer: 'The Mall Group Co., Ltd. (Gourmet Market)',  custId: 'C-004', salesGroup: 'SG-02', salesRep: 'Anna Weber',      orderDate: '2026-04-01', billingDate: null,         netValue: 486720,  currency: 'THB', billingStatus: 'Pending', paymentStatus: 'Not Due',          paymentDate: null,        dueDate: null,         daysOverdue: 0,  paymentTerms: 'Net 45',          incoterms: 'DAP', paymentMethod: 'Bank Transfer' },
+  { id: 'BL-5007', soId: 'SO-200011', customer: 'Phnom Penh Trading Co., Ltd.',          custId: 'C-006', salesGroup: 'SG-03', salesRep: 'Ahmed Al-Rashid', orderDate: '2026-03-25', billingDate: null, netValue: 48000,  currency: 'USD', billingStatus: 'Pending', paymentStatus: 'Awaiting Payment', paymentDate: null, dueDate: '2026-04-24', daysOverdue: 0, paymentTerms: 'Cash in Advance', incoterms: 'FOB', paymentMethod: 'Telegraphic Transfer' },
+  { id: 'BL-5008', soId: 'SO-200012', customer: 'Phnom Penh Trading Co., Ltd.',          custId: 'C-006', salesGroup: 'SG-03', salesRep: 'Ahmed Al-Rashid', orderDate: '2026-04-02', billingDate: null, netValue: 148000, currency: 'USD', billingStatus: 'Pending', paymentStatus: 'Awaiting Payment', paymentDate: null, dueDate: '2026-04-15', daysOverdue: 0, paymentTerms: 'Cash in Advance', incoterms: 'CIF', paymentMethod: 'Letter of Credit' },
+  { id: 'BL-5009', soId: 'SO-200013', customer: 'Lagos Foods & Beverage Import Ltd.',    custId: 'C-007', salesGroup: 'SG-03', salesRep: 'Linda Chen',      orderDate: '2026-04-05', billingDate: null, netValue: 54200,  currency: 'USD', billingStatus: 'Pending', paymentStatus: 'Awaiting Payment', paymentDate: null, dueDate: '2026-04-20', daysOverdue: 0, paymentTerms: 'Cash in Advance', incoterms: 'DAP', paymentMethod: 'Telegraphic Transfer' },
 ];
 
 const USERS = [
@@ -2130,7 +2134,11 @@ const CURRENT_USER = USERS[2]; // James Tan — SG-01, SG-04
 const BILL_PAY_CLS = { 'Paid': 'tag-approved', 'Overdue': 'tag-error', 'Awaiting Payment': 'tag-pending', 'Not Due': 'tag-neutral', 'Partial': 'tag-warning' };
 const BILL_STATUS_CLS = { 'Billed': 'tag-info', 'Pending': 'tag-pending', 'Cancelled': 'tag-error' };
 
-const fmt = (n, cur = 'EUR') => cur === 'USD' ? `$${n.toLocaleString()}` : `€${n.toLocaleString()}`;
+const fmt = (n, cur = 'THB') => {
+  if (cur === 'USD') return `$${n.toLocaleString()}`;
+  if (cur === 'EUR') return `€${n.toLocaleString()}`;
+  return `฿${n.toLocaleString()}`;
+};
 
 /* ─── SALES: BILLING REPORT ──────────────────────────────────── */
 const SalesBillingReport = ({ setView, currentUser = CURRENT_USER }) => {

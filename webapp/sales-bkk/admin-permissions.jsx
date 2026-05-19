@@ -86,7 +86,7 @@ const SAMPLE_USERS = [
 // ── Audit log entries ─────────────────────────────────────────
 const AUDIT_LOG = [
   { ts: "16 May 2026 15:42:11", actor: "ปริยากร น.",  role: "cashier", action: "Settled truck TRK-1046 (4 billings · ฿38,400)",        kind: "settle" },
-  { ts: "16 May 2026 15:41:02", actor: "ปริยากร น.",  role: "cashier", action: "Approved BL-880373 — Big C สาขารัชดาภิเษก",         kind: "approve" },
+  { ts: "16 May 2026 15:41:02", actor: "ปริยากร น.",  role: "cashier", action: "Approved BL-880373 — บิ๊กซี เอ็กซ์ตร้า พระราม 4",         kind: "approve" },
   { ts: "16 May 2026 15:24:48", actor: "ปริยากร น.",  role: "cashier", action: "Rejected BL-880371 — receipt amount mismatch",        kind: "reject" },
   { ts: "16 May 2026 14:55:11", actor: "ณัฐพล ส.",   role: "sales",   action: "Submitted 5 billings on TRK-1044 to cashier",         kind: "submit" },
   { ts: "16 May 2026 14:50:23", actor: "ณัฐพล ส.",   role: "sales",   action: "Edited BL-880335 (cash short note, ฿420)",           kind: "edit"   },
