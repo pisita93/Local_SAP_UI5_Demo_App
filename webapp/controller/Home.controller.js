@@ -39,6 +39,12 @@ sap.ui.define([
 						title: oBundle.getText("demoPartnerPortalTitle"),
 						description: oBundle.getText("demoPartnerPortalDesc"),
 						icon: "sap-icon://customer"
+					},
+					{
+						key: "deliveryTrackingDemo",
+						title: oBundle.getText("demoDeliveryTrackingTitle"),
+						description: oBundle.getText("demoDeliveryTrackingDesc"),
+						icon: "sap-icon://shipping-status"
 					}
 				]
 			});
