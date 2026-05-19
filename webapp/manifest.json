@@ -87,6 +87,16 @@
           "pattern": "demo/delivery-tracking",
           "name": "deliveryTrackingDemo",
           "target": "deliveryTrackingDemo"
+        },
+        {
+          "pattern": "demo/sales-order",
+          "name": "salesOrderDemo",
+          "target": "salesOrderDemo"
+        },
+        {
+          "pattern": "demo/etax-invoice",
+          "name": "etaxInvoiceDemo",
+          "target": "etaxInvoiceDemo"
         }
       ],
       "targets": {
@@ -116,6 +126,14 @@
         },
         "deliveryTrackingDemo": {
           "viewName": "demos.DeliveryTrackingDemo",
+          "viewLevel": 1
+        },
+        "salesOrderDemo": {
+          "viewName": "demos.SalesOrderDemo",
+          "viewLevel": 1
+        },
+        "etaxInvoiceDemo": {
+          "viewName": "demos.EtaxInvoiceDemo",
           "viewLevel": 1
         }
       }

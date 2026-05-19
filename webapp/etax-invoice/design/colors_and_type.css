@@ -1,0 +1,255 @@
+/**
+ * SAP Fiori Design System — Color & Typography Tokens
+ * Theme: SAP Horizon (Light)
+ * 
+ * Font: SAP 72 (proprietary) — substituted with IBM Plex Sans from Google Fonts
+ * To use the actual SAP 72 font, replace the @import with SAP's font CDN or local files.
+ */
+
+/**
+ * SAP 72 — Complete font family + SAP Icons
+ * All weights loaded from local font files.
+ */
+
+/* ── SAP 72 ──────────────────────────────────────────────────── */
+@font-face { font-family:'72'; font-weight:300; font-style:normal;  font-display:swap; src:url('fonts/72-Light-full.woff2') format('woff2'), url('fonts/72-Light.woff') format('woff'); }
+@font-face { font-family:'72'; font-weight:400; font-style:normal;  font-display:swap; src:url('fonts/72-Regular-full.woff2') format('woff2'), url('fonts/72-Regular.woff') format('woff'); }
+@font-face { font-family:'72'; font-weight:400; font-style:italic;  font-display:swap; src:url('fonts/72-Italic-full.woff2') format('woff2'), url('fonts/72-Italic.woff') format('woff'); }
+@font-face { font-family:'72'; font-weight:600; font-style:normal;  font-display:swap; src:url('fonts/72-Semibold-full.woff2') format('woff2'), url('fonts/72-Semibold.woff') format('woff'); }
+@font-face { font-family:'72'; font-weight:700; font-style:normal;  font-display:swap; src:url('fonts/72-Bold-full.woff2') format('woff2'), url('fonts/72-Bold.woff') format('woff'); }
+@font-face { font-family:'72'; font-weight:700; font-style:italic;  font-display:swap; src:url('fonts/72-BoldItalic-full.woff2') format('woff2'), url('fonts/72-BoldItalic.woff') format('woff'); }
+@font-face { font-family:'72'; font-weight:900; font-style:normal;  font-display:swap; src:url('fonts/72-Black-full.woff2') format('woff2'), url('fonts/72-Black.woff') format('woff'); }
+
+/* ── SAP 72 Condensed ────────────────────────────────────────── */
+@font-face { font-family:'72 Condensed'; font-weight:400; font-style:normal; font-display:swap; src:url('fonts/72-Condensed-full.woff2') format('woff2'), url('fonts/72-Condensed.woff') format('woff'); }
+@font-face { font-family:'72 Condensed'; font-weight:700; font-style:normal; font-display:swap; src:url('fonts/72-CondensedBold-full.woff2') format('woff2'), url('fonts/72-CondensedBold.woff') format('woff'); }
+
+/* ── SAP 72 Semibold Duplex ──────────────────────────────────── */
+@font-face { font-family:'72 Duplex'; font-weight:600; font-style:normal; font-display:swap; src:url('fonts/72-SemiboldDuplex-full.woff2') format('woff2'), url('fonts/72-SemiboldDuplex.woff') format('woff'); }
+
+/* ── SAP Icons ───────────────────────────────────────────────── */
+@font-face { font-family:'SAP-icons'; font-weight:400; font-style:normal; font-display:block; src:url('fonts/SAP-icons.woff2') format('woff2'), url('fonts/SAP-icons.woff') format('woff'); }
+
+/* ── Business Suite In-App Symbols ───────────────────────────── */
+@font-face { font-family:'BusinessSuiteInAppSymbols'; font-weight:400; font-style:normal; font-display:block; src:url('fonts/BusinessSuiteInAppSymbols.woff2') format('woff2'), url('fonts/BusinessSuiteInAppSymbols.woff') format('woff'); }
+
+:root {
+  /* ─── Font Families ─────────────────────────────────────────── */
+  --sap-font-family:        '72', Arial, sans-serif;
+  --sap-font-family-brand:  '72', Arial, sans-serif;
+  --sap-font-family-cond:   '72 Condensed', '72', Arial, sans-serif;
+  --sap-font-family-duplex: '72 Duplex', '72', Arial, sans-serif;
+  --sap-font-family-icons:  'SAP-icons';
+  --sap-font-family-mono:   'Courier New', monospace;
+
+  /* ─── Font Weights ──────────────────────────────────────────── */
+  --sap-font-weight-regular:    400;
+  --sap-font-weight-semibold:   600;
+  --sap-font-weight-bold:       700;
+  --sap-font-weight-medium:     500;  /* Brand Medium */
+
+  /* ─── Type Scale ────────────────────────────────────────────── */
+  --sap-font-size-display:  3rem;     /* 48px — hero/display */
+  --sap-font-size-h1:       2.25rem;  /* 36px — page title */
+  --sap-font-size-h2:       1.5rem;   /* 24px — section heading */
+  --sap-font-size-h3:       1.25rem;  /* 20px — sub-section */
+  --sap-font-size-h4:       1rem;     /* 16px — emphasized label */
+  --sap-font-size-base:     0.875rem; /* 14px — default body */
+  --sap-font-size-sm:       0.75rem;  /* 12px — small/compact */
+
+  /* ─── Line Heights ──────────────────────────────────────────── */
+  --sap-line-height-tight:  1;        /* 100% — headings */
+  --sap-line-height-base:   1.5;      /* 150% — body text */
+  --sap-line-height-loose:  1.75;
+
+  /* ─── Primary / Brand Colors ────────────────────────────────── */
+  --sap-color-interactive:    #0070F2;   /* Primary button fill, active states */
+  --sap-color-interactive-h:  #0064D9;   /* Hover state, links */
+  --sap-color-interactive-a:  #0057BF;   /* Active/pressed */
+  --sap-color-link:           #0064D9;   /* sapLinkColor */
+  --sap-color-link-h:         #0057BF;   /* Link hover */
+
+  /* ─── Text Colors ───────────────────────────────────────────── */
+  --sap-color-text:           #131E29;   /* sapTextColor — primary text */
+  --sap-color-text-2:         #556B82;   /* sapContent_LabelColor — secondary */
+  --sap-color-text-3:         #7F8C9A;   /* tertiary / placeholder */
+  --sap-color-text-disabled:  #556B82;   /* used with opacity 0.4 */
+  --sap-color-text-inverse:   #FFFFFF;   /* text on dark bg */
+  --sap-color-text-title:     #131E29;
+
+  /* ─── Background Colors ─────────────────────────────────────── */
+  --sap-color-bg:             #FFFFFF;   /* sapBaseColor — content bg */
+  --sap-color-bg-shell:       #F5F6F7;   /* sapShellColor — page bg */
+  --sap-color-bg-selected:    #EDF6FF;   /* selected row / highlighted */
+  --sap-color-bg-hover:       #EAE4EE;   /* neutral hover */
+  --sap-color-bg-hover-blue:  #EDF6FF;   /* interactive hover */
+  --sap-color-bg-dark-nav:    #1D2D3E;   /* dark side nav / header */
+  --sap-color-bg-dark-nav-2:  #29405A;   /* dark nav hover */
+  --sap-color-bg-toggled:     #EDF6FF;   /* toggled button background */
+
+  /* ─── Semantic Colors ───────────────────────────────────────── */
+  --sap-color-negative:       #AA0808;   /* Error / Negative (red) */
+  --sap-color-negative-bg:    #FFDBEF;   /* Error background tint */
+  --sap-color-negative-border:#E8A0A0;
+  --sap-color-warning:        #FF9900;   /* Warning / Caution (amber) */
+  --sap-color-warning-bg:     #FFF3B8;   /* Warning background tint */
+  --sap-color-warning-border: #F0D56A;
+  --sap-color-positive:       #30914C;   /* Success / Positive (green) */
+  --sap-color-positive-dark:  #25713A;   /* Success dark */
+  --sap-color-positive-bg:    #C2FCEE;   /* Success background tint */
+  --sap-color-positive-border:#96E6C8;
+  --sap-color-info:           #0064D9;   /* Information (blue) */
+  --sap-color-info-bg:        #D1EFFF;   /* Info background tint */
+  --sap-color-info-border:    #80C8F0;
+  --sap-color-accept:         #30914C;   /* Accept button */
+  --sap-color-accept-bg:      #EBFAD3;   /* Accept button bg */
+  --sap-color-accept-border:  #DBEEA1;
+  --sap-color-reject:         #AA0808;   /* Reject button */
+
+  /* ─── Tag / Badge Colors ────────────────────────────────────── */
+  --sap-color-tag-cyan:       #D1EFFF;
+  --sap-color-tag-pink:       #FFDBEF;
+  --sap-color-tag-yellow:     #FFF3B8;
+  --sap-color-tag-green:      #C2FCEE;
+  --sap-color-tag-purple:     #DDC4F0;
+  --sap-color-tag-magenta:    #FFDCF3;
+
+  /* ─── Border Colors ─────────────────────────────────────────── */
+  --sap-color-border:         #BCC3CA;   /* Default border */
+  --sap-color-border-2:       #D9D9D9;   /* Divider / subtle */
+  --sap-color-border-3:       #EAE4EE;   /* Very subtle border */
+  --sap-color-border-focus:   #0070F2;   /* Focus ring color */
+
+  /* ─── Shadow System ─────────────────────────────────────────── */
+  --sap-shadow-0: 0px 2px 4px 0px rgba(34,53,72,0.2), 0px 0px 2px 0px rgba(34,53,72,0.2);
+  --sap-shadow-1: 0px 2px 8px 0px rgba(34,53,72,0.3), 0px 0px 0px 1px rgba(34,53,72,0.48);
+  --sap-shadow-popover: 0px 20px 80px 0px rgba(34,53,72,0.25), 0px 0px 0px 1px rgba(34,53,72,0.48);
+  --sap-shadow-color: rgba(34, 53, 72, 0.48);
+
+  /* ─── Border Radii ──────────────────────────────────────────── */
+  --sap-radius-xs:     4px;    /* badges, tags, progress */
+  --sap-radius-sm:     8px;    /* buttons, inputs, menus */
+  --sap-radius-md:     10px;   /* cards, popovers */
+  --sap-radius-lg:     20px;   /* large frames */
+  --sap-radius-full:   50%;    /* avatars */
+
+  /* ─── Spacing Scale (8px base) ──────────────────────────────── */
+  --sap-space-1:   4px;
+  --sap-space-2:   8px;
+  --sap-space-3:   12px;
+  --sap-space-4:   16px;
+  --sap-space-5:   24px;
+  --sap-space-6:   32px;
+  --sap-space-7:   48px;
+  --sap-space-8:   64px;
+
+  /* ─── Component Sizes ───────────────────────────────────────── */
+  --sap-button-height-cozy:     36px;
+  --sap-button-height-compact:  26px;
+  --sap-shell-bar-height:       52px;
+  --sap-side-nav-width:         240px;
+  --sap-side-nav-collapsed:     48px;
+  --sap-input-height:           36px;
+  --sap-avatar-xs:              24px;
+  --sap-avatar-sm:              32px;
+  --sap-avatar-md:              40px;
+  --sap-avatar-lg:              64px;
+  --sap-avatar-xl:              80px;
+}
+
+/* ─── Semantic Typography Styles ──────────────────────────────── */
+
+.sap-display, h1.display {
+  font-family: var(--sap-font-family-brand);
+  font-weight: var(--sap-font-weight-medium);
+  font-size: var(--sap-font-size-display);
+  line-height: var(--sap-line-height-tight);
+  color: var(--sap-color-text);
+}
+
+h1, .sap-h1 {
+  font-family: var(--sap-font-family);
+  font-weight: var(--sap-font-weight-bold);
+  font-size: var(--sap-font-size-h1);
+  line-height: var(--sap-line-height-tight);
+  color: var(--sap-color-text);
+}
+
+h2, .sap-h2 {
+  font-family: var(--sap-font-family);
+  font-weight: var(--sap-font-weight-semibold);
+  font-size: var(--sap-font-size-h2);
+  line-height: var(--sap-line-height-tight);
+  color: var(--sap-color-text);
+}
+
+h3, .sap-h3 {
+  font-family: var(--sap-font-family);
+  font-weight: var(--sap-font-weight-semibold);
+  font-size: var(--sap-font-size-h3);
+  line-height: var(--sap-line-height-tight);
+  color: var(--sap-color-text);
+}
+
+h4, .sap-h4 {
+  font-family: var(--sap-font-family);
+  font-weight: var(--sap-font-weight-bold);
+  font-size: var(--sap-font-size-h4);
+  line-height: var(--sap-line-height-base);
+  color: var(--sap-color-text);
+}
+
+p, .sap-body {
+  font-family: var(--sap-font-family);
+  font-weight: var(--sap-font-weight-regular);
+  font-size: var(--sap-font-size-base);
+  line-height: var(--sap-line-height-base);
+  color: var(--sap-color-text);
+}
+
+.sap-label {
+  font-family: var(--sap-font-family);
+  font-weight: var(--sap-font-weight-bold);
+  font-size: var(--sap-font-size-base);
+  line-height: var(--sap-line-height-base);
+  color: var(--sap-color-text);
+}
+
+small, .sap-small {
+  font-family: var(--sap-font-family);
+  font-weight: var(--sap-font-weight-semibold);
+  font-size: var(--sap-font-size-sm);
+  line-height: var(--sap-line-height-base);
+  color: var(--sap-color-text-2);
+}
+
+code, .sap-code {
+  font-family: var(--sap-font-family-mono);
+  font-weight: var(--sap-font-weight-regular);
+  font-size: var(--sap-font-size-base);
+  color: var(--sap-color-text);
+}
+
+a, .sap-link {
+  font-family: var(--sap-font-family);
+  font-weight: var(--sap-font-weight-regular);
+  font-size: var(--sap-font-size-base);
+  color: var(--sap-color-link);
+  text-decoration: none;
+}
+
+a:hover, .sap-link:hover {
+  color: var(--sap-color-link-h);
+  text-decoration: underline;
+}
+
+/* ─── Utility Classes ─────────────────────────────────────────── */
+
+.sap-text-secondary { color: var(--sap-color-text-2); }
+.sap-text-inverse   { color: var(--sap-color-text-inverse); }
+.sap-text-negative  { color: var(--sap-color-negative); }
+.sap-text-warning   { color: var(--sap-color-warning); }
+.sap-text-positive  { color: var(--sap-color-positive); }
+.sap-text-info      { color: var(--sap-color-info); }
+.sap-bg-shell       { background-color: var(--sap-color-bg-shell); }
+.sap-bg-dark-nav    { background-color: var(--sap-color-bg-dark-nav); }

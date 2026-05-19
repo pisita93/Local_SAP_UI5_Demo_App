@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales Order Creation App</title>
+<link rel="stylesheet" href="colors_and_type.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; font-family: '72', Arial, sans-serif; }
+body { display: flex; flex-direction: column; background: #F5F6F7; color: #131E29; }
+
+/* Shell Bar */
+.shell-bar {
+  height: 52px; background: #1D2D3E; display: flex; align-items: center;
+  padding: 0 16px; gap: 12px; flex-shrink: 0; z-index: 100;
+  box-shadow: 0 2px 4px rgba(34,53,72,0.3);
+}
+.shell-logo { display: flex; align-items: center; gap: 10px; }
+.shell-logo img { height: 18px; }
+.shell-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.2); }
+.shell-title { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.01em; }
+.shell-spacer { flex: 1; }
+.shell-btn { width: 36px; height: 36px; border-radius: 8px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.7); transition: background 0.15s; }
+.shell-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.avatar-chip { width: 32px; height: 32px; border-radius: 50%; background: #0070F2; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; cursor: pointer; }
+.notif-wrap { position: relative; }
+.notif-dot { position: absolute; top: 4px; right: 4px; width: 8px; height: 8px; background: #AA0808; border-radius: 50%; border: 2px solid #1D2D3E; }
+
+/* Layout */
+.app-layout { display: flex; flex: 1; overflow: hidden; }
+
+/* Side Nav */
+.side-nav { width: 240px; flex-shrink: 0; background: #fff; border-right: 1px solid #D9D9D9; display: flex; flex-direction: column; transition: width 0.2s; overflow: hidden; }
+.side-nav.collapsed { width: 48px; }
+.nav-section-title { font-size: 11px; font-weight: 700; color: #556B82; text-transform: uppercase; letter-spacing: 0.06em; padding: 16px 16px 6px; white-space: nowrap; }
+.side-nav.collapsed .nav-section-title { display: none; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; font-size: 14px; color: #131E29; cursor: pointer; border-radius: 0; transition: background 0.12s; border-left: 3px solid transparent; white-space: nowrap; }
+.nav-item:hover { background: #EAE4EE; }
+.nav-item.active { background: #EDF6FF; color: #0070F2; border-left-color: #0070F2; font-weight: 700; }
+.nav-item svg { flex-shrink: 0; }
+.side-nav.collapsed .nav-item span { display: none; }
+.side-nav.collapsed .nav-item { justify-content: center; padding: 10px 0; }
+.nav-footer { margin-top: auto; border-top: 1px solid #D9D9D9; padding: 8px 0; }
+
+/* Main */
+.main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* Page header */
+.page-header { background: #fff; border-bottom: 1px solid #D9D9D9; padding: 0 32px; }
+.page-header-top { display: flex; align-items: center; justify-content: space-between; padding: 12px 0 8px; gap: 16px; }
+.page-title { font-size: 20px; font-weight: 700; color: #131E29; }
+.breadcrumb { font-size: 12px; color: #556B82; display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
+.breadcrumb a { color: #0064D9; text-decoration: none; cursor: pointer; }
+.breadcrumb a:hover { text-decoration: underline; }
+.page-toolbar { display: flex; align-items: center; gap: 8px; padding: 8px 0; flex-wrap: wrap; }
+
+/* Buttons */
+.btn { height: 36px; padding: 0 16px; border-radius: 8px; font-size: 14px; font-family: '72', Arial, sans-serif; font-weight: 700; cursor: pointer; border: 1px solid transparent; display: inline-flex; align-items: center; gap: 6px; transition: background 0.12s, border-color 0.12s, box-shadow 0.12s; white-space: nowrap; }
+.btn:focus-visible { outline: 2px solid #0070F2; outline-offset: 2px; }
+.btn-primary { background: #0070F2; color: #fff; border-color: #0070F2; }
+.btn-primary:hover { background: #0064D9; border-color: #0064D9; }
+.btn-secondary { background: #fff; color: #131E29; border-color: #BCC3CA; }
+.btn-secondary:hover { background: #F5F6F7; }
+.btn-ghost { background: transparent; color: #0070F2; border-color: transparent; }
+.btn-ghost:hover { background: #EDF6FF; }
+.btn-positive { background: #30914C; color: #fff; border-color: #30914C; }
+.btn-positive:hover { background: #25713A; }
+.btn-negative { background: #AA0808; color: #fff; border-color: #AA0808; }
+.btn-negative:hover { background: #8a0606; }
+.btn-sm { height: 28px; padding: 0 10px; font-size: 12px; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Page area */
+.page-area { flex: 1; overflow-y: auto; padding: 24px 32px; }
+
+/* Cards */
+.card { background: #fff; border-radius: 10px; box-shadow: 0px 2px 4px rgba(34,53,72,0.2), 0px 0px 2px rgba(34,53,72,0.2); margin-bottom: 16px; overflow: hidden; }
+.card-header { padding: 14px 20px; border-bottom: 1px solid #D9D9D9; display: flex; align-items: center; justify-content: space-between; }
+.card-title { font-size: 14px; font-weight: 700; color: #131E29; }
+.card-body { padding: 20px; }
+
+/* Form */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
+.form-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.form-field { display: flex; flex-direction: column; gap: 4px; }
+.form-field.full { grid-column: 1 / -1; }
+.form-label { font-size: 12px; font-weight: 700; color: #131E29; }
+.form-label.required::after { content: ' *'; color: #AA0808; }
+.form-input { height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid #BCC3CA; background: #fff; font-size: 14px; font-family: '72', Arial, sans-serif; color: #131E29; transition: border-color 0.12s, box-shadow 0.12s; outline: none; }
+.form-input:focus { border-color: #0070F2; box-shadow: 0 0 0 2px rgba(0,112,242,0.15); }
+.form-input::placeholder { color: #7F8C9A; }
+.form-input.error { border-color: #AA0808; }
+.form-select { height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid #BCC3CA; background: #fff; font-size: 14px; font-family: '72', Arial, sans-serif; color: #131E29; outline: none; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23556B82' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px; }
+.form-select:focus { border-color: #0070F2; box-shadow: 0 0 0 2px rgba(0,112,242,0.15); }
+.form-textarea { padding: 8px 10px; border-radius: 8px; border: 1px solid #BCC3CA; background: #fff; font-size: 14px; font-family: '72', Arial, sans-serif; color: #131E29; outline: none; resize: vertical; min-height: 72px; }
+.form-textarea:focus { border-color: #0070F2; box-shadow: 0 0 0 2px rgba(0,112,242,0.15); }
+.error-msg { font-size: 11px; color: #AA0808; margin-top: 2px; }
+
+/* Line items table */
+.line-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.line-table th { background: #F5F6F7; font-size: 12px; font-weight: 700; color: #556B82; text-align: left; padding: 8px 12px; border-bottom: 1px solid #D9D9D9; white-space: nowrap; }
+.line-table td { padding: 8px 12px; border-bottom: 1px solid #EAE4EE; color: #131E29; vertical-align: middle; }
+.line-table tr:last-child td { border-bottom: none; }
+.line-table tr:hover td { background: #F5F6F7; }
+.line-table .td-input { padding: 4px 8px; }
+
+/* Status badges */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; }
+.badge-draft { background: #F5F6F7; color: #556B82; }
+.badge-pending { background: #FFF3B8; color: #7A5800; }
+.badge-approved1 { background: #D1EFFF; color: #0057BF; }
+.badge-approved { background: #C2FCEE; color: #1B6B47; }
+.badge-rejected { background: #FFDBEF; color: #7A0030; }
+.badge-created { background: #C2FCEE; color: #1B6B47; }
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+/* Table */
+.sap-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.sap-table th { background: #F5F6F7; font-size: 12px; font-weight: 700; color: #556B82; text-align: left; padding: 10px 14px; border-bottom: 1px solid #D9D9D9; white-space: nowrap; cursor: pointer; user-select: none; }
+.sap-table th:hover { background: #EAE4EE; }
+.sap-table td { padding: 11px 14px; border-bottom: 1px solid #EAE4EE; color: #131E29; vertical-align: middle; }
+.sap-table tr:hover td { background: #EDF6FF; cursor: pointer; }
+.sap-table tr.selected td { background: #EDF6FF; }
+.table-link { color: #0064D9; font-weight: 700; text-decoration: none; cursor: pointer; }
+.table-link:hover { text-decoration: underline; }
+
+/* Filter bar */
+.filter-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 16px; background: #fff; border-bottom: 1px solid #D9D9D9; }
+.filter-chip { height: 28px; padding: 0 10px; border-radius: 14px; font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid #BCC3CA; background: #fff; color: #131E29; display: flex; align-items: center; gap: 4px; transition: all 0.12s; }
+.filter-chip.active { background: #EDF6FF; border-color: #0070F2; color: #0070F2; }
+.search-box { display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid #BCC3CA; background: #fff; min-width: 240px; }
+.search-box input { border: none; outline: none; font-size: 14px; font-family: '72', Arial, sans-serif; color: #131E29; background: transparent; flex: 1; }
+.search-box input::placeholder { color: #7F8C9A; }
+
+/* Progress steps */
+.progress-steps { display: flex; align-items: center; gap: 0; margin-bottom: 24px; }
+.step-item { display: flex; align-items: center; flex: 1; }
+.step-bubble { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; transition: all 0.2s; }
+.step-bubble.done { background: #30914C; color: #fff; }
+.step-bubble.active { background: #0070F2; color: #fff; box-shadow: 0 0 0 4px rgba(0,112,242,0.2); }
+.step-bubble.pending { background: #F5F6F7; color: #556B82; border: 2px solid #BCC3CA; }
+.step-line { flex: 1; height: 2px; background: #D9D9D9; margin: 0 4px; }
+.step-line.done { background: #30914C; }
+.step-info { display: flex; flex-direction: column; align-items: center; margin-top: 6px; }
+.step-label { font-size: 11px; font-weight: 700; color: #556B82; white-space: nowrap; }
+.step-label.active { color: #0070F2; }
+.step-label.done { color: #30914C; }
+.step-wrapper { display: flex; flex-direction: column; align-items: center; }
+
+/* Approval card */
+.approval-card { background: #fff; border-radius: 10px; box-shadow: 0px 2px 4px rgba(34,53,72,0.2); padding: 20px; margin-bottom: 12px; border-left: 4px solid #BCC3CA; }
+.approval-card.pending { border-left-color: #FF9900; }
+.approval-card.approved { border-left-color: #30914C; }
+.approval-card.rejected { border-left-color: #AA0808; }
+.approval-card.waiting { border-left-color: #BCC3CA; }
+.approval-meta { font-size: 12px; color: #556B82; margin-top: 4px; }
+
+/* Success screen */
+.success-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 64px 32px; flex: 1; }
+.success-icon { width: 80px; height: 80px; border-radius: 50%; background: #C2FCEE; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
+.success-order-num { font-size: 32px; font-weight: 700; color: #0070F2; letter-spacing: -0.5px; margin: 8px 0; }
+
+/* Detail row */
+.detail-row { display: flex; gap: 32px; flex-wrap: wrap; padding: 16px 0; border-bottom: 1px solid #EAE4EE; }
+.detail-row:last-child { border-bottom: none; }
+.detail-field { display: flex; flex-direction: column; gap: 2px; min-width: 140px; }
+.detail-field-label { font-size: 11px; font-weight: 700; color: #556B82; text-transform: uppercase; letter-spacing: 0.06em; }
+.detail-field-val { font-size: 14px; color: #131E29; font-weight: 600; }
+
+/* KPI strip */
+.kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+.kpi-card { background: #fff; border-radius: 10px; box-shadow: 0px 2px 4px rgba(34,53,72,0.2); padding: 16px 20px; }
+.kpi-val { font-size: 28px; font-weight: 700; color: #131E29; line-height: 1; }
+.kpi-label { font-size: 12px; color: #556B82; margin-top: 4px; font-weight: 600; }
+
+/* Tabs */
+.page-tabs { display: flex; border-bottom: 1px solid #D9D9D9; background: #fff; padding: 0 32px; }
+.page-tab { padding: 12px 16px; font-size: 14px; font-weight: 700; color: #556B82; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.12s; white-space: nowrap; }
+.page-tab:hover { color: #131E29; }
+.page-tab.active { color: #0070F2; border-bottom-color: #0070F2; }
+
+/* Message strip */
+.msg-strip { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; border-radius: 8px; font-size: 14px; margin-bottom: 16px; }
+.msg-strip.info { background: #D1EFFF; color: #0057BF; }
+.msg-strip.success { background: #C2FCEE; color: #1B6B47; }
+.msg-strip.warning { background: #FFF3B8; color: #7A5800; }
+.msg-strip.error { background: #FFDBEF; color: #7A0030; }
+
+/* Object header */
+.obj-header { background: #fff; border-radius: 10px; box-shadow: 0px 2px 4px rgba(34,53,72,0.2); padding: 20px 24px; margin-bottom: 16px; }
+.obj-title { font-size: 20px; font-weight: 700; color: #131E29; }
+.obj-subtitle { font-size: 13px; color: #556B82; margin-top: 2px; }
+.obj-attrs { display: flex; gap: 32px; margin-top: 14px; flex-wrap: wrap; padding-top: 14px; border-top: 1px solid #EAE4EE; }
+.obj-attr-label { font-size: 11px; font-weight: 700; color: #556B82; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+.obj-attr-val { font-size: 14px; color: #131E29; font-weight: 600; }
+
+/* Popover/tooltip */
+.comment-box { background: #1D2D3E; color: #fff; border-radius: 8px; padding: 12px 16px; font-size: 13px; margin-top: 8px; position: relative; }
+.comment-box::before { content: ''; position: absolute; top: -6px; left: 20px; border: 6px solid transparent; border-top: 0; border-bottom-color: #1D2D3E; }
+
+/* Empty state */
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 32px; color: #556B82; text-align: center; }
+.empty-state svg { opacity: 0.3; margin-bottom: 16px; }
+.empty-title { font-size: 16px; font-weight: 700; color: #131E29; margin-bottom: 6px; }
+.empty-sub { font-size: 14px; color: #556B82; }
+
+/* Dialog overlay */
+.dialog-overlay { position: fixed; inset: 0; background: rgba(34,53,72,0.4); z-index: 200; display: flex; align-items: center; justify-content: center; }
+.dialog { background: #fff; border-radius: 10px; box-shadow: 0px 20px 80px rgba(34,53,72,0.25); width: 480px; max-width: 95vw; }
+.dialog-header { padding: 16px 20px; border-bottom: 1px solid #D9D9D9; display: flex; align-items: center; justify-content: space-between; }
+.dialog-title { font-size: 16px; font-weight: 700; }
+.dialog-body { padding: 20px; }
+.dialog-footer { padding: 14px 20px; border-top: 1px solid #D9D9D9; display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+
+/* Chip/count */
+.count-chip { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #0070F2; color: #fff; font-size: 11px; font-weight: 700; }
+
+/* Scroll area */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #BCC3CA; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const { useState, useEffect, useRef } = React;
+
+// ── Data helpers ─────────────────────────────────────────────────
+const STORAGE_KEY = 'sap_sales_orders_v3';
+const generateId = () => 'REQ-' + String(Date.now()).slice(-6);
+const generateSONum = () => 'SO-' + (4500000000 + Math.floor(Math.random() * 100000));
+
+const STATUS_LABELS = {
+  draft: 'Draft',
+  pending_approval1: 'Pending L1 Approval',
+  pending_approval2: 'Pending L2 Approval',
+  approved: 'Fully Approved',
+  rejected: 'Rejected',
+  created: 'SAP Order Created'
+};
+const STATUS_BADGE = {
+  draft: 'badge-draft',
+  pending_approval1: 'badge-pending',
+  pending_approval2: 'badge-approved1',
+  approved: 'badge-approved',
+  rejected: 'badge-rejected',
+  created: 'badge-created'
+};
+
+const INITIAL_ORDERS = [
+{
+  id: 'REQ-100001', soNumber: 'SO-4500012345', status: 'created',
+  customer: 'Siemens AG', customerCode: 'C-1001',
+  soldTo: 'DE-Berlin', shipTo: 'DE-Munich',
+  requestedDate: '2026-04-10', deliveryDate: '2026-04-20',
+  currency: 'EUR', paymentTerms: 'Net 30',
+  salesOrg: '1000', distributionChannel: '10', division: '00',
+  orderType: 'OR', salesRep: 'John Smith',
+  priority: 'High', notes: 'Urgent delivery required.',
+  items: [
+  { id: 1, material: 'MAT-001', description: 'Industrial Pump A', qty: 10, uom: 'EA', price: 1200, total: 12000 },
+  { id: 2, material: 'MAT-003', description: 'Seal Kit Pro', qty: 50, uom: 'EA', price: 45, total: 2250 }],
+
+  totalAmount: 14250,
+  history: [
+  { action: 'Submitted', by: 'John Smith', date: '2026-04-08 09:12', comment: '' },
+  { action: 'L1 Approved', by: 'Sarah Lee', date: '2026-04-09 10:30', comment: 'Looks good.' },
+  { action: 'L2 Approved', by: 'Michael Chan', date: '2026-04-10 11:00', comment: 'Approved.' },
+  { action: 'SAP Order Created', by: 'System', date: '2026-04-10 11:01', comment: '' }],
+
+  createdAt: '2026-04-08'
+},
+{
+  id: 'REQ-100002', soNumber: null, status: 'pending_approval1',
+  customer: 'BMW Group', customerCode: 'C-1002',
+  soldTo: 'DE-Hamburg', shipTo: 'DE-Leipzig',
+  requestedDate: '2026-04-25', deliveryDate: '2026-05-05',
+  currency: 'EUR', paymentTerms: 'Net 60',
+  salesOrg: '1000', distributionChannel: '10', division: '00',
+  orderType: 'OR', salesRep: 'Anna Müller',
+  priority: 'Medium', notes: '',
+  items: [
+  { id: 1, material: 'MAT-007', description: 'Control Module X9', qty: 5, uom: 'EA', price: 3400, total: 17000 }],
+
+  totalAmount: 17000,
+  history: [
+  { action: 'Submitted', by: 'Anna Müller', date: '2026-04-22 14:00', comment: '' }],
+
+  createdAt: '2026-04-22'
+},
+{
+  id: 'REQ-100003', soNumber: null, status: 'rejected',
+  customer: 'Bosch GmbH', customerCode: 'C-1003',
+  soldTo: 'DE-Stuttgart', shipTo: 'DE-Mannheim',
+  requestedDate: '2026-04-15', deliveryDate: '2026-04-28',
+  currency: 'EUR', paymentTerms: 'Net 30',
+  salesOrg: '2000', distributionChannel: '20', division: '00',
+  orderType: 'OR', salesRep: 'John Smith',
+  priority: 'Low', notes: 'Standard order.',
+  items: [
+  { id: 1, material: 'MAT-002', description: 'Valve Assembly B', qty: 20, uom: 'EA', price: 890, total: 17800 }],
+
+  totalAmount: 17800,
+  history: [
+  { action: 'Submitted', by: 'John Smith', date: '2026-04-12 08:30', comment: '' },
+  { action: 'Rejected (L1)', by: 'Sarah Lee', date: '2026-04-13 09:00', comment: 'Price not aligned with contract. Please revise.' }],
+
+  createdAt: '2026-04-12'
+}];
+
+
+function loadOrders() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    return s ? JSON.parse(s) : INITIAL_ORDERS;
+  } catch {return INITIAL_ORDERS;}
+}
+function saveOrders(orders) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+}
+
+// ── Icons ─────────────────────────────────────────────────────────
+const Icon = ({ name, size = 16, ...props }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (ref.current && window.lucide) lucide.createIcons({ icons: { [name]: lucide[name] }, rootNode: ref.current.parentNode });
+  }, [name]);
+  return <i ref={ref} data-lucide={name} style={{ width: size, height: size, display: 'inline-flex', flexShrink: 0 }} {...props}></i>;
+};
+
+// ── Lucide icon render ────────────────────────────────────────────
+function LucideIcon({ name, size = 16, color, style = {} }) {
+  const elRef = useRef(null);
+  useEffect(() => {
+    if (!elRef.current) return;
+    const el = elRef.current;
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const paths = {
+      'home': ['M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z', 'M9 22V12h6v10'],
+      'list': ['M8 6h13', 'M8 12h13', 'M8 18h13', 'M3 6h.01', 'M3 12h.01', 'M3 18h.01'],
+      'plus': ['M12 5v14', 'M5 12h14'],
+      'search': ['circle cx=11 cy=11 r=8', 'M21 21l-4.35-4.35'],
+      'filter': ['polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"'],
+      'bell': ['M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9', 'M13.73 21a2 2 0 0 1-3.46 0'],
+      'settings': ['circle cx=12 cy=12 r=3', 'path d=M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z'],
+      'user': ['path d=M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2', 'circle cx=12 cy=7 r=4'],
+      'check': ['polyline points="20 6 9 17 4 12"'],
+      'check-circle': ['path d=M22 11.08V12a10 10 0 1 1-5.93-9.14', 'polyline points="22 4 12 14.01 9 11.01"'],
+      'x': ['M18 6 6 18', 'M6 6l12 12'],
+      'x-circle': ['circle cx=12 cy=12 r=10', 'M15 9l-6 6', 'M9 9l6 6'],
+      'chevron-right': ['M9 18l6-6-6-6'],
+      'chevron-down': ['M6 9l6 6 6-6'],
+      'chevron-left': ['M15 18l-6-6 6-6'],
+      'file-text': ['path d=M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z', 'polyline points="14 2 14 8 20 8"', 'line x1=16 y1=13 x2=8 y2=13', 'line x1=16 y1=17 x2=8 y2=17', 'polyline points="10 9 9 9 8 9"'],
+      'clock': ['circle cx=12 cy=12 r=10', 'polyline points="12 6 12 12 16 14"'],
+      'arrow-right': ['M5 12h14', 'M12 5l7 7-7 7'],
+      'send': ['line x1=22 y1=2 x2=11 y2=13', 'polygon points="22 2 15 22 11 13 2 9 22 2"'],
+      'alert-circle': ['circle cx=12 cy=12 r=10', 'line x1=12 y1=8 x2=12 y2=12', 'line x1=12 y1=16 x2=12.01 y2=16'],
+      'info': ['circle cx=12 cy=12 r=10', 'line x1=12 y1=16 x2=12 y2=12', 'line x1=12 y1=8 x2=12.01 y2=8'],
+      'trash-2': ['polyline points="3 6 5 6 21 6"', 'path d=M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2'],
+      'edit-2': ['path d=M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z'],
+      'download': ['path d=M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4', 'polyline points="7 10 12 15 17 10"', 'line x1=12 y1=15 x2=12 y2=3'],
+      'refresh-cw': ['polyline points="23 4 23 10 17 10"', 'polyline points="1 20 1 14 7 14"', 'path d=M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15'],
+      'package': ['line x1=16.5 y1=9.4 x2=7.5 y2=4.21', 'path d=M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z', 'polyline points="3.27 6.96 12 12.01 20.73 6.96"', 'line x1=12 y1=22.08 x2=12 y2=12'],
+      'menu': ['line x1=3 y1=12 x2=21 y2=12', 'line x1=3 y1=6 x2=21 y2=6', 'line x1=3 y1=18 x2=21 y2=18'],
+      'log-out': ['path d=M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4', 'polyline points="16 17 21 12 16 7"', 'line x1=21 y1=12 x2=9 y2=12'],
+      'truck': ['rect x=1 y=3 width=15 height=13', 'polygon points="16 8 20 8 23 11 23 16 16 16 16 8"', 'circle cx=5.5 cy=18.5 r=2.5', 'circle cx=18.5 cy=18.5 r=2.5'],
+      'credit-card': ['rect x=1 y=4 width=22 height=16 rx=2 ry=2', 'line x1=1 y1=10 x2=23 y2=10'],
+      'file-invoice': ['path d=M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z', 'polyline points="14 2 14 8 20 8"', 'line x1=16 y1=13 x2=8 y2=13', 'line x1=16 y1=17 x2=8 y2=17'],
+      'dollar-sign': ['line x1=12 y1=1 x2=12 y2=23', 'path d=M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6'],
+      'layers': ['polygon points="12 2 2 7 12 12 22 7 12 2"', 'polyline points="2 17 12 22 22 17"', 'polyline points="2 12 12 17 22 12"'],
+      'activity': ['polyline points="22 12 18 12 15 21 9 3 6 12 2 12"'],
+      'map-pin': ['path d=M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z', 'circle cx=12 cy=10 r=3'],
+      'calendar': ['rect x=3 y=4 width=18 height=18 rx=2 ry=2', 'line x1=16 y1=2 x2=16 y2=6', 'line x1=8 y1=2 x2=8 y2=6', 'line x1=3 y1=10 x2=21 y2=10'],
+      'clipboard': ['path d=M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2', 'rect x=8 y=2 width=8 height=4 rx=1 ry=1'],
+      'external-link': ['path d=M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6', 'polyline points="15 3 21 3 21 9"', 'line x1=10 y1=14 x2=21 y2=3']
+    };
+    el.innerHTML = '';
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('width', size);svg.setAttribute('height', size);
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', color || 'currentColor');
+    svg.setAttribute('stroke-width', '2');
+    svg.setAttribute('stroke-linecap', 'round');
+    svg.setAttribute('stroke-linejoin', 'round');
+    const defs = paths[name] || [];
+    defs.forEach((d) => {
+      if (d.startsWith('circle ')) {
+        const attrs = d.slice(7).split(' ').reduce((a, p) => {const [k, v] = p.split('=');a[k] = v;return a;}, {});
+        const c = document.createElementNS(svgNS, 'circle');
+        Object.entries(attrs).forEach(([k, v]) => c.setAttribute(k, v));
+        svg.appendChild(c);
+      } else if (d.startsWith('line ')) {
+        const attrs = d.slice(5).split(' ').reduce((a, p) => {const [k, v] = p.split('=');a[k] = v;return a;}, {});
+        const l = document.createElementNS(svgNS, 'line');
+        Object.entries(attrs).forEach(([k, v]) => l.setAttribute(k, v));
+        svg.appendChild(l);
+      } else if (d.startsWith('polygon ') || d.startsWith('polyline ')) {
+        const tag = d.split(' ')[0];
+        const rest = d.slice(tag.length + 1);
+        const attrs = {};
+        rest.replace(/(\w[\w-]*)=("([^"]*)"|(\S+))/g, (_, k, _q, q1, q2) => {attrs[k] = q1 !== undefined ? q1 : q2;});
+        const poly = document.createElementNS(svgNS, tag);
+        Object.entries(attrs).forEach(([k, v]) => poly.setAttribute(k, v));
+        svg.appendChild(poly);
+      } else if (d.startsWith('path ')) {
+        const m = d.match(/d=(.+)/);
+        if (m) {const p = document.createElementNS(svgNS, 'path');p.setAttribute('d', m[1].replace(/^"|"$/g, ''));svg.appendChild(p);}
+      } else {
+        const p = document.createElementNS(svgNS, 'path');
+        p.setAttribute('d', d);
+        svg.appendChild(p);
+      }
+    });
+    el.appendChild(svg);
+  }, [name, size, color]);
+  return <span ref={elRef} style={{ display: 'inline-flex', alignItems: 'center', flexShrink: 0, ...style }}></span>;
+}
+
+// ── Shell Bar ────────────────────────────────────────────────────
+function ShellBar({ onMenuToggle }) {
+  return (
+    <div className="shell-bar">
+      <button className="shell-btn" onClick={onMenuToggle}><LucideIcon name="menu" size={20} color="rgba(255,255,255,0.7)" /></button>
+      <div className="shell-logo">
+        <div style={{ background: '#0070F2', borderRadius: 6, padding: '4px 8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img src="assets/sap-logo.svg" alt="SAP" style={{ height: 16, filter: 'brightness(0) invert(1)' }} />
+        </div>
+      </div>
+      <div className="shell-divider"></div>
+      <span className="shell-title">Sales Order Portal</span>
+      <div className="shell-spacer"></div>
+      <button className="shell-btn"><LucideIcon name="search" size={18} color="rgba(255,255,255,0.7)" /></button>
+      <div className="notif-wrap">
+        <button className="shell-btn"><LucideIcon name="bell" size={18} color="rgba(255,255,255,0.7)" /></button>
+        <span className="notif-dot"></span>
+      </div>
+      <button className="shell-btn"><LucideIcon name="settings" size={18} color="rgba(255,255,255,0.7)" /></button>
+      <div className="shell-divider"></div>
+      <div className="avatar-chip" title="John Smith">JS</div>
+    </div>);
+
+}
+
+// ── Side Nav ─────────────────────────────────────────────────────
+function SideNav({ collapsed, activePage, onNav }) {
+  const items = [
+  { id: 'home', icon: 'home', label: 'Overview' },
+  { id: 'list', icon: 'list', label: 'My sales orders' },
+  { id: 'create', icon: 'plus', label: 'Create sales order' },
+  { id: 'pending', icon: 'clock', label: 'Pending approvals' },
+  { id: 'transactions', icon: 'layers', label: 'Transaction status' }];
+
+  return (
+    <nav className={`side-nav ${collapsed ? 'collapsed' : ''}`}>
+      <div style={{ padding: '8px 0', flex: 1 }}>
+        {!collapsed && <div className="nav-section-title">Sales orders</div>}
+        {items.map((item) =>
+        <div key={item.id} className={`nav-item ${activePage === item.id ? 'active' : ''}`} onClick={() => onNav(item.id)} title={collapsed ? item.label : ''}>
+            <LucideIcon name={item.icon} size={16} color={activePage === item.id ? '#0070F2' : '#556B82'} />
+            <span>{item.label}</span>
+          </div>
+        )}
+      </div>
+      <div className="nav-footer">
+        <div className="nav-item" title={collapsed ? 'Sign out' : ''}>
+          <LucideIcon name="log-out" size={16} color="#556B82" />
+          <span>Sign out</span>
+        </div>
+      </div>
+    </nav>);
+
+}
+
+// ── Badge ────────────────────────────────────────────────────────
+function StatusBadge({ status }) {
+  return <span className={`badge ${STATUS_BADGE[status] || 'badge-draft'}`}><span className="badge-dot"></span>{STATUS_LABELS[status] || status}</span>;
+}
+
+// ── Step Progress ────────────────────────────────────────────────
+function StepProgress({ currentStep }) {
+  const steps = ['Request submitted', 'L1 approval', 'L2 approval', 'SAP order created'];
+  return (
+    <div style={{ background: '#fff', borderRadius: 10, boxShadow: '0px 2px 4px rgba(34,53,72,0.2)', padding: '20px 32px', marginBottom: 16 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+        {steps.map((label, i) => {
+          const stepNum = i + 1;
+          const isDone = currentStep > stepNum;
+          const isActive = currentStep === stepNum;
+          return (
+            <React.Fragment key={i}>
+              <div className="step-wrapper">
+                <div className={`step-bubble ${isDone ? 'done' : isActive ? 'active' : 'pending'}`}>
+                  {isDone ? <LucideIcon name="check" size={14} color="#fff" /> : stepNum}
+                </div>
+                <div className={`step-label ${isDone ? 'done' : isActive ? 'active' : ''}`} style={{ marginTop: 6, fontSize: 11, fontWeight: 700, textAlign: 'center', maxWidth: 80 }}>{label}</div>
+              </div>
+              {i < steps.length - 1 && <div className={`step-line ${isDone ? 'done' : ''}`} style={{ marginTop: 15 }}></div>}
+            </React.Fragment>);
+
+        })}
+      </div>
+    </div>);
+
+}
+
+// ── Overview Page ────────────────────────────────────────────────
+function OverviewPage({ orders, onNav, onViewOrder }) {
+  const counts = {
+    total: orders.length,
+    pending: orders.filter((o) => o.status === 'pending_approval1' || o.status === 'pending_approval2').length,
+    created: orders.filter((o) => o.status === 'created').length,
+    rejected: orders.filter((o) => o.status === 'rejected').length
+  };
+  const recent = [...orders].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 5);
+  return (
+    <div className="page-area">
+      <div className="kpi-strip">
+        <div className="kpi-card"><div className="kpi-val">{counts.total}</div><div className="kpi-label">Total requests</div></div>
+        <div className="kpi-card"><div className="kpi-val" style={{ color: '#FF9900' }}>{counts.pending}</div><div className="kpi-label">Pending approval</div></div>
+        <div className="kpi-card"><div className="kpi-val" style={{ color: '#30914C' }}>{counts.created}</div><div className="kpi-label">SAP orders created</div></div>
+        <div className="kpi-card"><div className="kpi-val" style={{ color: '#AA0808' }}>{counts.rejected}</div><div className="kpi-label">Rejected</div></div>
+      </div>
+      <div className="card">
+        <div className="card-header">
+          <span className="card-title">Recent sales order requests</span>
+          <button className="btn btn-ghost btn-sm" onClick={() => onNav('list')}>View all <LucideIcon name="arrow-right" size={13} /></button>
+        </div>
+        <table className="sap-table" style={{ width: '100%' }}>
+          <thead><tr>
+            <th>Request ID</th><th>Customer</th><th>Amount</th><th>Status</th><th>Created</th>
+          </tr></thead>
+          <tbody>
+            {recent.map((o) =>
+            <tr key={o.id} onClick={() => onViewOrder(o)}>
+                <td><span className="table-link">{o.id}</span></td>
+                <td>{o.customer}</td>
+                <td style={{ fontWeight: 700 }}>{o.currency} {o.totalAmount.toLocaleString()}</td>
+                <td><StatusBadge status={o.status} /></td>
+                <td style={{ color: '#556B82', fontSize: 13 }}>{o.createdAt}</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>);
+
+}
+
+// ── Sales Order List Page ────────────────────────────────────────
+function ListPage({ orders, onNav, onViewOrder }) {
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [sortField, setSortField] = useState('createdAt');
+  const [sortDir, setSortDir] = useState('desc');
+
+  const statusFilters = [
+  { key: 'all', label: 'All' },
+  { key: 'pending_approval1', label: 'Pending L1' },
+  { key: 'pending_approval2', label: 'Pending L2' },
+  { key: 'approved', label: 'Approved' },
+  { key: 'created', label: 'SAP created' },
+  { key: 'rejected', label: 'Rejected' }];
+
+
+  const filtered = orders.filter((o) => {
+    const matchSearch = !search || o.id.toLowerCase().includes(search.toLowerCase()) || o.customer.toLowerCase().includes(search.toLowerCase());
+    const matchStatus = statusFilter === 'all' || o.status === statusFilter;
+    return matchSearch && matchStatus;
+  }).sort((a, b) => {
+    const av = a[sortField] || '';const bv = b[sortField] || '';
+    return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+  });
+
+  const toggleSort = (field) => {
+    if (sortField === field) setSortDir((d) => d === 'asc' ? 'desc' : 'asc');else
+    {setSortField(field);setSortDir('asc');}
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+      <div className="page-header">
+        <div className="page-header-top">
+          <div>
+            <div className="breadcrumb"><span>Sales order management</span><LucideIcon name="chevron-right" size={12} /><span>My sales orders</span></div>
+            <div className="page-title">My sales orders <span className="count-chip" style={{ marginLeft: 8 }}>{filtered.length}</span></div>
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="btn btn-secondary btn-sm"><LucideIcon name="download" size={13} /> Export</button>
+            <button className="btn btn-primary" onClick={() => onNav('create')}><LucideIcon name="plus" size={14} /> Create sales order</button>
+          </div>
+        </div>
+      </div>
+      <div className="filter-bar">
+        <div className="search-box">
+          <LucideIcon name="search" size={14} color="#7F8C9A" />
+          <input placeholder="Search by ID or customer…" value={search} onChange={(e) => setSearch(e.target.value)} />
+        </div>
+        <LucideIcon name="filter" size={14} color="#556B82" style={{ marginLeft: 4 }} />
+        {statusFilters.map((f) =>
+        <button key={f.key} className={`filter-chip ${statusFilter === f.key ? 'active' : ''}`} onClick={() => setStatusFilter(f.key)}>{f.label}</button>
+        )}
+      </div>
+      <div style={{ flex: 1, overflow: 'auto', padding: '16px 32px' }}>
+        <div className="card" style={{ marginBottom: 0 }}>
+          <table className="sap-table" style={{ width: '100%' }}>
+            <thead><tr>
+              <th onClick={() => toggleSort('id')}>Request ID {sortField === 'id' ? sortDir === 'asc' ? '↑' : '↓' : ''}</th>
+              <th onClick={() => toggleSort('customer')}>Customer {sortField === 'customer' ? sortDir === 'asc' ? '↑' : '↓' : ''}</th>
+              <th>SO number</th>
+              <th>Total amount</th>
+              <th>Delivery date</th>
+              <th onClick={() => toggleSort('status')}>Status</th>
+              <th onClick={() => toggleSort('createdAt')}>Created {sortField === 'createdAt' ? sortDir === 'asc' ? '↑' : '↓' : ''}</th>
+            </tr></thead>
+            <tbody>
+              {filtered.length === 0 &&
+              <tr><td colSpan={7}><div className="empty-state"><LucideIcon name="file-text" size={40} color="#BCC3CA" /><div className="empty-title">No records found</div><div className="empty-sub">Try adjusting your search or filters.</div></div></td></tr>
+              }
+              {filtered.map((o) =>
+              <tr key={o.id} onClick={() => onViewOrder(o)}>
+                  <td><span className="table-link">{o.id}</span></td>
+                  <td><div style={{ fontWeight: 600 }}>{o.customer}</div><div style={{ fontSize: 12, color: '#556B82' }}>{o.customerCode}</div></td>
+                  <td>{o.soNumber ? <span style={{ color: '#0070F2', fontWeight: 700 }}>{o.soNumber}</span> : <span style={{ color: '#BCC3CA' }}>—</span>}</td>
+                  <td style={{ fontWeight: 700 }}>{o.currency} {o.totalAmount.toLocaleString()}</td>
+                  <td style={{ color: '#556B82', fontSize: 13 }}>{o.deliveryDate}</td>
+                  <td><StatusBadge status={o.status} /></td>
+                  <td style={{ color: '#556B82', fontSize: 13 }}>{o.createdAt}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>);
+
+}
+
+// ── Create Form Page ─────────────────────────────────────────────
+function CreatePage({ onSubmit, onCancel }) {
+  const [form, setForm] = useState({
+    customer: '', customerCode: '', soldTo: '', shipTo: '',
+    requestedDate: '', deliveryDate: '', currency: 'EUR',
+    paymentTerms: 'Net 30', salesOrg: '1000', distributionChannel: '10',
+    division: '00', orderType: 'OR', salesRep: 'John Smith',
+    priority: 'Medium', notes: ''
+  });
+  const [items, setItems] = useState([
+  { id: 1, material: '', description: '', qty: 1, uom: 'EA', price: 0, total: 0 }]
+  );
+  const [errors, setErrors] = useState({});
+  const [step, setStep] = useState(1); // 1 = form, 2 = review
+
+  const set = (key, val) => setForm((f) => ({ ...f, [key]: val }));
+
+  const calcItems = (its) => its.map((i) => ({ ...i, total: (parseFloat(i.qty) || 0) * (parseFloat(i.price) || 0) }));
+  const totalAmount = items.reduce((s, i) => s + i.total, 0);
+
+  const addItem = () => setItems((its) => [...its, { id: Date.now(), material: '', description: '', qty: 1, uom: 'EA', price: 0, total: 0 }]);
+  const removeItem = (id) => setItems((its) => its.filter((i) => i.id !== id));
+  const updateItem = (id, key, val) => setItems((its) => calcItems(its.map((i) => i.id === id ? { ...i, [key]: val } : i)));
+
+  const validate = () => {
+    const e = {};
+    if (!form.customer) e.customer = 'Customer is required';
+    if (!form.deliveryDate) e.deliveryDate = 'Delivery date is required';
+    if (!form.requestedDate) e.requestedDate = 'Requested date is required';
+    if (items.some((i) => !i.material)) e.items = 'All items must have a material number';
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleNext = () => {if (validate()) setStep(2);};
+
+  const handleSubmit = () => {
+    const id = generateId();
+    const order = {
+      id, soNumber: null, status: 'pending_approval1',
+      ...form, items, totalAmount,
+      history: [{ action: 'Submitted', by: 'John Smith', date: new Date().toLocaleString(), comment: '' }],
+      createdAt: new Date().toISOString().slice(0, 10)
+    };
+    onSubmit(order);
+  };
+
+  if (step === 2) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+        <div className="page-header">
+          <div className="page-header-top">
+            <div>
+              <div className="breadcrumb">
+                <span className="table-link" onClick={() => onCancel()}>My sales orders</span>
+                <LucideIcon name="chevron-right" size={12} />
+                <span>Create sales order</span>
+                <LucideIcon name="chevron-right" size={12} />
+                <span>Review</span>
+              </div>
+              <div className="page-title">Review & submit</div>
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button className="btn btn-secondary" onClick={() => setStep(1)}><LucideIcon name="chevron-left" size={14} /> Back</button>
+              <button className="btn btn-primary" onClick={handleSubmit}><LucideIcon name="send" size={14} /> Submit for approval</button>
+            </div>
+          </div>
+        </div>
+        <div className="page-area">
+          <div className="msg-strip info"><LucideIcon name="info" size={16} /><span>Please review your order details before submitting. Once submitted, the request will go to L1 approval.</span></div>
+          <div className="card">
+            <div className="card-header"><span className="card-title">Order header</span></div>
+            <div className="card-body">
+              <div className="detail-row">
+                <div className="detail-field"><div className="detail-field-label">Customer</div><div className="detail-field-val">{form.customer}</div></div>
+                <div className="detail-field"><div className="detail-field-label">Customer code</div><div className="detail-field-val">{form.customerCode || '—'}</div></div>
+                <div className="detail-field"><div className="detail-field-label">Order type</div><div className="detail-field-val">{form.orderType}</div></div>
+                <div className="detail-field"><div className="detail-field-label">Sales org</div><div className="detail-field-val">{form.salesOrg} / {form.distributionChannel} / {form.division}</div></div>
+              </div>
+              <div className="detail-row">
+                <div className="detail-field"><div className="detail-field-label">Sold-to</div><div className="detail-field-val">{form.soldTo || '—'}</div></div>
+                <div className="detail-field"><div className="detail-field-label">Ship-to</div><div className="detail-field-val">{form.shipTo || '—'}</div></div>
+                <div className="detail-field"><div className="detail-field-label">Requested date</div><div className="detail-field-val">{form.requestedDate}</div></div>
+                <div className="detail-field"><div className="detail-field-label">Delivery date</div><div className="detail-field-val">{form.deliveryDate}</div></div>
+              </div>
+              <div className="detail-row">
+                <div className="detail-field"><div className="detail-field-label">Currency</div><div className="detail-field-val">{form.currency}</div></div>
+                <div className="detail-field"><div className="detail-field-label">Payment terms</div><div className="detail-field-val">{form.paymentTerms}</div></div>
+                <div className="detail-field"><div className="detail-field-label">Priority</div><div className="detail-field-val">{form.priority}</div></div>
+                <div className="detail-field"><div className="detail-field-label">Sales rep</div><div className="detail-field-val">{form.salesRep}</div></div>
+              </div>
+              {form.notes && <div className="detail-row"><div className="detail-field" style={{ width: '100%' }}><div className="detail-field-label">Notes</div><div className="detail-field-val">{form.notes}</div></div></div>}
+            </div>
+          </div>
+          <div className="card">
+            <div className="card-header">
+              <span className="card-title">Line items</span>
+              <span style={{ fontSize: 13, color: '#556B82' }}>{items.length} item{items.length !== 1 ? 's' : ''}</span>
+            </div>
+            <table className="line-table" style={{ width: '100%' }}>
+              <thead><tr><th>#</th><th>Material</th><th>Description</th><th>Qty</th><th>UoM</th><th style={{ textAlign: 'right' }}>Unit price ({form.currency})</th><th style={{ textAlign: 'right' }}>Total ({form.currency})</th></tr></thead>
+              <tbody>
+                {items.map((item, idx) =>
+                <tr key={item.id}>
+                    <td style={{ color: '#556B82', fontSize: 12 }}>{String(idx + 1).padStart(2, '0')}</td>
+                    <td style={{ fontWeight: 700 }}>{item.material}</td>
+                    <td>{item.description}</td>
+                    <td>{item.qty}</td><td>{item.uom}</td>
+                    <td style={{ textAlign: 'right' }}>{parseFloat(item.price).toLocaleString()}</td>
+                    <td style={{ textAlign: 'right', fontWeight: 700 }}>{item.total.toLocaleString()}</td>
+                  </tr>
+                )}
+                <tr style={{ background: '#F5F6F7' }}>
+                  <td colSpan={5}></td>
+                  <td style={{ textAlign: 'right', fontWeight: 700, fontSize: 13, paddingTop: 10 }}>Total amount</td>
+                  <td style={{ textAlign: 'right', fontWeight: 700, fontSize: 16, color: '#0070F2' }}>{form.currency} {totalAmount.toLocaleString()}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>);
+
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+      <div className="page-header">
+        <div className="page-header-top">
+          <div>
+            <div className="breadcrumb"><span className="table-link" onClick={onCancel}>My sales orders</span><LucideIcon name="chevron-right" size={12} /><span>Create sales order</span></div>
+            <div className="page-title">Create sales order request</div>
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="btn btn-secondary" onClick={onCancel}>Cancel</button>
+            <button className="btn btn-primary" onClick={handleNext}>Review & submit <LucideIcon name="chevron-right" size={14} /></button>
+          </div>
+        </div>
+      </div>
+      <div className="page-area">
+        {/* Order Header */}
+        <div className="card">
+          <div className="card-header"><span className="card-title">Order header</span><span style={{ fontSize: 12, color: '#556B82' }}>* Required fields</span></div>
+          <div className="card-body">
+            <div className="form-grid" style={{ marginBottom: 16 }}>
+              <div className="form-field">
+                <label className="form-label required">Customer name</label>
+                <input className={`form-input ${errors.customer ? 'error' : ''}`} placeholder="e.g. Siemens AG" value={form.customer} onChange={(e) => set('customer', e.target.value)} />
+                {errors.customer && <span className="error-msg">{errors.customer}</span>}
+              </div>
+              <div className="form-field">
+                <label className="form-label">Customer code</label>
+                <input className="form-input" placeholder="e.g. C-1001" value={form.customerCode} onChange={(e) => set('customerCode', e.target.value)} />
+              </div>
+              <div className="form-field">
+                <label className="form-label">Order type</label>
+                <select className="form-select" value={form.orderType} onChange={(e) => set('orderType', e.target.value)}>
+                  <option value="OR">OR – Standard order</option>
+                  <option value="CR">CR – Credit memo request</option>
+                  <option value="DR">DR – Debit memo request</option>
+                  <option value="RO">RO – Rush order</option>
+                </select>
+              </div>
+              <div className="form-field">
+                <label className="form-label">Priority</label>
+                <select className="form-select" value={form.priority} onChange={(e) => set('priority', e.target.value)}>
+                  <option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
+                </select>
+              </div>
+            </div>
+            <div className="form-grid form-grid-3" style={{ marginBottom: 16 }}>
+              <div className="form-field">
+                <label className="form-label">Sales organization</label>
+                <select className="form-select" value={form.salesOrg} onChange={(e) => set('salesOrg', e.target.value)}>
+                  <option value="1000">1000 – Germany</option>
+                  <option value="2000">2000 – UK</option>
+                  <option value="3000">3000 – USA</option>
+                </select>
+              </div>
+              <div className="form-field">
+                <label className="form-label">Distribution channel</label>
+                <select className="form-select" value={form.distributionChannel} onChange={(e) => set('distributionChannel', e.target.value)}>
+                  <option value="10">10 – Direct</option>
+                  <option value="20">20 – Retail</option>
+                </select>
+              </div>
+              <div className="form-field">
+                <label className="form-label">Division</label>
+                <select className="form-select" value={form.division} onChange={(e) => set('division', e.target.value)}>
+                  <option value="00">00 – Cross-division</option>
+                  <option value="01">01 – Pumps</option>
+                  <option value="02">02 – Valves</option>
+                </select>
+              </div>
+            </div>
+            <div className="form-grid">
+              <div className="form-field">
+                <label className="form-label">Sold-to party</label>
+                <input className="form-input" placeholder="Location / party code" value={form.soldTo} onChange={(e) => set('soldTo', e.target.value)} />
+              </div>
+              <div className="form-field">
+                <label className="form-label">Ship-to party</label>
+                <input className="form-input" placeholder="Location / party code" value={form.shipTo} onChange={(e) => set('shipTo', e.target.value)} />
+              </div>
+              <div className="form-field">
+                <label className="form-label required">Requested delivery date</label>
+                <input type="date" className={`form-input ${errors.requestedDate ? 'error' : ''}`} value={form.requestedDate} onChange={(e) => set('requestedDate', e.target.value)} />
+                {errors.requestedDate && <span className="error-msg">{errors.requestedDate}</span>}
+              </div>
+              <div className="form-field">
+                <label className="form-label required">Confirmed delivery date</label>
+                <input type="date" className={`form-input ${errors.deliveryDate ? 'error' : ''}`} value={form.deliveryDate} onChange={(e) => set('deliveryDate', e.target.value)} />
+                {errors.deliveryDate && <span className="error-msg">{errors.deliveryDate}</span>}
+              </div>
+              <div className="form-field">
+                <label className="form-label">Currency</label>
+                <select className="form-select" value={form.currency} onChange={(e) => set('currency', e.target.value)}>
+                  <option>EUR</option><option>USD</option><option>GBP</option><option>JPY</option><option>THB</option>
+                </select>
+              </div>
+              <div className="form-field">
+                <label className="form-label">Payment terms</label>
+                <select className="form-select" value={form.paymentTerms} onChange={(e) => set('paymentTerms', e.target.value)}>
+                  <option>Net 30</option><option>Net 60</option><option>Net 90</option><option>Immediate</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Line Items */}
+        <div className="card">
+          <div className="card-header">
+            <span className="card-title">Line items</span>
+            <button className="btn btn-secondary btn-sm" onClick={addItem}><LucideIcon name="plus" size={13} /> Add item</button>
+          </div>
+          {errors.items && <div style={{ padding: '8px 16px' }}><span className="error-msg">{errors.items}</span></div>}
+          <div style={{ overflowX: 'auto' }}>
+            <table className="line-table" style={{ width: '100%' }}>
+              <thead><tr>
+                <th style={{ width: 32 }}>#</th>
+                <th style={{ width: 130 }}>Material *</th>
+                <th>Description</th>
+                <th style={{ width: 70 }}>Qty</th>
+                <th style={{ width: 80 }}>UoM</th>
+                <th style={{ width: 120, textAlign: 'right' }}>Unit price ({form.currency})</th>
+                <th style={{ width: 120, textAlign: 'right' }}>Total</th>
+                <th style={{ width: 36 }}></th>
+              </tr></thead>
+              <tbody>
+                {items.map((item, idx) =>
+                <tr key={item.id}>
+                    <td style={{ color: '#556B82', fontSize: 12 }}>{String(idx + 1).padStart(2, '0')}</td>
+                    <td className="td-input"><input className="form-input" style={{ width: '100%', fontSize: 13 }} placeholder="MAT-XXX" value={item.material} onChange={(e) => updateItem(item.id, 'material', e.target.value)} /></td>
+                    <td className="td-input"><input className="form-input" style={{ width: '100%', fontSize: 13 }} placeholder="Description" value={item.description} onChange={(e) => updateItem(item.id, 'description', e.target.value)} /></td>
+                    <td className="td-input"><input type="number" className="form-input" style={{ width: '100%', fontSize: 13, textAlign: 'right' }} min="1" value={item.qty} onChange={(e) => updateItem(item.id, 'qty', e.target.value)} /></td>
+                    <td className="td-input">
+                      <select className="form-select" style={{ width: '100%', fontSize: 13 }} value={item.uom} onChange={(e) => updateItem(item.id, 'uom', e.target.value)}>
+                        <option>EA</option><option>KG</option><option>L</option><option>M</option><option>BOX</option><option>SET</option>
+                      </select>
+                    </td>
+                    <td className="td-input"><input type="number" className="form-input" style={{ width: '100%', fontSize: 13, textAlign: 'right' }} min="0" value={item.price} onChange={(e) => updateItem(item.id, 'price', e.target.value)} /></td>
+                    <td style={{ textAlign: 'right', fontWeight: 700, paddingRight: 12 }}>{item.total.toLocaleString()}</td>
+                    <td><button className="btn btn-ghost btn-sm" style={{ color: '#AA0808', padding: '0 6px', fontSize: 18, fontWeight: 700, lineHeight: 1 }} onClick={() => removeItem(item.id)} disabled={items.length === 1}><LucideIcon name="x" size={16} color="#AA0808" /></button></td>
+                  </tr>
+                )}
+                <tr style={{ background: '#F5F6F7' }}>
+                  <td colSpan={5}></td>
+                  <td style={{ textAlign: 'right', fontWeight: 700, padding: '10px 12px' }}>Total</td>
+                  <td style={{ textAlign: 'right', fontWeight: 700, color: '#0070F2', fontSize: 16 }}>{form.currency} {totalAmount.toLocaleString()}</td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Notes */}
+        <div className="card">
+          <div className="card-header"><span className="card-title">Notes & remarks</span></div>
+          <div className="card-body">
+            <div className="form-field">
+              <label className="form-label">Internal notes</label>
+              <textarea className="form-textarea" style={{ width: '100%' }} placeholder="Add any relevant notes for approvers…" value={form.notes} onChange={(e) => set('notes', e.target.value)} rows={3}></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>);
+
+}
+
+// ── Approval Dialog ──────────────────────────────────────────────
+function ApprovalDialog({ level, onApprove, onReject, onClose }) {
+  const [comment, setComment] = useState('');
+  const approver = level === 1 ? 'Sarah Lee (Sales Manager)' : 'Michael Chan (VP Sales)';
+  return (
+    <div className="dialog-overlay" onClick={onClose}>
+      <div className="dialog" onClick={(e) => e.stopPropagation()}>
+        <div className="dialog-header">
+          <span className="dialog-title">L{level} Approval — {approver}</span>
+          <button className="btn btn-ghost btn-sm" onClick={onClose}><LucideIcon name="x" size={16} /></button>
+        </div>
+        <div className="dialog-body">
+          <div className="msg-strip info" style={{ marginBottom: 16 }}>
+            <LucideIcon name="info" size={16} />
+            <span>You are acting as <strong>{approver}</strong>. Please review and approve or reject.</span>
+          </div>
+          <div className="form-field">
+            <label className="form-label">Comment (optional)</label>
+            <textarea className="form-textarea" style={{ width: '100%' }} placeholder="Add a comment for this decision…" value={comment} onChange={(e) => setComment(e.target.value)} rows={3}></textarea>
+          </div>
+        </div>
+        <div className="dialog-footer">
+          <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
+          <button className="btn btn-negative" onClick={() => onReject(comment)}><LucideIcon name="x-circle" size={14} /> Reject</button>
+          <button className="btn btn-positive" onClick={() => onApprove(comment)}><LucideIcon name="check" size={14} /> Approve</button>
+        </div>
+      </div>
+    </div>);
+
+}
+
+// ── Order Detail Page ────────────────────────────────────────────
+function OrderDetailPage({ order, onBack, onUpdateOrder }) {
+  const [showApprovalDialog, setShowApprovalDialog] = useState(false);
+  const [approvalLevel, setApprovalLevel] = useState(1);
+  const [showSuccess, setShowSuccess] = useState(order.status === 'created' && !order._viewed);
+
+  const currentStep = {
+    draft: 1,
+    pending_approval1: 2,
+    pending_approval2: 3,
+    approved: 4,
+    rejected: 2,
+    created: 5
+  }[order.status] || 1;
+
+  const handleApprove = (comment) => {
+    let updated = { ...order };
+    const now = new Date().toLocaleString();
+    if (approvalLevel === 1) {
+      updated.status = 'pending_approval2';
+      updated.history = [...updated.history, { action: 'L1 Approved', by: 'Sarah Lee', date: now, comment }];
+    } else {
+      updated.status = 'approved';
+      updated.history = [...updated.history, { action: 'L2 Approved', by: 'Michael Chan', date: now, comment }];
+      // Simulate SAP creation
+      setTimeout(() => {
+        const soNum = generateSONum();
+        onUpdateOrder({
+          ...updated,
+          status: 'created',
+          soNumber: soNum,
+          history: [...updated.history, { action: 'SAP order created', by: 'System', date: new Date().toLocaleString(), comment: `Sales order ${soNum} created in SAP.` }],
+          _viewed: false
+        });
+      }, 1200);
+    }
+    setShowApprovalDialog(false);
+    onUpdateOrder(updated);
+  };
+
+  const handleReject = (comment) => {
+    const updated = {
+      ...order,
+      status: 'rejected',
+      history: [...order.history, { action: `Rejected (L${approvalLevel})`, by: approvalLevel === 1 ? 'Sarah Lee' : 'Michael Chan', date: new Date().toLocaleString(), comment }]
+    };
+    setShowApprovalDialog(false);
+    onUpdateOrder(updated);
+  };
+
+  const openApproval = (level) => {setApprovalLevel(level);setShowApprovalDialog(true);};
+
+  if (order.status === 'created' && showSuccess) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+        <div className="page-header">
+          <div className="page-header-top">
+            <div>
+              <div className="breadcrumb"><span className="table-link" onClick={onBack}>My sales orders</span><LucideIcon name="chevron-right" size={12} /><span>{order.id}</span></div>
+              <div className="page-title">{order.id}</div>
+            </div>
+            <button className="btn btn-secondary" onClick={() => setShowSuccess(false)}>View details</button>
+          </div>
+        </div>
+        <div className="page-area" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+          <div style={{ background: '#fff', borderRadius: 10, boxShadow: '0px 2px 4px rgba(34,53,72,0.2)', padding: '64px 48px', textAlign: 'center', maxWidth: 520 }}>
+            <div className="success-icon" style={{ margin: '0 auto 24px' }}>
+              <LucideIcon name="check-circle" size={40} color="#30914C" />
+            </div>
+            <div style={{ fontSize: 14, color: '#556B82', marginBottom: 8 }}>SAP Sales order successfully created</div>
+            <div className="success-order-num">{order.soNumber}</div>
+            <div style={{ fontSize: 14, color: '#556B82', marginBottom: 32 }}>Your sales order has been created in SAP SD and is ready for processing.</div>
+            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center', background: '#F5F6F7', borderRadius: 8, padding: '16px 24px', marginBottom: 24 }}>
+              <div style={{ textAlign: 'left' }}><div className="detail-field-label" style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Customer</div><div style={{ fontWeight: 700, fontSize: 14 }}>{order.customer}</div></div>
+              <div style={{ textAlign: 'left' }}><div className="detail-field-label" style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Amount</div><div style={{ fontWeight: 700, fontSize: 14 }}>{order.currency} {order.totalAmount.toLocaleString()}</div></div>
+              <div style={{ textAlign: 'left' }}><div className="detail-field-label" style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Delivery date</div><div style={{ fontWeight: 700, fontSize: 14 }}>{order.deliveryDate}</div></div>
+            </div>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+              <button className="btn btn-secondary" onClick={onBack}><LucideIcon name="list" size={14} /> Back to list</button>
+              <button className="btn btn-primary" onClick={() => setShowSuccess(false)}><LucideIcon name="file-text" size={14} /> View order details</button>
+            </div>
+          </div>
+        </div>
+      </div>);
+
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+      {showApprovalDialog && <ApprovalDialog level={approvalLevel} onApprove={handleApprove} onReject={handleReject} onClose={() => setShowApprovalDialog(false)} />}
+      <div className="page-header">
+        <div className="page-header-top">
+          <div>
+            <div className="breadcrumb"><span className="table-link" onClick={onBack}>My sales orders</span><LucideIcon name="chevron-right" size={12} /><span>{order.id}</span></div>
+            <div className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              {order.id}
+              <StatusBadge status={order.status} />
+              {order.soNumber && <span style={{ fontSize: 14, color: '#0070F2', fontWeight: 700 }}>{order.soNumber}</span>}
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            {order.status === 'pending_approval1' &&
+            <button className="btn btn-primary" onClick={() => openApproval(1)}><LucideIcon name="check" size={14} /> L1 Approval</button>
+            }
+            {order.status === 'pending_approval2' &&
+            <button className="btn btn-primary" onClick={() => openApproval(2)}><LucideIcon name="check" size={14} /> L2 Approval</button>
+            }
+            <button className="btn btn-secondary" onClick={onBack}>Back</button>
+          </div>
+        </div>
+      </div>
+      <div className="page-area">
+        <StepProgress currentStep={
+        order.status === 'draft' ? 1 :
+        order.status === 'pending_approval1' ? 2 :
+        order.status === 'pending_approval2' ? 3 :
+        order.status === 'approved' ? 4 :
+        order.status === 'created' ? 5 :
+        order.status === 'rejected' ? 2 : 1
+        } />
+
+        {order.status === 'rejected' &&
+        <div className="msg-strip error"><LucideIcon name="x-circle" size={16} /><span>This request was rejected. {order.history.find((h) => h.action.startsWith('Rejected'))?.comment || ''}</span></div>
+        }
+        {order.status === 'created' &&
+        <div className="msg-strip success"><LucideIcon name="check-circle" size={16} /><span>SAP sales order <strong>{order.soNumber}</strong> has been successfully created.</span></div>
+        }
+
+        {/* Approval timeline */}
+        <div className="card">
+          <div className="card-header"><span className="card-title">Approval workflow</span></div>
+          <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {/* L1 */}
+            <div className={`approval-card ${order.status === 'pending_approval1' ? 'pending' : order.history.some((h) => h.action === 'L1 Approved') ? 'approved' : order.history.some((h) => h.action.startsWith('Rejected (L1)')) ? 'rejected' : 'waiting'}`}>
+              <div style={{ display: 'flex', alignItems: 'center', justify: 'space-between', gap: 12 }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>Level 1 approval — Sales Manager</div>
+                  <div className="approval-meta">Approver: Sarah Lee</div>
+                  {order.history.find((h) => h.action === 'L1 Approved') &&
+                  <div style={{ marginTop: 6, display: 'flex', gap: 8, alignItems: 'center' }}>
+                      <span className="badge badge-approved"><span className="badge-dot"></span>Approved</span>
+                      <span style={{ fontSize: 12, color: '#556B82' }}>{order.history.find((h) => h.action === 'L1 Approved')?.date}</span>
+                    </div>
+                  }
+                  {order.history.find((h) => h.action.startsWith('Rejected (L1)')) &&
+                  <div style={{ marginTop: 6, display: 'flex', gap: 8, alignItems: 'center' }}>
+                      <span className="badge badge-rejected"><span className="badge-dot"></span>Rejected</span>
+                      <span style={{ fontSize: 12, color: '#556B82' }}>{order.history.find((h) => h.action.startsWith('Rejected (L1)'))?.date}</span>
+                    </div>
+                  }
+                  {order.status === 'pending_approval1' && <span className="badge badge-pending" style={{ marginTop: 6 }}><span className="badge-dot"></span>Awaiting decision</span>}
+                  {!['pending_approval1', 'pending_approval2', 'approved', 'created', 'rejected'].includes(order.status) && <span className="badge badge-draft" style={{ marginTop: 6 }}>Not started</span>}
+                  {order.history.find((h) => h.action === 'L1 Approved')?.comment &&
+                  <div style={{ marginTop: 8, padding: '8px 12px', background: '#F5F6F7', borderRadius: 6, fontSize: 13, color: '#131E29', fontStyle: 'italic' }}>"{order.history.find((h) => h.action === 'L1 Approved').comment}"</div>
+                  }
+                </div>
+                {order.status === 'pending_approval1' &&
+                <button className="btn btn-primary btn-sm" onClick={() => openApproval(1)}>Review & decide</button>
+                }
+              </div>
+            </div>
+            {/* L2 */}
+            <div className={`approval-card ${order.status === 'pending_approval2' ? 'pending' : order.history.some((h) => h.action === 'L2 Approved') ? 'approved' : order.history.some((h) => h.action.startsWith('Rejected (L2)')) ? 'rejected' : 'waiting'}`}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>Level 2 approval — VP Sales</div>
+                  <div className="approval-meta">Approver: Michael Chan</div>
+                  {order.history.find((h) => h.action === 'L2 Approved') &&
+                  <div style={{ marginTop: 6, display: 'flex', gap: 8, alignItems: 'center' }}>
+                      <span className="badge badge-approved"><span className="badge-dot"></span>Approved</span>
+                      <span style={{ fontSize: 12, color: '#556B82' }}>{order.history.find((h) => h.action === 'L2 Approved')?.date}</span>
+                    </div>
+                  }
+                  {order.history.find((h) => h.action.startsWith('Rejected (L2)')) &&
+                  <div style={{ marginTop: 6, display: 'flex', gap: 8, alignItems: 'center' }}>
+                      <span className="badge badge-rejected"><span className="badge-dot"></span>Rejected</span>
+                    </div>
+                  }
+                  {order.status === 'pending_approval2' && <span className="badge badge-pending" style={{ marginTop: 6 }}><span className="badge-dot"></span>Awaiting decision</span>}
+                  {['draft', 'pending_approval1'].includes(order.status) && <span className="badge badge-draft" style={{ marginTop: 6 }}>Waiting for L1</span>}
+                  {order.history.find((h) => h.action === 'L2 Approved')?.comment &&
+                  <div style={{ marginTop: 8, padding: '8px 12px', background: '#F5F6F7', borderRadius: 6, fontSize: 13, color: '#131E29', fontStyle: 'italic' }}>"{order.history.find((h) => h.action === 'L2 Approved').comment}"</div>
+                  }
+                </div>
+                {order.status === 'pending_approval2' &&
+                <button className="btn btn-primary btn-sm" onClick={() => openApproval(2)}>Review & decide</button>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Order details */}
+        <div className="card">
+          <div className="card-header"><span className="card-title">Order header</span></div>
+          <div className="card-body">
+            <div className="detail-row">
+              <div className="detail-field"><div className="detail-field-label">Customer</div><div className="detail-field-val">{order.customer}</div></div>
+              <div className="detail-field"><div className="detail-field-label">Customer code</div><div className="detail-field-val">{order.customerCode || '—'}</div></div>
+              <div className="detail-field"><div className="detail-field-label">Order type</div><div className="detail-field-val">{order.orderType}</div></div>
+              <div className="detail-field"><div className="detail-field-label">Sales org / DC / Div</div><div className="detail-field-val">{order.salesOrg} / {order.distributionChannel} / {order.division}</div></div>
+            </div>
+            <div className="detail-row">
+              <div className="detail-field"><div className="detail-field-label">Sold-to</div><div className="detail-field-val">{order.soldTo || '—'}</div></div>
+              <div className="detail-field"><div className="detail-field-label">Ship-to</div><div className="detail-field-val">{order.shipTo || '—'}</div></div>
+              <div className="detail-field"><div className="detail-field-label">Requested date</div><div className="detail-field-val">{order.requestedDate}</div></div>
+              <div className="detail-field"><div className="detail-field-label">Delivery date</div><div className="detail-field-val">{order.deliveryDate}</div></div>
+            </div>
+            <div className="detail-row">
+              <div className="detail-field"><div className="detail-field-label">Currency</div><div className="detail-field-val">{order.currency}</div></div>
+              <div className="detail-field"><div className="detail-field-label">Payment terms</div><div className="detail-field-val">{order.paymentTerms}</div></div>
+              <div className="detail-field"><div className="detail-field-label">Priority</div><div className="detail-field-val">{order.priority}</div></div>
+              <div className="detail-field"><div className="detail-field-label">Sales rep</div><div className="detail-field-val">{order.salesRep}</div></div>
+            </div>
+            {order.notes && <div className="detail-row"><div className="detail-field"><div className="detail-field-label">Notes</div><div className="detail-field-val">{order.notes}</div></div></div>}
+          </div>
+        </div>
+
+        {/* Line items */}
+        <div className="card">
+          <div className="card-header"><span className="card-title">Line items</span><span style={{ fontSize: 13, color: '#556B82' }}>{order.items.length} item{order.items.length !== 1 ? 's' : ''}</span></div>
+          <table className="line-table" style={{ width: '100%' }}>
+            <thead><tr><th>#</th><th>Material</th><th>Description</th><th>Qty</th><th>UoM</th><th style={{ textAlign: 'right' }}>Unit price ({order.currency})</th><th style={{ textAlign: 'right' }}>Total ({order.currency})</th></tr></thead>
+            <tbody>
+              {order.items.map((item, idx) =>
+              <tr key={item.id}>
+                  <td style={{ color: '#556B82', fontSize: 12 }}>{String(idx + 1).padStart(2, '0')}</td>
+                  <td style={{ fontWeight: 700 }}>{item.material}</td>
+                  <td>{item.description}</td>
+                  <td>{item.qty}</td><td>{item.uom}</td>
+                  <td style={{ textAlign: 'right' }}>{parseFloat(item.price).toLocaleString()}</td>
+                  <td style={{ textAlign: 'right', fontWeight: 700 }}>{item.total.toLocaleString()}</td>
+                </tr>
+              )}
+              <tr style={{ background: '#F5F6F7' }}>
+                <td colSpan={5}></td>
+                <td style={{ textAlign: 'right', fontWeight: 700, padding: '12px' }}>Total amount</td>
+                <td style={{ textAlign: 'right', fontWeight: 700, fontSize: 16, color: '#0070F2', padding: '12px' }}>{order.currency} {order.totalAmount.toLocaleString()}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* History */}
+        <div className="card">
+          <div className="card-header"><span className="card-title">Activity log</span></div>
+          <div className="card-body">
+            {order.history.map((h, i) =>
+            <div key={i} style={{ display: 'flex', gap: 16, paddingBottom: 16, position: 'relative' }}>
+                {i < order.history.length - 1 && <div style={{ position: 'absolute', left: 12, top: 28, bottom: 0, width: 1, background: '#D9D9D9' }}></div>}
+                <div style={{ width: 24, height: 24, borderRadius: '50%', background: h.action.includes('Rejected') ? '#FFDBEF' : h.action.includes('Approved') || h.action.includes('created') ? '#C2FCEE' : '#EDF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid #D9D9D9' }}>
+                  <LucideIcon name={h.action.includes('Rejected') ? 'x' : h.action.includes('Approved') || h.action.includes('created') ? 'check' : 'clock'} size={12} color={h.action.includes('Rejected') ? '#AA0808' : h.action.includes('Approved') || h.action.includes('created') ? '#30914C' : '#0070F2'} />
+                </div>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>{h.action}</div>
+                  <div style={{ fontSize: 12, color: '#556B82' }}>by {h.by} · {h.date}</div>
+                  {h.comment && <div style={{ marginTop: 4, padding: '6px 10px', background: '#F5F6F7', borderRadius: 6, fontSize: 13, color: '#131E29', fontStyle: 'italic' }}>"{h.comment}"</div>}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>);
+
+}
+
+// ── Pending Approvals Page ───────────────────────────────────────
+function PendingApprovalsPage({ orders, onViewOrder }) {
+  const pending = orders.filter((o) => o.status === 'pending_approval1' || o.status === 'pending_approval2');
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+      <div className="page-header">
+        <div className="page-header-top">
+          <div>
+            <div className="breadcrumb"><span>Sales order management</span><LucideIcon name="chevron-right" size={12} /><span>Pending approvals</span></div>
+            <div className="page-title">Pending approvals <span className="count-chip" style={{ marginLeft: 8 }}>{pending.length}</span></div>
+          </div>
+        </div>
+      </div>
+      <div className="page-area">
+        {pending.length === 0 ?
+        <div className="empty-state"><LucideIcon name="check-circle" size={48} color="#BCC3CA" /><div className="empty-title">All caught up!</div><div className="empty-sub">No orders awaiting your approval.</div></div> :
+        pending.map((o) =>
+        <div key={o.id} className="card" style={{ cursor: 'pointer' }} onClick={() => onViewOrder(o)}>
+            <div className="card-body">
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 8 }}>
+                    <span style={{ fontWeight: 700, fontSize: 15, color: '#0064D9' }}>{o.id}</span>
+                    <StatusBadge status={o.status} />
+                  </div>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>{o.customer}</div>
+                  <div style={{ fontSize: 13, color: '#556B82', marginTop: 2 }}>Requested by: {o.salesRep} · Created: {o.createdAt}</div>
+                  <div style={{ display: 'flex', gap: 24, marginTop: 12, flexWrap: 'wrap' }}>
+                    <div><div className="detail-field-label" style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase' }}>Amount</div><div style={{ fontWeight: 700 }}>{o.currency} {o.totalAmount.toLocaleString()}</div></div>
+                    <div><div className="detail-field-label" style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase' }}>Delivery date</div><div style={{ fontWeight: 700 }}>{o.deliveryDate}</div></div>
+                    <div><div className="detail-field-label" style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase' }}>Items</div><div style={{ fontWeight: 700 }}>{o.items.length}</div></div>
+                    <div><div className="detail-field-label" style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase' }}>Approval level</div><div style={{ fontWeight: 700 }}>{o.status === 'pending_approval1' ? 'L1 – Sales Manager' : 'L2 – VP Sales'}</div></div>
+                  </div>
+                </div>
+                <button className="btn btn-primary btn-sm" onClick={(e) => {e.stopPropagation();onViewOrder(o);}}>Review <LucideIcon name="arrow-right" size={13} /></button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>);
+
+}
+
+// ── Transaction Status Page ──────────────────────────────────────
+const TX_DATA = {
+  'REQ-100001': {
+    salesOrder: { number: 'SO-4500012345', date: '2026-04-10', customer: 'Siemens AG', netValue: 14250, currency: 'EUR', status: 'Completed', items: [{ pos: '10', material: 'MAT-001', desc: 'Industrial Pump A', qty: 10, uom: 'EA', price: 1200, total: 12000 }, { pos: '20', material: 'MAT-003', desc: 'Seal Kit Pro', qty: 50, uom: 'EA', price: 45, total: 2250 }] },
+    delivery: { number: 'DN-8000023456', date: '2026-04-15', actualDate: '2026-04-14', carrier: 'DHL Express', trackingNo: 'DHL-9876543210', shipFrom: 'DE-Berlin WH', shipTo: 'DE-Munich', status: 'Delivered', items: [{ pos: '10', material: 'MAT-001', desc: 'Industrial Pump A', delQty: 10, pickedQty: 10, uom: 'EA' }, { pos: '20', material: 'MAT-003', desc: 'Seal Kit Pro', delQty: 50, pickedQty: 50, uom: 'EA' }] },
+    billing: { number: 'INV-9000034567', date: '2026-04-16', dueDate: '2026-05-16', netAmount: 14250, taxAmount: 2707.50, totalAmount: 16957.50, currency: 'EUR', status: 'Posted', taxCode: 'V1 (19%)', items: [{ pos: '10', desc: 'Industrial Pump A', qty: 10, unitPrice: 1200, total: 12000 }, { pos: '20', desc: 'Seal Kit Pro', qty: 50, unitPrice: 45, total: 2250 }] },
+    payment: { status: 'Paid', paidDate: '2026-05-10', method: 'Bank Transfer', reference: 'PAY-TRF-20260510-001', amount: 16957.50, currency: 'EUR', bank: 'Deutsche Bank', accountNo: 'DE89 3704 0044 0532 0130 00', clearedDate: '2026-05-11' },
+  },
+  'REQ-100002': {
+    salesOrder: { number: null, date: '2026-04-22', customer: 'BMW Group', netValue: 17000, currency: 'EUR', status: 'Pending Approval', items: [{ pos: '10', material: 'MAT-007', desc: 'Control Module X9', qty: 5, uom: 'EA', price: 3400, total: 17000 }] },
+    delivery: null,
+    billing: null,
+    payment: { status: 'Not yet billed', paidDate: null, method: null, reference: null, amount: null, currency: 'EUR', bank: null, accountNo: null, clearedDate: null },
+  },
+  'REQ-100003': {
+    salesOrder: { number: null, date: '2026-04-12', customer: 'Bosch GmbH', netValue: 17800, currency: 'EUR', status: 'Rejected', items: [{ pos: '10', material: 'MAT-002', desc: 'Valve Assembly B', qty: 20, uom: 'EA', price: 890, total: 17800 }] },
+    delivery: null,
+    billing: null,
+    payment: { status: 'N/A', paidDate: null, method: null, reference: null, amount: null, currency: 'EUR', bank: null, accountNo: null, clearedDate: null },
+  },
+};
+
+function getTxData(order) {
+  const base = TX_DATA[order.id];
+  if (base) return base;
+  // Generate for newly created orders
+  if (order.status === 'created') {
+    const dlvNum = 'DN-' + (8000000000 + Math.floor(Math.random()*100000));
+    const invNum = 'INV-' + (9000000000 + Math.floor(Math.random()*100000));
+    return {
+      salesOrder: { number: order.soNumber, date: order.createdAt, customer: order.customer, netValue: order.totalAmount, currency: order.currency, status: 'Open', items: order.items.map((it, i) => ({ pos: String((i+1)*10).padStart(2,'0'), material: it.material, desc: it.description, qty: it.qty, uom: it.uom, price: it.price, total: it.total })) },
+      delivery: { number: dlvNum, date: order.deliveryDate, actualDate: null, carrier: 'Pending', trackingNo: null, shipFrom: order.soldTo || '—', shipTo: order.shipTo || '—', status: 'In preparation', items: order.items.map((it, i) => ({ pos: String((i+1)*10).padStart(2,'0'), material: it.material, desc: it.description, delQty: it.qty, pickedQty: 0, uom: it.uom })) },
+      billing: null,
+      payment: { status: 'Pending billing', paidDate: null, method: null, reference: null, amount: null, currency: order.currency, bank: null, accountNo: null, clearedDate: null },
+    };
+  }
+  return { salesOrder: { number: null, date: order.createdAt, customer: order.customer, netValue: order.totalAmount, currency: order.currency, status: STATUS_LABELS[order.status], items: order.items.map((it, i) => ({ pos: String((i+1)*10).padStart(2,'0'), material: it.material, desc: it.description, qty: it.qty, uom: it.uom, price: it.price, total: it.total })) }, delivery: null, billing: null, payment: { status: 'N/A', paidDate: null, method: null, reference: null, amount: null, currency: order.currency, bank: null, accountNo: null, clearedDate: null } };
+}
+
+const DOC_STATUS_COLOR = {
+  'Completed': '#30914C', 'Delivered': '#30914C', 'Posted': '#30914C', 'Paid': '#30914C',
+  'Open': '#0070F2', 'In preparation': '#0070F2', 'Partially billed': '#0070F2',
+  'Pending Approval': '#FF9900', 'Pending billing': '#FF9900', 'Not yet billed': '#FF9900',
+  'Rejected': '#AA0808', 'N/A': '#BCC3CA',
+};
+function docStatusBg(s) {
+  const c = DOC_STATUS_COLOR[s] || '#BCC3CA';
+  if (c === '#30914C') return { bg: '#C2FCEE', text: '#1B6B47' };
+  if (c === '#0070F2') return { bg: '#D1EFFF', text: '#0057BF' };
+  if (c === '#FF9900') return { bg: '#FFF3B8', text: '#7A5800' };
+  if (c === '#AA0808') return { bg: '#FFDBEF', text: '#7A0030' };
+  return { bg: '#F5F6F7', text: '#556B82' };
+}
+
+function DocStatusBadge({ status }) {
+  const { bg, text } = docStatusBg(status);
+  return <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 4, fontSize: 12, fontWeight: 700, background: bg, color: text }}><span style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor', display: 'inline-block' }}></span>{status}</span>;
+}
+
+function TxDocHeader({ icon, label, number, date, status, color }) {
+  const { bg, text } = docStatusBg(status);
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 20px', borderBottom: '1px solid #EAE4EE' }}>
+      <div style={{ width: 40, height: 40, borderRadius: 8, background: color + '18', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        <LucideIcon name={icon} size={20} color={color} />
+      </div>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</div>
+        <div style={{ fontWeight: 700, fontSize: 15, color: number ? '#131E29' : '#BCC3CA', marginTop: 1 }}>{number || '—'}</div>
+        {date && <div style={{ fontSize: 12, color: '#556B82', marginTop: 1 }}>{date}</div>}
+      </div>
+      <DocStatusBadge status={status} />
+    </div>
+  );
+}
+
+function TransactionStatusPage({ orders, onViewOrder }) {
+  const [selectedOrderId, setSelectedOrderId] = useState(orders[0]?.id || null);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [search, setSearch] = useState('');
+
+  const filtered = orders.filter(o =>
+    !search || o.id.toLowerCase().includes(search.toLowerCase()) || o.customer.toLowerCase().includes(search.toLowerCase()) || (o.soNumber || '').toLowerCase().includes(search.toLowerCase())
+  );
+
+  const selectedOrder = orders.find(o => o.id === selectedOrderId);
+  const tx = selectedOrder ? getTxData(selectedOrder) : null;
+
+  const tabs = ['overview', 'sales order', 'delivery', 'billing', 'payment'];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+      <div className="page-header">
+        <div className="page-header-top">
+          <div>
+            <div className="breadcrumb"><span>Sales order management</span><LucideIcon name="chevron-right" size={12} /><span>Transaction status</span></div>
+            <div className="page-title">Transaction status</div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        {/* Left: order list */}
+        <div style={{ width: 300, flexShrink: 0, borderRight: '1px solid #D9D9D9', display: 'flex', flexDirection: 'column', background: '#fff' }}>
+          <div style={{ padding: '12px 12px 8px', borderBottom: '1px solid #EAE4EE' }}>
+            <div className="search-box" style={{ width: '100%' }}>
+              <LucideIcon name="search" size={14} color="#7F8C9A" />
+              <input placeholder="Search orders…" value={search} onChange={e => setSearch(e.target.value)} />
+            </div>
+          </div>
+          <div style={{ flex: 1, overflowY: 'auto' }}>
+            {filtered.length === 0 && <div style={{ padding: 24, color: '#7F8C9A', fontSize: 13, textAlign: 'center' }}>No results</div>}
+            {filtered.map(o => {
+              const isSelected = o.id === selectedOrderId;
+              return (
+                <div key={o.id}
+                  onClick={() => { setSelectedOrderId(o.id); setActiveTab('overview'); }}
+                  style={{ padding: '12px 14px', borderBottom: '1px solid #EAE4EE', cursor: 'pointer', background: isSelected ? '#EDF6FF' : '#fff', borderLeft: isSelected ? '3px solid #0070F2' : '3px solid transparent', transition: 'all 0.1s' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                    <span style={{ fontWeight: 700, fontSize: 13, color: isSelected ? '#0070F2' : '#131E29' }}>{o.id}</span>
+                    <StatusBadge status={o.status} />
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#131E29', marginTop: 3 }}>{o.customer}</div>
+                  {o.soNumber && <div style={{ fontSize: 12, color: '#0070F2', marginTop: 2, fontWeight: 700 }}>{o.soNumber}</div>}
+                  <div style={{ fontSize: 12, color: '#7F8C9A', marginTop: 2 }}>{o.currency} {o.totalAmount.toLocaleString()} · {o.createdAt}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Right: detail */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          {!selectedOrder ? (
+            <div className="empty-state"><LucideIcon name="layers" size={48} color="#BCC3CA" /><div className="empty-title">Select an order</div><div className="empty-sub">Choose an order from the list to view its transaction status.</div></div>
+          ) : (
+            <>
+              {/* Sub-tabs */}
+              <div style={{ background: '#fff', borderBottom: '1px solid #D9D9D9', padding: '0 24px', display: 'flex', gap: 0 }}>
+                {tabs.map(tab => (
+                  <button key={tab} onClick={() => setActiveTab(tab)} style={{ height: 44, padding: '0 16px', background: 'none', border: 'none', borderBottom: activeTab === tab ? '2px solid #0070F2' : '2px solid transparent', fontFamily: "'72', Arial, sans-serif", fontSize: 13, fontWeight: 700, color: activeTab === tab ? '#0070F2' : '#556B82', cursor: 'pointer', textTransform: 'capitalize', marginBottom: -1, transition: 'all 0.12s' }}>
+                    {tab === 'sales order' ? 'Sales Order' : tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </button>
+                ))}
+              </div>
+
+              <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
+
+                {/* OVERVIEW TAB */}
+                {activeTab === 'overview' && (
+                  <div>
+                    {/* Object header */}
+                    <div className="obj-header" style={{ marginBottom: 16 }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                          <div className="obj-title">{selectedOrder.id}</div>
+                          <StatusBadge status={selectedOrder.status} />
+                          {selectedOrder.soNumber && <span style={{ fontSize: 14, color: '#0070F2', fontWeight: 700 }}>{selectedOrder.soNumber}</span>}
+                        </div>
+                        <div className="obj-subtitle">{selectedOrder.customer} · Created {selectedOrder.createdAt}</div>
+                        <div className="obj-attrs">
+                          <div><div className="obj-attr-label">Amount</div><div className="obj-attr-val">{selectedOrder.currency} {selectedOrder.totalAmount.toLocaleString()}</div></div>
+                          <div><div className="obj-attr-label">Delivery date</div><div className="obj-attr-val">{selectedOrder.deliveryDate || '—'}</div></div>
+                          <div><div className="obj-attr-label">Sales rep</div><div className="obj-attr-val">{selectedOrder.salesRep}</div></div>
+                          <div><div className="obj-attr-label">Priority</div><div className="obj-attr-val">{selectedOrder.priority}</div></div>
+                        </div>
+                      </div>
+                      <button className="btn btn-ghost btn-sm" onClick={() => onViewOrder(selectedOrder)}><LucideIcon name="external-link" size={13} /> Full detail</button>
+                    </div>
+
+                    {/* Document flow timeline */}
+                    <div className="card" style={{ marginBottom: 16 }}>
+                      <div className="card-header"><span className="card-title">Document flow</span></div>
+                      <div className="card-body" style={{ padding: '24px 20px' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 0 }}>
+                          {[
+                            { icon: 'clipboard', label: 'Sales Order', number: tx.salesOrder?.number, status: tx.salesOrder?.status || 'N/A', color: '#0070F2', tab: 'sales order' },
+                            { icon: 'truck', label: 'Delivery', number: tx.delivery?.number, status: tx.delivery?.status || 'Not created', color: '#7B61FF', tab: 'delivery' },
+                            { icon: 'file-invoice', label: 'Billing', number: tx.billing?.number, status: tx.billing?.status || 'Not billed', color: '#FF6B00', tab: 'billing' },
+                            { icon: 'credit-card', label: 'Payment', number: tx.payment?.reference, status: tx.payment?.status || 'N/A', color: '#30914C', tab: 'payment' },
+                          ].map((doc, i, arr) => {
+                            const { bg, text } = docStatusBg(doc.status);
+                            return (
+                              <React.Fragment key={doc.tab}>
+                                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }} onClick={() => setActiveTab(doc.tab)}>
+                                  <div style={{ width: 56, height: 56, borderRadius: 12, background: doc.number ? doc.color + '18' : '#F5F6F7', display: 'flex', alignItems: 'center', justifyContent: 'center', border: `2px solid ${doc.number ? doc.color + '40' : '#EAE4EE'}`, marginBottom: 8, transition: 'all 0.15s' }}>
+                                    <LucideIcon name={doc.icon} size={24} color={doc.number ? doc.color : '#BCC3CA'} />
+                                  </div>
+                                  <div style={{ fontWeight: 700, fontSize: 12, color: '#131E29', marginBottom: 4, textAlign: 'center' }}>{doc.label}</div>
+                                  {doc.number ? <div style={{ fontSize: 11, color: '#556B82', marginBottom: 4, textAlign: 'center', fontWeight: 600 }}>{doc.number}</div> : <div style={{ fontSize: 11, color: '#BCC3CA', marginBottom: 4 }}>—</div>}
+                                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 700, background: bg, color: text }}><span style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor', display: 'inline-block' }}></span>{doc.status}</span>
+                                </div>
+                                {i < arr.length - 1 && (
+                                  <div style={{ display: 'flex', alignItems: 'center', marginTop: 20, flex: 0, padding: '0 4px' }}>
+                                    <div style={{ width: 40, height: 2, background: doc.number ? '#0070F2' : '#EAE4EE' }}></div>
+                                    <LucideIcon name="chevron-right" size={14} color={doc.number ? '#0070F2' : '#BCC3CA'} />
+                                  </div>
+                                )}
+                              </React.Fragment>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Summary cards */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                      {/* Delivery summary */}
+                      <div className="card" style={{ marginBottom: 0 }}>
+                        <TxDocHeader icon="truck" label="Delivery" number={tx.delivery?.number} date={tx.delivery?.date ? `Planned: ${tx.delivery.date}` : null} status={tx.delivery?.status || 'Not created'} color="#7B61FF" />
+                        <div className="card-body" style={{ padding: '12px 16px' }}>
+                          {tx.delivery ? <>
+                            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                              <div><div style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase' }}>Carrier</div><div style={{ fontWeight: 600, fontSize: 13 }}>{tx.delivery.carrier}</div></div>
+                              <div><div style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase' }}>Tracking</div><div style={{ fontWeight: 600, fontSize: 13, color: '#0064D9' }}>{tx.delivery.trackingNo || '—'}</div></div>
+                              <div><div style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase' }}>Actual date</div><div style={{ fontWeight: 600, fontSize: 13 }}>{tx.delivery.actualDate || 'Pending'}</div></div>
+                            </div>
+                          </> : <div style={{ color: '#BCC3CA', fontSize: 13 }}>Delivery not yet created.</div>}
+                        </div>
+                      </div>
+                      {/* Billing summary */}
+                      <div className="card" style={{ marginBottom: 0 }}>
+                        <TxDocHeader icon="file-invoice" label="Invoice" number={tx.billing?.number} date={tx.billing?.date ? `Invoice date: ${tx.billing.date}` : null} status={tx.billing?.status || 'Not billed'} color="#FF6B00" />
+                        <div className="card-body" style={{ padding: '12px 16px' }}>
+                          {tx.billing ? <>
+                            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                              <div><div style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase' }}>Net amount</div><div style={{ fontWeight: 600, fontSize: 13 }}>{tx.billing.currency} {tx.billing.netAmount.toLocaleString()}</div></div>
+                              <div><div style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase' }}>Tax</div><div style={{ fontWeight: 600, fontSize: 13 }}>{tx.billing.currency} {tx.billing.taxAmount.toLocaleString()}</div></div>
+                              <div><div style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase' }}>Total</div><div style={{ fontWeight: 700, fontSize: 14, color: '#0070F2' }}>{tx.billing.currency} {tx.billing.totalAmount.toLocaleString()}</div></div>
+                              <div><div style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase' }}>Due date</div><div style={{ fontWeight: 600, fontSize: 13 }}>{tx.billing.dueDate}</div></div>
+                            </div>
+                          </> : <div style={{ color: '#BCC3CA', fontSize: 13 }}>Invoice not yet created.</div>}
+                        </div>
+                      </div>
+                      {/* Payment summary */}
+                      <div className="card" style={{ marginBottom: 0, gridColumn: '1 / -1' }}>
+                        <TxDocHeader icon="credit-card" label="Payment" number={tx.payment?.reference} date={tx.payment?.paidDate ? `Paid: ${tx.payment.paidDate}` : null} status={tx.payment?.status || 'N/A'} color="#30914C" />
+                        <div className="card-body" style={{ padding: '12px 16px' }}>
+                          {tx.payment?.paidDate ? <>
+                            <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+                              <div><div style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase' }}>Method</div><div style={{ fontWeight: 600, fontSize: 13 }}>{tx.payment.method}</div></div>
+                              <div><div style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase' }}>Amount paid</div><div style={{ fontWeight: 700, fontSize: 14, color: '#30914C' }}>{tx.payment.currency} {tx.payment.amount?.toLocaleString()}</div></div>
+                              <div><div style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase' }}>Bank</div><div style={{ fontWeight: 600, fontSize: 13 }}>{tx.payment.bank}</div></div>
+                              <div><div style={{ fontSize: 11, fontWeight: 700, color: '#556B82', textTransform: 'uppercase' }}>Cleared date</div><div style={{ fontWeight: 600, fontSize: 13 }}>{tx.payment.clearedDate || '—'}</div></div>
+                            </div>
+                          </> : <div style={{ color: '#BCC3CA', fontSize: 13 }}>{tx.payment?.status === 'N/A' ? 'Not applicable for this order.' : 'Payment not yet received.'}</div>}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* SALES ORDER TAB */}
+                {activeTab === 'sales order' && tx.salesOrder && (
+                  <div>
+                    <div className="card">
+                      <TxDocHeader icon="clipboard" label="Sales Order" number={tx.salesOrder.number} date={`Order date: ${tx.salesOrder.date}`} status={tx.salesOrder.status} color="#0070F2" />
+                      <div className="card-body">
+                        <div className="detail-row">
+                          <div className="detail-field"><div className="detail-field-label">Customer</div><div className="detail-field-val">{tx.salesOrder.customer}</div></div>
+                          <div className="detail-field"><div className="detail-field-label">Net value</div><div className="detail-field-val" style={{ color: '#0070F2' }}>{tx.salesOrder.currency} {tx.salesOrder.netValue.toLocaleString()}</div></div>
+                          <div className="detail-field"><div className="detail-field-label">Order date</div><div className="detail-field-val">{tx.salesOrder.date}</div></div>
+                          <div className="detail-field"><div className="detail-field-label">Status</div><div className="detail-field-val"><DocStatusBadge status={tx.salesOrder.status} /></div></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="card">
+                      <div className="card-header"><span className="card-title">Order items</span></div>
+                      <table className="line-table" style={{ width: '100%' }}>
+                        <thead><tr><th>Pos</th><th>Material</th><th>Description</th><th>Qty</th><th>UoM</th><th style={{ textAlign: 'right' }}>Unit price</th><th style={{ textAlign: 'right' }}>Total</th></tr></thead>
+                        <tbody>
+                          {tx.salesOrder.items.map((it, i) => (
+                            <tr key={i}><td style={{ color: '#556B82' }}>{it.pos}</td><td style={{ fontWeight: 700 }}>{it.material}</td><td>{it.desc}</td><td>{it.qty}</td><td>{it.uom}</td><td style={{ textAlign: 'right' }}>{it.price?.toLocaleString()}</td><td style={{ textAlign: 'right', fontWeight: 700 }}>{it.total?.toLocaleString()}</td></tr>
+                          ))}
+                          <tr style={{ background: '#F5F6F7' }}><td colSpan={5}></td><td style={{ textAlign: 'right', fontWeight: 700, padding: '10px 12px' }}>Net value</td><td style={{ textAlign: 'right', fontWeight: 700, color: '#0070F2', padding: '10px 12px' }}>{tx.salesOrder.currency} {tx.salesOrder.netValue.toLocaleString()}</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {/* DELIVERY TAB */}
+                {activeTab === 'delivery' && (
+                  <div>
+                    {!tx.delivery ? (
+                      <div className="empty-state"><LucideIcon name="truck" size={48} color="#BCC3CA" /><div className="empty-title">No delivery document</div><div className="empty-sub">Delivery has not been created yet for this order.</div></div>
+                    ) : (
+                      <>
+                        <div className="card">
+                          <TxDocHeader icon="truck" label="Delivery Document" number={tx.delivery.number} date={`Planned: ${tx.delivery.date}`} status={tx.delivery.status} color="#7B61FF" />
+                          <div className="card-body">
+                            <div className="detail-row">
+                              <div className="detail-field"><div className="detail-field-label">Planned date</div><div className="detail-field-val">{tx.delivery.date}</div></div>
+                              <div className="detail-field"><div className="detail-field-label">Actual delivery</div><div className="detail-field-val">{tx.delivery.actualDate || 'Pending'}</div></div>
+                              <div className="detail-field"><div className="detail-field-label">Carrier</div><div className="detail-field-val">{tx.delivery.carrier}</div></div>
+                              <div className="detail-field"><div className="detail-field-label">Tracking no.</div><div className="detail-field-val" style={{ color: '#0064D9' }}>{tx.delivery.trackingNo || '—'}</div></div>
+                            </div>
+                            <div className="detail-row">
+                              <div className="detail-field"><div className="detail-field-label">Ship from</div><div className="detail-field-val">{tx.delivery.shipFrom}</div></div>
+                              <div className="detail-field"><div className="detail-field-label">Ship to</div><div className="detail-field-val">{tx.delivery.shipTo}</div></div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="card">
+                          <div className="card-header"><span className="card-title">Delivery items</span></div>
+                          <table className="line-table" style={{ width: '100%' }}>
+                            <thead><tr><th>Pos</th><th>Material</th><th>Description</th><th>Delivery qty</th><th>Picked qty</th><th>UoM</th><th>Status</th></tr></thead>
+                            <tbody>
+                              {tx.delivery.items.map((it, i) => {
+                                const pct = it.delQty > 0 ? (it.pickedQty / it.delQty) * 100 : 0;
+                                return (
+                                  <tr key={i}>
+                                    <td style={{ color: '#556B82' }}>{it.pos}</td>
+                                    <td style={{ fontWeight: 700 }}>{it.material}</td>
+                                    <td>{it.desc}</td>
+                                    <td>{it.delQty}</td>
+                                    <td>{it.pickedQty}</td>
+                                    <td>{it.uom}</td>
+                                    <td>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        <div style={{ flex: 1, height: 6, background: '#EAE4EE', borderRadius: 3, overflow: 'hidden', minWidth: 60 }}>
+                                          <div style={{ width: pct + '%', height: '100%', background: pct === 100 ? '#30914C' : '#0070F2', borderRadius: 3 }}></div>
+                                        </div>
+                                        <span style={{ fontSize: 11, fontWeight: 700, color: pct === 100 ? '#30914C' : '#556B82', minWidth: 30 }}>{pct}%</span>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {/* BILLING TAB */}
+                {activeTab === 'billing' && (
+                  <div>
+                    {!tx.billing ? (
+                      <div className="empty-state"><LucideIcon name="file-invoice" size={48} color="#BCC3CA" /><div className="empty-title">No billing document</div><div className="empty-sub">Invoice has not been created yet for this order.</div></div>
+                    ) : (
+                      <>
+                        <div className="card">
+                          <TxDocHeader icon="file-invoice" label="Invoice" number={tx.billing.number} date={`Invoice date: ${tx.billing.date}`} status={tx.billing.status} color="#FF6B00" />
+                          <div className="card-body">
+                            <div className="detail-row">
+                              <div className="detail-field"><div className="detail-field-label">Invoice date</div><div className="detail-field-val">{tx.billing.date}</div></div>
+                              <div className="detail-field"><div className="detail-field-label">Due date</div><div className="detail-field-val">{tx.billing.dueDate}</div></div>
+                              <div className="detail-field"><div className="detail-field-label">Tax code</div><div className="detail-field-val">{tx.billing.taxCode}</div></div>
+                              <div className="detail-field"><div className="detail-field-label">Status</div><div className="detail-field-val"><DocStatusBadge status={tx.billing.status} /></div></div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="card">
+                          <div className="card-header"><span className="card-title">Invoice items</span></div>
+                          <table className="line-table" style={{ width: '100%' }}>
+                            <thead><tr><th>Pos</th><th>Description</th><th>Qty</th><th style={{ textAlign: 'right' }}>Unit price</th><th style={{ textAlign: 'right' }}>Total ({tx.billing.currency})</th></tr></thead>
+                            <tbody>
+                              {tx.billing.items.map((it, i) => (
+                                <tr key={i}><td style={{ color: '#556B82' }}>{it.pos}</td><td>{it.desc}</td><td>{it.qty}</td><td style={{ textAlign: 'right' }}>{it.unitPrice.toLocaleString()}</td><td style={{ textAlign: 'right', fontWeight: 700 }}>{it.total.toLocaleString()}</td></tr>
+                              ))}
+                              <tr style={{ background: '#F5F6F7' }}>
+                                <td colSpan={3}></td>
+                                <td style={{ textAlign: 'right', padding: '8px 12px', fontWeight: 700, fontSize: 13 }}>Net amount</td>
+                                <td style={{ textAlign: 'right', padding: '8px 12px', fontWeight: 700 }}>{tx.billing.currency} {tx.billing.netAmount.toLocaleString()}</td>
+                              </tr>
+                              <tr style={{ background: '#F5F6F7' }}>
+                                <td colSpan={3}></td>
+                                <td style={{ textAlign: 'right', padding: '4px 12px', color: '#556B82', fontSize: 13 }}>Tax ({tx.billing.taxCode})</td>
+                                <td style={{ textAlign: 'right', padding: '4px 12px', color: '#556B82' }}>{tx.billing.currency} {tx.billing.taxAmount.toLocaleString()}</td>
+                              </tr>
+                              <tr style={{ background: '#EDF6FF' }}>
+                                <td colSpan={3}></td>
+                                <td style={{ textAlign: 'right', padding: '10px 12px', fontWeight: 700, fontSize: 15 }}>Total amount</td>
+                                <td style={{ textAlign: 'right', padding: '10px 12px', fontWeight: 700, fontSize: 16, color: '#0070F2' }}>{tx.billing.currency} {tx.billing.totalAmount.toLocaleString()}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {/* PAYMENT TAB */}
+                {activeTab === 'payment' && (
+                  <div>
+                    <div className="card">
+                      <TxDocHeader icon="credit-card" label="Payment" number={tx.payment?.reference} date={tx.payment?.paidDate ? `Paid: ${tx.payment.paidDate}` : null} status={tx.payment?.status || 'N/A'} color="#30914C" />
+                      <div className="card-body">
+                        {tx.payment?.paidDate ? (
+                          <>
+                            <div className="detail-row">
+                              <div className="detail-field"><div className="detail-field-label">Payment method</div><div className="detail-field-val">{tx.payment.method}</div></div>
+                              <div className="detail-field"><div className="detail-field-label">Payment date</div><div className="detail-field-val">{tx.payment.paidDate}</div></div>
+                              <div className="detail-field"><div className="detail-field-label">Cleared date</div><div className="detail-field-val">{tx.payment.clearedDate || '—'}</div></div>
+                              <div className="detail-field"><div className="detail-field-label">Reference</div><div className="detail-field-val">{tx.payment.reference}</div></div>
+                            </div>
+                            <div className="detail-row">
+                              <div className="detail-field"><div className="detail-field-label">Bank</div><div className="detail-field-val">{tx.payment.bank}</div></div>
+                              <div className="detail-field"><div className="detail-field-label">Account no.</div><div className="detail-field-val" style={{ fontFamily: 'Courier New, monospace', fontSize: 13 }}>{tx.payment.accountNo}</div></div>
+                            </div>
+                            <div style={{ marginTop: 16, background: '#C2FCEE', borderRadius: 8, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <div>
+                                <div style={{ fontSize: 12, fontWeight: 700, color: '#1B6B47', textTransform: 'uppercase' }}>Amount paid</div>
+                                <div style={{ fontSize: 28, fontWeight: 700, color: '#1B6B47', marginTop: 2 }}>{tx.payment.currency} {tx.payment.amount?.toLocaleString()}</div>
+                              </div>
+                              <LucideIcon name="check-circle" size={40} color="#30914C" />
+                            </div>
+                          </>
+                        ) : (
+                          <div style={{ padding: '24px 0', textAlign: 'center', color: '#7F8C9A' }}>
+                            <LucideIcon name="credit-card" size={40} color="#BCC3CA" style={{ marginBottom: 12 }} />
+                            <div style={{ fontWeight: 700, color: '#131E29', marginBottom: 4 }}>{tx.payment?.status}</div>
+                            <div style={{ fontSize: 13 }}>No payment has been recorded for this order yet.</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Main App ─────────────────────────────────────────────────────
+function App() {
+  const [orders, setOrders] = useState(loadOrders);
+  const [activePage, setActivePage] = useState('home');
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [navCollapsed, setNavCollapsed] = useState(false);
+
+  useEffect(() => {saveOrders(orders);}, [orders]);
+
+  const updateOrder = (updated) => {
+    setOrders((prev) => prev.map((o) => o.id === updated.id ? updated : o));
+    setSelectedOrder(updated);
+  };
+
+  const handleSubmit = (order) => {
+    setOrders((prev) => [order, ...prev]);
+    setSelectedOrder(order);
+    setActivePage('detail');
+  };
+
+  const handleNav = (page) => {
+    setSelectedOrder(null);
+    setActivePage(page);
+  };
+
+  const handleViewOrder = (order) => {
+    setSelectedOrder(order);
+    setActivePage('detail');
+  };
+
+  // Sync selectedOrder with orders state
+  const currentOrder = selectedOrder ? orders.find((o) => o.id === selectedOrder.id) || selectedOrder : null;
+
+  const renderPage = () => {
+    if (activePage === 'detail' && currentOrder) {
+      return <OrderDetailPage order={currentOrder} onBack={() => handleNav('list')} onUpdateOrder={updateOrder} />;
+    }
+    if (activePage === 'create') {
+      return <CreatePage onSubmit={handleSubmit} onCancel={() => handleNav('list')} />;
+    }
+    if (activePage === 'list') {
+      return <ListPage orders={orders} onNav={handleNav} onViewOrder={handleViewOrder} />;
+    }
+    if (activePage === 'pending') {
+      return <PendingApprovalsPage orders={orders} onViewOrder={handleViewOrder} />;
+    }
+    if (activePage === 'transactions') {
+      return <TransactionStatusPage orders={orders} onViewOrder={handleViewOrder} />;
+    }
+    return <OverviewPage orders={orders} onNav={handleNav} onViewOrder={handleViewOrder} />;
+  };
+
+  return (
+    <>
+      <ShellBar onMenuToggle={() => setNavCollapsed((c) => !c)} />
+      <div className="app-layout">
+        <SideNav collapsed={navCollapsed} activePage={activePage === 'detail' || activePage === 'create' ? 'list' : activePage} onNav={handleNav} />
+        <div className="main-content">
+          {renderPage()}
+        </div>
+      </div>
+    </>);
+
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
