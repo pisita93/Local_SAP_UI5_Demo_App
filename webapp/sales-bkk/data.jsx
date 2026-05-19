@@ -69,87 +69,95 @@ const PAYMENT_TYPES = [
 ];
 
 // ─── Product catalogue (Vitamilk / V-Soy) ──────────────────────
+// Sourced from GreenSpot_Integrated_Demo_Dataset.xlsx → Material Master + Sales Pricing (MT01-HYPER tier)
 const PRODUCTS = {
-  "VTM-LIT-300": { name: "ไวตามิ้ลค์ ไลท์ สูตรออริจินัล น้ำตาลน้อยลง 50% 300 มล. X 24 ขวด",
-                   en: "Vitamilk Light Original (50% less sugar) 300ml × 24 bottles",   price: 432 },
-  "VTM-TGO-ORG": { name: "ไวตามิ้ลค์ นมถั่วเหลือง ทูโก ออริจินัล 300 มล. X 24 ขวด",
-                   en: "Vitamilk ToGo Original Soy Milk 300ml × 24 bottles",            price: 432 },
-  "VTM-TGO-CHO": { name: "ไวตามิ้ลค์ ทูโก ช็อกโก แกรนเด 300 มล. X 24 ขวด",
-                   en: "Vitamilk ToGo Choco Grande 300ml × 24 bottles",                 price: 456 },
-  "VTM-TGO-RTT": { name: "ไวตามิ้ลค์ ทูโก รอยัล ไทย ที 300 มล. X 24 ขวด",
-                   en: "Vitamilk ToGo Royal Thai Tea 300ml × 24 bottles",               price: 456 },
-  "VTM-UHT-BLK": { name: "ไวตามิ้ลค์ ยูเอชที สูตรงาดำ และข้าวสีนิล 300 มล. X 36 กล่อง",
-                   en: "Vitamilk UHT Black Sesame & Riceberry 300ml × 36 boxes",         price: 612 },
-  "VTM-UHT-ORG": { name: "ไวตามิ้ลค์ ยูเอชที สูตรออริจินัล 300 มล. X 36 กล่อง",
-                   en: "Vitamilk UHT Original 300ml × 36 boxes",                         price: 540 },
-  "VTM-UHT-LAC": { name: "ไวตามิ้ลค์ ยูเอชที สูตรน้ำตาลน้อยกว่า (ปราศจากน้ำตาลแลคโตส) 250 มล. X 36 กล่อง",
-                   en: "Vitamilk UHT Less Sugar (Lactose-free) 250ml × 36 boxes",        price: 504 },
-  "VTM-UHT-JAY": { name: "ไวตามิ้ลค์ ยูเอชที สูตรเจ 250 มล. X 36 กล่อง",
-                   en: "Vitamilk UHT Vegetarian (Jay) 250ml × 36 boxes",                 price: 504 },
-  "VSO-ALM-180": { name: "วีซอย นมถั่วเหลือง สูตรอัลมอนด์ 180 มล. X 36 กล่อง",
-                   en: "V-Soy Almond Soy Milk 180ml × 36 boxes",                         price: 396 },
-  "VSO-MLT-180": { name: "วีซอย นมถั่วเหลือง สูตรงามอลต์ 180 มล. X 36 กล่อง",
-                   en: "V-Soy Malt Soy Milk 180ml × 36 boxes",                           price: 396 },
+  "GS-VTG-06": { name: "ไวตามิ้ลค์ ไลท์ สูตรออริจินัล น้ำตาลน้อยลง 50% 300 มล. X 24 ขวด",
+                   en: "Vitamilk Light Original 50% Less Sugar 300ml x 24 bottles",     price: 355.68 },
+  "GS-VTG-05": { name: "ไวตามิ้ลค์ นมถั่วเหลือง ทูโก ออริจินัล 300 มล. X 24 ขวด",
+                   en: "Vitamilk Togo Original 300ml x 24 bottles",                     price: 299.52 },
+  "GS-VTG-01": { name: "ไวตามิ้ลค์ ทูโก ช็อกโก แกรนเด 300 มล. X 24 ขวด",
+                   en: "Vitamilk Togo Choco Grande 300ml x 24 bottles",                 price: 355.68 },
+  "GS-VTG-02": { name: "ไวตามิ้ลค์ ทูโก รอยัล ไทย ที 300 มล. X 24 ขวด",
+                   en: "Vitamilk Togo Royal Thai Tea 300ml x 24 bottles",               price: 355.68 },
+  "GS-VUH-02": { name: "ไวตามิ้ลค์ ยูเอชที สูตรงาดำ และข้าวสีนิล 300 มล. X 36 กล่อง",
+                   en: "Vitamilk UHT Black Sesame & Riceberry 300ml x 36 cartons",      price: 336.96 },
+  "GS-VUH-04": { name: "ไวตามิ้ลค์ ยูเอชที สูตรออริจินัล 300 มล. X 36 กล่อง",
+                   en: "Vitamilk UHT Original 300ml x 36 cartons",                      price: 336.96 },
+  "GS-VUH-03": { name: "ไวตามิ้ลค์ ยูเอชที สูตรน้ำตาลน้อยกว่า 250 มล. X 36 กล่อง",
+                   en: "Vitamilk UHT Less Sugar (Lactose Free) 250ml x 36",             price: 280.80 },
+  "GS-VUH-05": { name: "ไวตามิ้ลค์ ยูเอชที สูตรเจ 250 มล. X 36 กล่อง",
+                   en: "Vitamilk UHT Vegetarian (Jay) 250ml x 36",                      price: 280.80 },
+  "GS-VSY-04": { name: "วีซอย นมถั่วเหลือง สูตรอัลมอนด์ 180 มล. X 36 กล่อง",
+                   en: "V-Soy Almond 180ml x 36 cartons",                               price: 421.20 },
+  "GS-VSY-01": { name: "วีซอย นมถั่วเหลือง สูตรงามอลต์ 180 มล. X 36 กล่อง",
+                   en: "V-Soy Sesame Malt 180ml x 36 cartons",                          price: 421.20 },
 };
 
 // ─── Customers (Thai FMCG channels) ────────────────────────────
+// Sourced from GreenSpot_Integrated_Demo_Dataset.xlsx → Sold-to Master.
 // payment type is dominant per customer; ship-tos inherit unless overridden
 const CUSTOMERS = {
-  "CN10045": { name: "บริษัท เอก-ชัย ดีสทริบิวชั่น ซิสเทม จำกัด",  en: "Lotus's HQ (Ek-Chai)",     pay: "credit", channel: "Modern Trade" },
-  "CN10082": { name: "บริษัท ซีพี ออลล์ จำกัด (มหาชน)",            en: "CP All — 7-Eleven",        pay: "credit", channel: "Convenience" },
-  "CN10157": { name: "บริษัท บิ๊กซี ซูเปอร์เซ็นเตอร์ จำกัด (มหาชน)", en: "Big C Supercenter",         pay: "credit", channel: "Modern Trade" },
-  "CN10213": { name: "บริษัท สยามแม็คโคร จำกัด (มหาชน)",         en: "Siam Makro",                pay: "credit", channel: "Wholesale" },
-  "CN10421": { name: "บริษัท เซ็นทรัล แฟมิลี่มาร์ท จำกัด",         en: "Family Mart Thailand",      pay: "credit", channel: "Convenience" },
-  "CN10560": { name: "ร้านสะดวกซื้อ ป้าน้อย เจริญกรุง",            en: "Pa Noi mini-mart",          pay: "cash",   channel: "Traditional Trade" },
-  "CN10732": { name: "มินิมาร์ท แสงสว่าง สีลม",                    en: "Saeng Sawang mini-mart",    pay: "cash",   channel: "Traditional Trade" },
-  "CN10891": { name: "ร้านค้าส่ง คลองเตย ล็อค A-12",               en: "Khlong Toei wholesale A-12",pay: "cash",   channel: "Wholesale" },
-  "CN11045": { name: "ร้านโชห่วย จิตติพร อโศก",                    en: "Jittiporn grocery",         pay: "cash",   channel: "Traditional Trade" },
-  "CN11203": { name: "บริษัท เดอะ มอลล์ กรุ๊ป จำกัด — กูร์เมต์ มาร์เก็ต", en: "Gourmet Market (The Mall)", pay: "bank", channel: "Premium Retail" },
-  "CN11320": { name: "บริษัท วิลลา มาร์เก็ต เจพี จำกัด",            en: "Villa Market",              pay: "bank",   channel: "Premium Retail" },
-  "CN11451": { name: "บริษัท ฟู้ดแลนด์ ซูเปอร์มาร์เก็ต จำกัด",      en: "Foodland Supermarket",      pay: "bank",   channel: "Premium Retail" },
-  "CN11620": { name: "บริษัท สห ลอว์สัน จำกัด",                    en: "Lawson 108",                pay: "credit", channel: "Convenience" },
-  "CN11782": { name: "บริษัท เซ็นทรัล ฟู้ด รีเทล จำกัด — ท็อปส์",   en: "Tops Daily / Central Food", pay: "credit", channel: "Modern Trade" },
-  "CN11901": { name: "โรงแรม เซ็นทารา แกรนด์ ลาดพร้าว",            en: "Centara Grand Ladprao",     pay: "bank",   channel: "HoReCa" },
-  "CN12010": { name: "ร้านกาแฟ บ้านระเบียง ทองหล่อ",               en: "Baan Rabieng Cafe",         pay: "cash",   channel: "HoReCa" },
-  "CN12188": { name: "บริษัท ซีเจ มอร์ จำกัด",                     en: "CJ More",                   pay: "credit", channel: "Convenience" },
+  "CN10045": { name: "บริษัท โลตัสส์ สโตร์ส (ประเทศไทย) จำกัด",         en: "Lotus's Stores (Thailand) Co., Ltd.",          pay: "credit", channel: "Modern Trade" },
+  "CN10082": { name: "บริษัท ซีพี ออลล์ จำกัด (มหาชน) (เซเว่น อีเลฟเว่น)", en: "CP All Public Co., Ltd. (7-Eleven)",          pay: "credit", channel: "Convenience" },
+  "CN10157": { name: "บริษัท บิ๊กซี ซูเปอร์เซ็นเตอร์ จำกัด (มหาชน)",       en: "Big C Supercenter Public Co., Ltd.",           pay: "credit", channel: "Modern Trade" },
+  "CN10213": { name: "บริษัท สยามแม็คโคร จำกัด (มหาชน)",                 en: "Siam Makro Public Co., Ltd.",                  pay: "credit", channel: "Cash & Carry" },
+  "CN10421": { name: "ร้านสะดวกซื้อ ลุงสุข",                              en: "Lung Suk Convenience Shop",                    pay: "credit", channel: "Convenience" },
+  "CN10560": { name: "ร้านป้าน้อย มาร์ท",                                 en: "Pa Noi Mart",                                  pay: "cash",   channel: "Traditional Trade" },
+  "CN10732": { name: "ร้านเสริมทรัพย์ มินิมาร์ท",                          en: "Sermsap Mini-Mart",                            pay: "cash",   channel: "Traditional Trade" },
+  "CN10891": { name: "ร้านคลองเตย เฟรช ชอป",                              en: "Khlong Toei Fresh Shop",                       pay: "cash",   channel: "Traditional Trade" },
+  "CN11045": { name: "ร้านเจริญทรัพย์ ขายของชำ",                          en: "Jaroen Sap Grocery",                           pay: "cash",   channel: "Traditional Trade" },
+  "CN11203": { name: "บริษัท เดอะมอลล์ กรุ๊ป จำกัด (กูร์เมต์ มาร์เก็ต)",   en: "The Mall Group Co., Ltd. (Gourmet Market)",    pay: "bank",   channel: "Premium Retail" },
+  "CN11320": { name: "บริษัท สุขสำราญ ซูเปอร์มาร์เก็ต จำกัด",              en: "Suksamran Supermarket Co., Ltd.",              pay: "bank",   channel: "Local Supermarket" },
+  "CN11451": { name: "บริษัท พิษณุโลก เฟรช มาร์ท จำกัด",                  en: "Phitsanulok Fresh Mart Co., Ltd.",             pay: "bank",   channel: "Local Supermarket" },
+  "CN11620": { name: "ร้านซอยอารีย์ มินิมาร์ท",                            en: "Soi Aree Mini-Mart",                           pay: "credit", channel: "Convenience" },
+  "CN11782": { name: "ร้านลาดพร้าว 71 มินิมาร์ท",                          en: "Lat Phrao 71 Mini-Mart",                       pay: "credit", channel: "Modern Trade" },
+  "CN11901": { name: "บริษัท ไมเนอร์ โฮเทล กรุ๊ป จำกัด (มหาชน)",            en: "Minor Hotel Group Public Co., Ltd.",           pay: "bank",   channel: "HoReCa" },
+  "CN12010": { name: "บริษัท เซ็นทรัล เรสตอรองส์ กรุ๊ป จำกัด",             en: "Central Restaurants Group Co., Ltd.",          pay: "cash",   channel: "HoReCa" },
+  "CN12188": { name: "ร้านบางนา-ตราด ขายของชำ",                          en: "Bang Na Trad Shop",                            pay: "credit", channel: "Convenience" },
 };
 
 // ─── Ship-to addresses ─────────────────────────────────────────
+// Sourced from GreenSpot_Integrated_Demo_Dataset.xlsx → Ship-to Master + Sold-to Master.
 const SHIP_TO = {
-  // Lotus's branches
-  "ST-0451": { code: "CN10045", name: "Lotus's สาขาพระราม 4",        addr: "1693 ถ.พระราม 4 คลองเตย กรุงเทพฯ 10110" },
-  "ST-0452": { code: "CN10045", name: "Lotus's สาขาบางนา",            addr: "589/15 ถ.บางนา-ตราด บางนา กรุงเทพฯ 10260" },
-  // 7-Eleven branches
-  "ST-0821": { code: "CN10082", name: "7-Eleven สาขาสุขุมวิท 23",     addr: "23/4 สุขุมวิท 23 วัฒนา กรุงเทพฯ 10110" },
-  "ST-0822": { code: "CN10082", name: "7-Eleven สาขาอโศก",            addr: "100/1 ถ.อโศกมนตรี วัฒนา กรุงเทพฯ 10110" },
-  "ST-0823": { code: "CN10082", name: "7-Eleven สาขาทองหล่อ 10",      addr: "55 ทองหล่อ 10 วัฒนา กรุงเทพฯ 10110" },
-  // Big C
-  "ST-1571": { code: "CN10157", name: "Big C สาขารัชดาภิเษก",         addr: "97/11 ถ.รัชดาภิเษก ดินแดง กรุงเทพฯ 10400" },
-  // Makro
-  "ST-2131": { code: "CN10213", name: "Makro สาขาลาดพร้าว",           addr: "3498 ถ.ลาดพร้าว วังทองหลาง กรุงเทพฯ 10310" },
-  "ST-2132": { code: "CN10213", name: "Makro สาขาบางบอน",             addr: "127 ถ.บางบอน 1 บางบอน กรุงเทพฯ 10150" },
-  // Family Mart
-  "ST-4211": { code: "CN10421", name: "Family Mart สำนักงานใหญ่",     addr: "999/9 ถ.พระราม 1 ปทุมวัน กรุงเทพฯ 10330" },
-  // Mom-and-pop
-  "ST-5601": { code: "CN10560", name: "ป้าน้อย เจริญกรุง 36",         addr: "245 เจริญกรุง 36 บางรัก กรุงเทพฯ 10500" },
-  "ST-7321": { code: "CN10732", name: "แสงสว่าง สีลม ซ.5",            addr: "12/3 สีลม ซ.5 บางรัก กรุงเทพฯ 10500" },
-  "ST-8911": { code: "CN10891", name: "ตลาดคลองเตย ล็อค A-12",        addr: "ตลาดคลองเตย คลองเตย กรุงเทพฯ 10110" },
-  "ST-1045": { code: "CN11045", name: "จิตติพร อโศก ซ.13",             addr: "78 อโศก-ดินแดง วัฒนา กรุงเทพฯ 10110" },
-  // Gourmet / Villa / Foodland
-  "ST-1203": { code: "CN11203", name: "Gourmet Market สยามพารากอน",    addr: "991 พระราม 1 ปทุมวัน กรุงเทพฯ 10330" },
-  "ST-1204": { code: "CN11203", name: "Gourmet Market เอ็มควอเทียร์",  addr: "693 สุขุมวิท วัฒนา กรุงเทพฯ 10110" },
-  "ST-1320": { code: "CN11320", name: "Villa Market สุขุมวิท 33",      addr: "32 สุขุมวิท 33 วัฒนา กรุงเทพฯ 10110" },
-  "ST-1451": { code: "CN11451", name: "Foodland ปิ่นเกล้า",             addr: "7/3 บรมราชชนนี บางพลัด กรุงเทพฯ 10700" },
-  // Lawson
-  "ST-1620": { code: "CN11620", name: "Lawson 108 สาขาเอกมัย",         addr: "1093 สุขุมวิท 63 วัฒนา กรุงเทพฯ 10110" },
-  // Tops
-  "ST-1782": { code: "CN11782", name: "Tops Daily ทองหล่อ ซ.13",       addr: "55 ทองหล่อ 13 วัฒนา กรุงเทพฯ 10110" },
-  // Centara
-  "ST-1901": { code: "CN11901", name: "Centara Grand ลาดพร้าว",        addr: "1695 ถ.พหลโยธิน จตุจักร กรุงเทพฯ 10900" },
-  // Cafe
-  "ST-2010": { code: "CN12010", name: "บ้านระเบียง ทองหล่อ",            addr: "10 ทองหล่อ 13 วัฒนา กรุงเทพฯ 10110" },
-  // CJ
-  "ST-2188": { code: "CN12188", name: "CJ More สาขาบางนา",             addr: "788 บางนา-ตราด บางนา กรุงเทพฯ 10260" },
+  // Lotus's — Ship-to 2000101 / 2000102
+  "ST-0451": { code: "CN10045", name: "ศูนย์กระจายสินค้าโลตัสส์ บางบัวทอง",  addr: "55 หมู่ 5 ถนนบางบัวทอง-สุพรรณบุรี ตำบลบางบัวทอง อำเภอบางบัวทอง นนทบุรี 11110" },
+  "ST-0452": { code: "CN10045", name: "ศูนย์กระจายสินค้าโลตัสส์ วังน้อย",     addr: "99 หมู่ 2 ถนนพหลโยธิน ตำบลลำไทร อำเภอวังน้อย พระนครศรีอยุธยา 13170" },
+  // CP All / 7-Eleven — Ship-to 2000301 / 2000302
+  "ST-0821": { code: "CN10082", name: "ศูนย์กระจายสินค้า 7-Eleven สุวรรณภูมิ", addr: "111 ถนนบางนา-ตราด กม.19 อำเภอบางพลี สมุทรปราการ 10540" },
+  "ST-0822": { code: "CN10082", name: "ศูนย์กระจายสินค้า 7-Eleven ลำพูน",     addr: "99 หมู่ 3 นิคมอุตสาหกรรมลำพูน ตำบลในเมือง อำเภอเมืองลำพูน ลำพูน 51000" },
+  "ST-0823": { code: "CN10082", name: "ซีพี ออลล์ สำนักงานใหญ่ สีลม",          addr: "313 ถนนสีลม แขวงสีลม เขตบางรัก กรุงเทพฯ 10500" },
+  // Big C — Ship-to 2000202 (BKK store)
+  "ST-1571": { code: "CN10157", name: "บิ๊กซี เอ็กซ์ตร้า พระราม 4",            addr: "2929 ถนนพระราม 4 แขวงคลองเตย เขตคลองเตย กรุงเทพฯ 10110" },
+  // Makro — Ship-to 2000501 / 2000502
+  "ST-2131": { code: "CN10213", name: "แม็คโคร สาขาแจ้งวัฒนะ",                addr: "111 ถนนแจ้งวัฒนะ อำเภอปากเกร็ด นนทบุรี 11120" },
+  "ST-2132": { code: "CN10213", name: "แม็คโคร สาขาภูเก็ต",                   addr: "100/9 ถนนเจ้าฟ้าตะวันตก ตำบลในเมือง อำเภอเมืองภูเก็ต ภูเก็ต 83000" },
+  // Lung Suk Convenience Shop — Ship-to 2010801
+  "ST-4211": { code: "CN10421", name: "ร้านสะดวกซื้อ ลุงสุข",                   addr: "15 ซอย 3 ถนนพหลโยธิน ตำบลในเมือง อำเภอเมืองลำปาง ลำปาง 52000" },
+  // Pa Noi Mart — Ship-to 2010901
+  "ST-5601": { code: "CN10560", name: "ร้านป้าน้อย มาร์ท",                     addr: "99/2 หมู่ 4 ตำบลท่าใหม่ อำเภอท่าใหม่ จันทบุรี 22120" },
+  // Sermsap Mini-Mart — Ship-to 2010401
+  "ST-7321": { code: "CN10732", name: "ร้านเสริมทรัพย์ มินิมาร์ท",              addr: "123 ถนนราชวิถี แขวงถนนพญาไท เขตพญาไท กรุงเทพฯ 10400" },
+  // Khlong Toei Fresh Shop — Ship-to 2012301
+  "ST-8911": { code: "CN10891", name: "ร้านคลองเตย เฟรช ชอป",                 addr: "189 ถนนพระราม 4 แขวงคลองเตย เขตคลองเตย กรุงเทพฯ 10110" },
+  // Jaroen Sap Grocery — Ship-to 2011201
+  "ST-1045": { code: "CN11045", name: "ร้านเจริญทรัพย์ ขายของชำ",             addr: "78 ถนนเจริญกรุง แขวงบางรัก เขตบางรัก กรุงเทพฯ 10500" },
+  // The Mall Group / Gourmet Market — Ship-to 2000401 / 2000402
+  "ST-1203": { code: "CN11203", name: "กูร์เมต์ มาร์เก็ต สยามพารากอน",          addr: "991 ถนนพระราม 1 แขวงปทุมวัน เขตปทุมวัน กรุงเทพฯ 10330" },
+  "ST-1204": { code: "CN11203", name: "กูร์เมต์ มาร์เก็ต เอ็มควอเทียร์",         addr: "693 ถนนสุขุมวิท แขวงคลองตันเหนือ เขตวัฒนา กรุงเทพฯ 10110" },
+  // Suksamran Supermarket — Ship-to 2010601 / 2010602
+  "ST-1320": { code: "CN11320", name: "สุขสำราญ ซูเปอร์มาร์เก็ต โคราช",         addr: "88 ถนนสุขุมวิท ตำบลในเมือง อำเภอเมืองนครราชสีมา นครราชสีมา 30000" },
+  // Phitsanulok Fresh Mart — Ship-to 2010701
+  "ST-1451": { code: "CN11451", name: "พิษณุโลก เฟรช มาร์ท (สาขาหลัก)",        addr: "72/5 ถนนพระองค์ดำ ตำบลในเมือง อำเภอเมืองพิษณุโลก พิษณุโลก 65000" },
+  // Soi Aree Mini-Mart — Ship-to 2012201
+  "ST-1620": { code: "CN11620", name: "ร้านซอยอารีย์ มินิมาร์ท",                addr: "45 ซอยอารีย์ 5 ถนนพหลโยธิน แขวงสามเสนใน เขตพญาไท กรุงเทพฯ 10400" },
+  // Lat Phrao 71 Mini-Mart — Ship-to 2012501
+  "ST-1782": { code: "CN11782", name: "ร้านลาดพร้าว 71 มินิมาร์ท",              addr: "234 ซอยลาดพร้าว 71 แขวงวังทองหลาง เขตวังทองหลาง กรุงเทพฯ 10310" },
+  // Minor Hotel Group / Anantara — Ship-to 2020101
+  "ST-1901": { code: "CN11901", name: "อนันตรา ริเวอร์ไซด์ กรุงเทพฯ รีสอร์ท",    addr: "257/1-3 ถนนเจริญนคร เขตธนบุรี กรุงเทพฯ 10600" },
+  // Central Restaurants Group — Ship-to 2020201
+  "ST-2010": { code: "CN12010", name: "ครัวกลางและศูนย์กระจายสินค้า CRG บางนา", addr: "212 ถนนบางนา-ตราด กม.8 เขตบางนา กรุงเทพฯ 10260" },
+  // Bang Na Trad Shop — Ship-to 2012601
+  "ST-2188": { code: "CN12188", name: "ร้านบางนา-ตราด ขายของชำ",              addr: "555 ถนนบางนา-ตราด กม.6 แขวงบางนา เขตบางนา กรุงเทพฯ 10260" },
 };
 
 // ─── Trucks (today: 16 May 2026) ───────────────────────────────
@@ -175,99 +183,99 @@ const RAW = [
   // ─── TRK-1042 — central — Modern + premium mix ──────────────
   { truck: "TRK-1042", shipTo: "ST-0451", delivery: "DN-540021", billing: "BL-880331",
     status: "settled", payment: "credit",
-    lines: [["VTM-UHT-ORG", 120], ["VTM-TGO-CHO", 60], ["VTM-UHT-BLK", 30], ["VTM-LIT-300", 24]] },
+    lines: [["GS-VUH-04", 120], ["GS-VTG-01", 60], ["GS-VUH-02", 30], ["GS-VTG-06", 24]] },
   { truck: "TRK-1042", shipTo: "ST-0452", delivery: "DN-540022", billing: "BL-880332",
     status: "settled", payment: "credit",
-    lines: [["VTM-UHT-ORG", 80], ["VTM-UHT-JAY", 24]] },
+    lines: [["GS-VUH-04", 80], ["GS-VUH-05", 24]] },
   { truck: "TRK-1042", shipTo: "ST-1203", delivery: "DN-540023", billing: "BL-880333",
     status: "review", payment: "bank",
-    lines: [["VTM-UHT-ORG", 40], ["VTM-TGO-RTT", 30], ["VSO-MLT-180", 12]] },
+    lines: [["GS-VUH-04", 40], ["GS-VTG-02", 30], ["GS-VSY-01", 12]] },
   { truck: "TRK-1042", shipTo: "ST-1204", delivery: "DN-540024", billing: "BL-880334",
     status: "review", payment: "bank",
-    lines: [["VTM-TGO-CHO", 36], ["VTM-UHT-LAC", 18]] },
+    lines: [["GS-VTG-01", 36], ["GS-VUH-03", 18]] },
   { truck: "TRK-1042", shipTo: "ST-5601", delivery: "DN-540025", billing: "BL-880335",
     status: "review", payment: "cash",
-    lines: [["VTM-UHT-ORG", 6], ["VTM-TGO-ORG", 4], ["VSO-ALM-180", 3]] },
+    lines: [["GS-VUH-04", 6], ["GS-VTG-05", 4], ["GS-VSY-04", 3]] },
 
   // ─── TRK-1043 — north — convenience-heavy ───────────────────
   { truck: "TRK-1043", shipTo: "ST-0821", delivery: "DN-540031", billing: "BL-880341",
     status: "review", payment: "credit",
-    lines: [["VTM-UHT-ORG", 24], ["VTM-TGO-CHO", 24], ["VTM-TGO-ORG", 18]] },
+    lines: [["GS-VUH-04", 24], ["GS-VTG-01", 24], ["GS-VTG-05", 18]] },
   { truck: "TRK-1043", shipTo: "ST-0822", delivery: "DN-540032", billing: "BL-880342",
     status: "review", payment: "credit",
-    lines: [["VTM-UHT-ORG", 30], ["VTM-TGO-RTT", 18], ["VTM-LIT-300", 12]] },
+    lines: [["GS-VUH-04", 30], ["GS-VTG-02", 18], ["GS-VTG-06", 12]] },
   { truck: "TRK-1043", shipTo: "ST-1901", delivery: "DN-540033", billing: "BL-880343",
     status: "review", payment: "bank",
-    lines: [["VTM-UHT-LAC", 24], ["VSO-MLT-180", 36], ["VSO-ALM-180", 18]] },
+    lines: [["GS-VUH-03", 24], ["GS-VSY-01", 36], ["GS-VSY-04", 18]] },
   { truck: "TRK-1043", shipTo: "ST-2010", delivery: "DN-540034", billing: "BL-880344",
     status: "rejected", payment: "cash",
-    lines: [["VTM-UHT-ORG", 4], ["VSO-MLT-180", 6]],
+    lines: [["GS-VUH-04", 4], ["GS-VSY-01", 6]],
     rejectReason: "Cash short by ฿420. Driver to reconcile receipts." },
   { truck: "TRK-1043", shipTo: "ST-2188", delivery: "DN-540035", billing: "BL-880345",
     status: "submitted", payment: "credit",
-    lines: [["VTM-UHT-ORG", 30], ["VTM-TGO-CHO", 12], ["VTM-TGO-ORG", 12]] },
+    lines: [["GS-VUH-04", 30], ["GS-VTG-01", 12], ["GS-VTG-05", 12]] },
 
   // ─── TRK-1044 — east — high-volume convenience ──────────────
   { truck: "TRK-1044", shipTo: "ST-0823", delivery: "DN-540041", billing: "BL-880351",
     status: "submitted", payment: "credit",
-    lines: [["VTM-UHT-ORG", 36], ["VTM-TGO-CHO", 24], ["VTM-TGO-RTT", 18]] },
+    lines: [["GS-VUH-04", 36], ["GS-VTG-01", 24], ["GS-VTG-02", 18]] },
   { truck: "TRK-1044", shipTo: "ST-1620", delivery: "DN-540042", billing: "BL-880352",
     status: "submitted", payment: "credit",
-    lines: [["VTM-UHT-ORG", 24], ["VTM-TGO-ORG", 18], ["VSO-ALM-180", 6]] },
+    lines: [["GS-VUH-04", 24], ["GS-VTG-05", 18], ["GS-VSY-04", 6]] },
   { truck: "TRK-1044", shipTo: "ST-1320", delivery: "DN-540043", billing: "BL-880353",
     status: "submitted", payment: "bank",
-    lines: [["VTM-UHT-ORG", 18], ["VTM-UHT-JAY", 12], ["VSO-MLT-180", 12]] },
+    lines: [["GS-VUH-04", 18], ["GS-VUH-05", 12], ["GS-VSY-01", 12]] },
   { truck: "TRK-1044", shipTo: "ST-1782", delivery: "DN-540044", billing: "BL-880354",
     status: "submitted", payment: "credit",
-    lines: [["VTM-UHT-ORG", 30], ["VTM-TGO-CHO", 18], ["VTM-UHT-LAC", 12]] },
+    lines: [["GS-VUH-04", 30], ["GS-VTG-01", 18], ["GS-VUH-03", 12]] },
   { truck: "TRK-1044", shipTo: "ST-1045", delivery: "DN-540045", billing: "BL-880355",
     status: "submitted", payment: "cash",
-    lines: [["VTM-UHT-ORG", 6], ["VTM-TGO-CHO", 6], ["VTM-UHT-BLK", 3]] },
+    lines: [["GS-VUH-04", 6], ["GS-VTG-01", 6], ["GS-VUH-02", 3]] },
 
   // ─── TRK-1045 — west — wholesale + premium ──────────────────
   { truck: "TRK-1045", shipTo: "ST-2131", delivery: "DN-540051", billing: "BL-880361",
     status: "draft", payment: "credit",
-    lines: [["VTM-UHT-ORG", 240], ["VTM-TGO-CHO", 120], ["VTM-UHT-JAY", 60], ["VTM-UHT-BLK", 96], ["VTM-LIT-300", 36]] },
+    lines: [["GS-VUH-04", 240], ["GS-VTG-01", 120], ["GS-VUH-05", 60], ["GS-VUH-02", 96], ["GS-VTG-06", 36]] },
   { truck: "TRK-1045", shipTo: "ST-2132", delivery: "DN-540052", billing: "BL-880362",
     status: "draft", payment: "credit",
-    lines: [["VTM-UHT-ORG", 180], ["VTM-UHT-LAC", 48], ["VSO-ALM-180", 36]] },
+    lines: [["GS-VUH-04", 180], ["GS-VUH-03", 48], ["GS-VSY-04", 36]] },
   { truck: "TRK-1045", shipTo: "ST-1451", delivery: "DN-540053", billing: "BL-880363",
     status: "draft", payment: "bank",
-    lines: [["VTM-UHT-ORG", 24], ["VTM-TGO-RTT", 18], ["VSO-MLT-180", 12]] },
+    lines: [["GS-VUH-04", 24], ["GS-VTG-02", 18], ["GS-VSY-01", 12]] },
 
   // ─── TRK-1046 — south — small shops, cash-heavy ─────────────
   { truck: "TRK-1046", shipTo: "ST-7321", delivery: "DN-540061", billing: "BL-880371",
     status: "rework", payment: "cash",
-    lines: [["VTM-UHT-ORG", 8], ["VTM-TGO-CHO", 6], ["VTM-TGO-ORG", 4]],
+    lines: [["GS-VUH-04", 8], ["GS-VTG-01", 6], ["GS-VTG-05", 4]],
     rejectReason: "Receipt #R-7321-3 amount mismatch with billing total. Please re-submit with correction." },
   { truck: "TRK-1046", shipTo: "ST-8911", delivery: "DN-540062", billing: "BL-880372",
     status: "rework", payment: "cash",
-    lines: [["VTM-UHT-ORG", 12], ["VTM-UHT-LAC", 6], ["VTM-UHT-BLK", 8]] },
+    lines: [["GS-VUH-04", 12], ["GS-VUH-03", 6], ["GS-VUH-02", 8]] },
   { truck: "TRK-1046", shipTo: "ST-1571", delivery: "DN-540063", billing: "BL-880373",
     status: "closed", payment: "credit",
-    lines: [["VTM-UHT-ORG", 60], ["VTM-TGO-CHO", 36], ["VTM-UHT-JAY", 18]] },
+    lines: [["GS-VUH-04", 60], ["GS-VTG-01", 36], ["GS-VUH-05", 18]] },
   { truck: "TRK-1046", shipTo: "ST-4211", delivery: "DN-540064", billing: "BL-880374",
     status: "closed", payment: "credit",
-    lines: [["VTM-UHT-ORG", 36], ["VTM-TGO-RTT", 24], ["VTM-TGO-ORG", 12]] },
+    lines: [["GS-VUH-04", 36], ["GS-VTG-02", 24], ["GS-VTG-05", 12]] },
 
   // ─── TRK-1047 — central — split status (in-progress) ────────
   { truck: "TRK-1047", shipTo: "ST-0822", delivery: "DN-540071", billing: "BL-880381",
     status: "submitted", payment: "credit",
-    lines: [["VTM-UHT-ORG", 30], ["VTM-TGO-CHO", 18]] },
+    lines: [["GS-VUH-04", 30], ["GS-VTG-01", 18]] },
   { truck: "TRK-1047", shipTo: "ST-1203", delivery: "DN-540072", billing: "BL-880382",
     status: "submitted", payment: "bank",
-    lines: [["VTM-UHT-ORG", 36], ["VTM-UHT-LAC", 12], ["VSO-ALM-180", 6]] },
+    lines: [["GS-VUH-04", 36], ["GS-VUH-03", 12], ["GS-VSY-04", 6]] },
 
   // ─── TRK-1048 — east — settled & closed mix ─────────────────
   { truck: "TRK-1048", shipTo: "ST-0821", delivery: "DN-540081", billing: "BL-880391",
     status: "closed", payment: "credit",
-    lines: [["VTM-UHT-ORG", 24], ["VTM-TGO-CHO", 18], ["VTM-TGO-ORG", 12]] },
+    lines: [["GS-VUH-04", 24], ["GS-VTG-01", 18], ["GS-VTG-05", 12]] },
   { truck: "TRK-1048", shipTo: "ST-1782", delivery: "DN-540082", billing: "BL-880392",
     status: "settled", payment: "credit",
-    lines: [["VTM-UHT-ORG", 30], ["VTM-TGO-RTT", 24]] },
+    lines: [["GS-VUH-04", 30], ["GS-VTG-02", 24]] },
   { truck: "TRK-1048", shipTo: "ST-1620", delivery: "DN-540083", billing: "BL-880393",
     status: "settled", payment: "credit",
-    lines: [["VTM-UHT-ORG", 18], ["VTM-TGO-CHO", 12], ["VSO-ALM-180", 6]] },
+    lines: [["GS-VUH-04", 18], ["GS-VTG-01", 12], ["GS-VSY-04", 6]] },
 ];
 
 // ─── Compute totals + denormalize ───────────────────────────────

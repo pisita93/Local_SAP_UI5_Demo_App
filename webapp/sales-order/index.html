@@ -266,10 +266,10 @@ const INITIAL_ORDERS = [
   orderType: 'OR', salesRep: 'John Smith',
   priority: 'High', notes: 'Urgent delivery required.',
   items: [
-  { id: 1, material: 'MAT-001', description: 'Industrial Pump A', qty: 10, uom: 'EA', price: 1200, total: 12000 },
-  { id: 2, material: 'MAT-003', description: 'Seal Kit Pro', qty: 50, uom: 'EA', price: 45, total: 2250 }],
+  { id: 1, material: 'GS-VUH-04', description: 'Vitamilk UHT Original 300ml x 36 cartons',         qty: 10, uom: 'CSE', price: 336.96, total: 3369.60 },
+  { id: 2, material: 'GS-VTG-01', description: 'Vitamilk Togo Choco Grande 300ml x 24 bottles',    qty: 50, uom: 'CSE', price: 355.68, total: 17784.00 }],
 
-  totalAmount: 14250,
+  totalAmount: 21153.60,
   history: [
   { action: 'Submitted', by: 'John Smith', date: '2026-04-08 09:12', comment: '' },
   { action: 'L1 Approved', by: 'Sarah Lee', date: '2026-04-09 10:30', comment: 'Looks good.' },
@@ -288,9 +288,9 @@ const INITIAL_ORDERS = [
   orderType: 'OR', salesRep: 'Anna Müller',
   priority: 'Medium', notes: '',
   items: [
-  { id: 1, material: 'MAT-007', description: 'Control Module X9', qty: 5, uom: 'EA', price: 3400, total: 17000 }],
+  { id: 1, material: 'GS-VSY-03', description: 'V-Soy Almond 1000ml x 12 cartons', qty: 5, uom: 'CSE', price: 702.00, total: 3510.00 }],
 
-  totalAmount: 17000,
+  totalAmount: 3510.00,
   history: [
   { action: 'Submitted', by: 'Anna Müller', date: '2026-04-22 14:00', comment: '' }],
 
@@ -306,9 +306,9 @@ const INITIAL_ORDERS = [
   orderType: 'OR', salesRep: 'John Smith',
   priority: 'Low', notes: 'Standard order.',
   items: [
-  { id: 1, material: 'MAT-002', description: 'Valve Assembly B', qty: 20, uom: 'EA', price: 890, total: 17800 }],
+  { id: 1, material: 'GS-VSY-06', description: 'V-Soy Hi-Calcium Unsweetened 230ml x 36', qty: 20, uom: 'CSE', price: 421.20, total: 8424.00 }],
 
-  totalAmount: 17800,
+  totalAmount: 8424.00,
   history: [
   { action: 'Submitted', by: 'John Smith', date: '2026-04-12 08:30', comment: '' },
   { action: 'Rejected (L1)', by: 'Sarah Lee', date: '2026-04-13 09:00', comment: 'Price not aligned with contract. Please revise.' }],
@@ -898,7 +898,7 @@ function CreatePage({ onSubmit, onCancel }) {
                 {items.map((item, idx) =>
                 <tr key={item.id}>
                     <td style={{ color: '#556B82', fontSize: 12 }}>{String(idx + 1).padStart(2, '0')}</td>
-                    <td className="td-input"><input className="form-input" style={{ width: '100%', fontSize: 13 }} placeholder="MAT-XXX" value={item.material} onChange={(e) => updateItem(item.id, 'material', e.target.value)} /></td>
+                    <td className="td-input"><input className="form-input" style={{ width: '100%', fontSize: 13 }} placeholder="GS-XXX-NN" value={item.material} onChange={(e) => updateItem(item.id, 'material', e.target.value)} /></td>
                     <td className="td-input"><input className="form-input" style={{ width: '100%', fontSize: 13 }} placeholder="Description" value={item.description} onChange={(e) => updateItem(item.id, 'description', e.target.value)} /></td>
                     <td className="td-input"><input type="number" className="form-input" style={{ width: '100%', fontSize: 13, textAlign: 'right' }} min="1" value={item.qty} onChange={(e) => updateItem(item.id, 'qty', e.target.value)} /></td>
                     <td className="td-input">
@@ -1282,19 +1282,19 @@ function PendingApprovalsPage({ orders, onViewOrder }) {
 // ── Transaction Status Page ──────────────────────────────────────
 const TX_DATA = {
   'REQ-100001': {
-    salesOrder: { number: 'SO-4500012345', date: '2026-04-10', customer: 'Siemens AG', netValue: 14250, currency: 'EUR', status: 'Completed', items: [{ pos: '10', material: 'MAT-001', desc: 'Industrial Pump A', qty: 10, uom: 'EA', price: 1200, total: 12000 }, { pos: '20', material: 'MAT-003', desc: 'Seal Kit Pro', qty: 50, uom: 'EA', price: 45, total: 2250 }] },
-    delivery: { number: 'DN-8000023456', date: '2026-04-15', actualDate: '2026-04-14', carrier: 'DHL Express', trackingNo: 'DHL-9876543210', shipFrom: 'DE-Berlin WH', shipTo: 'DE-Munich', status: 'Delivered', items: [{ pos: '10', material: 'MAT-001', desc: 'Industrial Pump A', delQty: 10, pickedQty: 10, uom: 'EA' }, { pos: '20', material: 'MAT-003', desc: 'Seal Kit Pro', delQty: 50, pickedQty: 50, uom: 'EA' }] },
-    billing: { number: 'INV-9000034567', date: '2026-04-16', dueDate: '2026-05-16', netAmount: 14250, taxAmount: 2707.50, totalAmount: 16957.50, currency: 'EUR', status: 'Posted', taxCode: 'V1 (19%)', items: [{ pos: '10', desc: 'Industrial Pump A', qty: 10, unitPrice: 1200, total: 12000 }, { pos: '20', desc: 'Seal Kit Pro', qty: 50, unitPrice: 45, total: 2250 }] },
-    payment: { status: 'Paid', paidDate: '2026-05-10', method: 'Bank Transfer', reference: 'PAY-TRF-20260510-001', amount: 16957.50, currency: 'EUR', bank: 'Deutsche Bank', accountNo: 'DE89 3704 0044 0532 0130 00', clearedDate: '2026-05-11' },
+    salesOrder: { number: 'SO-4500012345', date: '2026-04-10', customer: 'Siemens AG', netValue: 21153.60, currency: 'EUR', status: 'Completed', items: [{ pos: '10', material: 'GS-VUH-04', desc: 'Vitamilk UHT Original 300ml x 36 cartons', qty: 10, uom: 'CSE', price: 336.96, total: 3369.60 }, { pos: '20', material: 'GS-VTG-01', desc: 'Vitamilk Togo Choco Grande 300ml x 24 bottles', qty: 50, uom: 'CSE', price: 355.68, total: 17784.00 }] },
+    delivery: { number: 'DN-8000023456', date: '2026-04-15', actualDate: '2026-04-14', carrier: 'DHL Express', trackingNo: 'DHL-9876543210', shipFrom: 'DE-Berlin WH', shipTo: 'DE-Munich', status: 'Delivered', items: [{ pos: '10', material: 'GS-VUH-04', desc: 'Vitamilk UHT Original 300ml x 36 cartons', delQty: 10, pickedQty: 10, uom: 'CSE' }, { pos: '20', material: 'GS-VTG-01', desc: 'Vitamilk Togo Choco Grande 300ml x 24 bottles', delQty: 50, pickedQty: 50, uom: 'CSE' }] },
+    billing: { number: 'INV-9000034567', date: '2026-04-16', dueDate: '2026-05-16', netAmount: 21153.60, taxAmount: 4019.18, totalAmount: 25172.78, currency: 'EUR', status: 'Posted', taxCode: 'V1 (19%)', items: [{ pos: '10', desc: 'Vitamilk UHT Original 300ml x 36 cartons', qty: 10, unitPrice: 336.96, total: 3369.60 }, { pos: '20', desc: 'Vitamilk Togo Choco Grande 300ml x 24 bottles', qty: 50, unitPrice: 355.68, total: 17784.00 }] },
+    payment: { status: 'Paid', paidDate: '2026-05-10', method: 'Bank Transfer', reference: 'PAY-TRF-20260510-001', amount: 25172.78, currency: 'EUR', bank: 'Deutsche Bank', accountNo: 'DE89 3704 0044 0532 0130 00', clearedDate: '2026-05-11' },
   },
   'REQ-100002': {
-    salesOrder: { number: null, date: '2026-04-22', customer: 'BMW Group', netValue: 17000, currency: 'EUR', status: 'Pending Approval', items: [{ pos: '10', material: 'MAT-007', desc: 'Control Module X9', qty: 5, uom: 'EA', price: 3400, total: 17000 }] },
+    salesOrder: { number: null, date: '2026-04-22', customer: 'BMW Group', netValue: 3510.00, currency: 'EUR', status: 'Pending Approval', items: [{ pos: '10', material: 'GS-VSY-03', desc: 'V-Soy Almond 1000ml x 12 cartons', qty: 5, uom: 'CSE', price: 702.00, total: 3510.00 }] },
     delivery: null,
     billing: null,
     payment: { status: 'Not yet billed', paidDate: null, method: null, reference: null, amount: null, currency: 'EUR', bank: null, accountNo: null, clearedDate: null },
   },
   'REQ-100003': {
-    salesOrder: { number: null, date: '2026-04-12', customer: 'Bosch GmbH', netValue: 17800, currency: 'EUR', status: 'Rejected', items: [{ pos: '10', material: 'MAT-002', desc: 'Valve Assembly B', qty: 20, uom: 'EA', price: 890, total: 17800 }] },
+    salesOrder: { number: null, date: '2026-04-12', customer: 'Bosch GmbH', netValue: 8424.00, currency: 'EUR', status: 'Rejected', items: [{ pos: '10', material: 'GS-VSY-06', desc: 'V-Soy Hi-Calcium Unsweetened 230ml x 36', qty: 20, uom: 'CSE', price: 421.20, total: 8424.00 }] },
     delivery: null,
     billing: null,
     payment: { status: 'N/A', paidDate: null, method: null, reference: null, amount: null, currency: 'EUR', bank: null, accountNo: null, clearedDate: null },
