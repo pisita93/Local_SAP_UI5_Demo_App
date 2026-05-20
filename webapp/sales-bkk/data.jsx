@@ -169,6 +169,8 @@ const TRUCKS = [
   { no: "TRK-1046", plate: "72-1183",  driver: "ธนากร พิมพ์งาม",  driverEn: "Tanakorn Pimngam",   route: "BKK-STH", depart: "05:50", returnT: "14:30" },
   { no: "TRK-1047", plate: "72-4490",  driver: "สุชาติ พรหมเทพ",  driverEn: "Suchart Promtep",    route: "BKK-CTR", depart: "06:25", returnT: "15:10" },
   { no: "TRK-1048", plate: "72-7712",  driver: "นิรันดร์ ทองดี",   driverEn: "Niran Thongdee",     route: "BKK-EST", depart: "06:00", returnT: "16:00" },
+  { no: "TRK-1049", plate: "73-0184",  driver: "ภาณุพงศ์ สุขสันต์", driverEn: "Phanupong Suksan",   route: "BKK-CTR", depart: "05:55", returnT: "15:20" },
+  { no: "TRK-1050", plate: "73-3392",  driver: "เกรียงไกร พลธรรม", driverEn: "Kriangkrai Pholtham",route: "BKK-NOR", depart: "06:15", returnT: "15:55" },
 ];
 
 // helpers
@@ -276,6 +278,28 @@ const RAW = [
   { truck: "TRK-1048", shipTo: "ST-1620", delivery: "DN-540083", billing: "BL-880393",
     status: "settled", payment: "credit",
     lines: [["GS-VUH-04", 18], ["GS-VTG-01", 12], ["GS-VSY-04", 6]] },
+
+  // ─── TRK-1049 — central — rework backlog + tail of settled ───
+  { truck: "TRK-1049", shipTo: "ST-0451", delivery: "DN-540091", billing: "BL-880401",
+    status: "rework", payment: "cash",
+    lines: [["GS-VUH-04", 12], ["GS-VTG-01", 6], ["GS-VSY-01", 4]],
+    rejectReason: "Receipt count differs from billing line: 3 vs 4. Verify delivery completeness." },
+  { truck: "TRK-1049", shipTo: "ST-0822", delivery: "DN-540092", billing: "BL-880402",
+    status: "rework", payment: "credit",
+    lines: [["GS-VUH-04", 24], ["GS-VTG-02", 18], ["GS-VUH-03", 12]],
+    rejectReason: "Customer signature missing on delivery note. Re-upload signed copy." },
+  { truck: "TRK-1049", shipTo: "ST-1620", delivery: "DN-540093", billing: "BL-880403",
+    status: "rework", payment: "bank",
+    lines: [["GS-VUH-04", 18], ["GS-VTG-05", 12]],
+    rejectReason: "Bank slip image unreadable — please rescan and re-submit." },
+  { truck: "TRK-1049", shipTo: "ST-0823", delivery: "DN-540094", billing: "BL-880404",
+    status: "settled", payment: "credit",
+    lines: [["GS-VUH-04", 36], ["GS-VTG-01", 18], ["GS-VUH-05", 12]] },
+
+  // ─── TRK-1050 — north — settled tail ─────────────────────────
+  { truck: "TRK-1050", shipTo: "ST-2010", delivery: "DN-540101", billing: "BL-880411",
+    status: "settled", payment: "bank",
+    lines: [["GS-VUH-04", 24], ["GS-VTG-02", 18], ["GS-VSY-04", 6]] },
 ];
 
 // ─── Compute totals + denormalize ───────────────────────────────

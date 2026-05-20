@@ -478,4 +478,107 @@ const Legend = ({ dot, label, value }) => (
   </span>
 );
 
-Object.assign(window, { AdminReport });
+// ─────────────────────────────────────────────────────────────
+// Side-nav status pages — Rework queue / Settled
+// Focused list view for a single billing status.
+// ─────────────────────────────────────────────────────────────
+function StatusFilteredPage({ status, billings, density, palette, onOpenTruck }) {
+  const rows = billings.filter(b => b.status === status);
+  const rowH  = density === "compact" ? 36 : 44;
+  const cellPad = density === "compact" ? "8px 12px" : "10px 12px";
+
+  const isRework = status === "rework";
+  const config = isRework
+    ? { title: "Rework queue",
+        subtitle: "Billings returned by the cashier — review the rejection reason, correct, and re-submit.",
+        emptyTitle: "No billings in rework right now",
+        emptySub: "When the cashier rejects a billing it lands here for the sales admin to fix and resubmit." }
+    : { title: "Settled",
+        subtitle: "Billings approved by the cashier — settle the truck to post to SAP.",
+        emptyTitle: "No settled billings yet",
+        emptySub: "Once the cashier approves a billing it shows here, ready for truck settlement and SAP posting." };
+
+  const totals = rows.reduce((s, b) => {
+    s.qty += b.qty; s.total += b.total;
+    s[b.payment] = (s[b.payment] || 0) + b.total;
+    return s;
+  }, { qty: 0, credit: 0, cash: 0, bank: 0, total: 0 });
+
+  const COLS = isRework
+    ? "140px 110px minmax(280px, 1.6fr) 90px 130px 110px minmax(260px, 1.4fr)"
+    : "140px 110px minmax(280px, 1.6fr) 90px 130px 110px 130px";
+
+  return (
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+      <PageTitle
+        title={config.title}
+        subtitle={`${TODAY} · ${rows.length} billing${rows.length === 1 ? "" : "s"} · ${totals.qty.toLocaleString()} cases · ${fmtTHB(totals.total)}`}
+      />
+      <div style={{ flex: 1, overflow: "auto", padding: 16 }}>
+        {rows.length === 0 ? (
+          <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)",
+                        padding: 64, textAlign: "center", color: "var(--text2)" }}>
+            <Icon name={isRework ? "alert" : "check"} size={36}
+                  color={isRework ? "var(--warn)" : "var(--pos)"}
+                  style={{ marginBottom: 12 }}/>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "var(--text)" }}>{config.emptyTitle}</div>
+            <div style={{ fontSize: 13, marginTop: 4 }}>{config.emptySub}</div>
+          </div>
+        ) : (
+          <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)", overflow: "hidden" }}>
+            <div style={{ display: "grid", gridTemplateColumns: COLS,
+                          padding: cellPad, fontSize: 11, fontWeight: 700, textTransform: "uppercase",
+                          letterSpacing: "0.06em", color: "var(--text2)",
+                          background: "var(--bg-shell)", borderBottom: "1px solid var(--border2)" }}>
+              <div>Billing</div>
+              <div>Truck</div>
+              <div>Ship-to · Customer</div>
+              <div style={{ textAlign: "right" }}>Cases</div>
+              <div style={{ textAlign: "right" }}>Total (incl. VAT)</div>
+              <div>Payment</div>
+              <div>{isRework ? "Rejection reason" : "Status"}</div>
+            </div>
+            {rows.map((b, i) => {
+              const st = SHIP_TO[b.shipTo];
+              const cust = CUSTOMERS[st.code];
+              return (
+                <div key={b.billing} style={{ display: "grid", gridTemplateColumns: COLS,
+                          padding: cellPad, alignItems: "center", minHeight: rowH,
+                          borderBottom: i < rows.length - 1 ? "1px solid var(--border3)" : "none",
+                          fontSize: 13 }}>
+                  <div style={{ fontFamily: "var(--mono, monospace)", fontWeight: 600 }}>{b.billing}</div>
+                  <div>
+                    <a onClick={() => onOpenTruck?.(b.truck)}
+                       style={{ color: "var(--blue-h)", cursor: "pointer", fontWeight: 600 }}>{b.truck}</a>
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden",
+                                  textOverflow: "ellipsis" }} title={st.name}>{st.name}</div>
+                    <div style={{ fontSize: 11, color: "var(--text2)", whiteSpace: "nowrap",
+                                  overflow: "hidden", textOverflow: "ellipsis" }} title={cust.en}>
+                      {b.shipTo} · {cust.en}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "right", fontVariantNumeric: "tabular-nums" }}>{b.qty.toLocaleString()}</div>
+                  <div style={{ textAlign: "right", fontVariantNumeric: "tabular-nums", fontWeight: 600 }}>{fmtTHB(b.total)}</div>
+                  <div><PaymentTag type={b.payment}/></div>
+                  <div style={{ minWidth: 0 }}>
+                    {isRework ? (
+                      <div style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.4 }} title={b.rejectReason || ""}>
+                        {b.rejectReason || <span style={{ fontStyle: "italic" }}>No reason captured.</span>}
+                      </div>
+                    ) : (
+                      <StatusTag status={b.status} palette={palette} size="sm"/>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { AdminReport, StatusFilteredPage });
