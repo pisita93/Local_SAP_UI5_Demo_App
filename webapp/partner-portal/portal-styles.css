@@ -78,7 +78,10 @@ body { font-family: '72', Arial, sans-serif; background: var(--sap-color-bg-shel
 .kpi-label { font-size: 12px; color: var(--sap-color-text-2); font-weight: 600; margin-top: 4px; }
 
 /* ── Table ── */
-.table-wrap { background: var(--sap-color-bg); border-radius: var(--sap-radius-md); box-shadow: var(--sap-shadow-0); overflow-x: auto; overflow-y: hidden; }
+/* Grid layout so the toolbar, table, and footer all stretch to the table's
+   intrinsic width when it overflows — otherwise the toolbar/footer look like
+   they "stop" before the last column when the table is horizontally scrolled. */
+.table-wrap { background: var(--sap-color-bg); border-radius: var(--sap-radius-md); box-shadow: var(--sap-shadow-0); display: grid; grid-template-columns: minmax(100%, max-content); overflow-x: auto; overflow-y: hidden; }
 .table-wrap .sap-table { min-width: max-content; }
 .table-toolbar { padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--sap-color-border-2); flex-wrap: wrap; gap: 8px; }
 .sap-table { width: 100%; border-collapse: collapse; font-size: 13px; }

@@ -81,8 +81,10 @@ body { display: flex; flex-direction: column; background: #F5F6F7; color: #131E2
 
 /* Cards */
 .card { background: #fff; border-radius: 10px; box-shadow: 0px 2px 4px rgba(34,53,72,0.2), 0px 0px 2px rgba(34,53,72,0.2); margin-bottom: 16px; overflow: hidden; }
-/* Cards containing tables scroll horizontally so long rows don't blow out the page */
-.card:has(> table.sap-table), .card:has(> table.line-table) { overflow-x: auto; overflow-y: hidden; }
+/* Cards containing tables become a single-column grid so the card-header
+   stretches to the table's intrinsic width — otherwise it ends before the
+   last column once the user scrolls horizontally. */
+.card:has(> table.sap-table), .card:has(> table.line-table) { display: grid; grid-template-columns: minmax(100%, max-content); overflow-x: auto; overflow-y: hidden; }
 .card > table.sap-table, .card > table.line-table { min-width: max-content; }
 .card-header { padding: 14px 20px; border-bottom: 1px solid #D9D9D9; display: flex; align-items: center; justify-content: space-between; }
 .card-title { font-size: 14px; font-weight: 700; color: #131E29; }
