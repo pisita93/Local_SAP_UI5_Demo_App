@@ -84,7 +84,7 @@ function TreeView({ customers, totals, density, palette, onOpenTruck }) {
   const cellPad = density === "compact" ? "0 10px" : "0 14px";
 
   return (
-    <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)", overflow: "hidden" }}>
+    <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)", overflowX: "auto", overflowY: "hidden" }}>
       <div style={{ display: "grid", gridTemplateColumns: COLS, alignItems: "center",
                     background: "#FAFBFC", borderBottom: "2px solid var(--border2)",
                     fontSize: 11, fontWeight: 700, color: "var(--text2)",
@@ -272,7 +272,7 @@ function KPIFlatView({ customers, totals, filtered, density, palette, onOpenTruc
       </div>
 
       {/* Customer-grouped flat table */}
-      <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)", overflow: "hidden" }}>
+      <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)", overflowX: "auto", overflowY: "hidden" }}>
         <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border2)",
                       display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div style={{ fontWeight: 700, fontSize: 14 }}>Customer rollup</div>
@@ -546,7 +546,7 @@ function StatusFilteredPage({ status, billings, density, palette, onOpenTruck })
             <div style={{ fontSize: 13, marginTop: 4 }}>{cfg.emptySub}</div>
           </div>
         ) : (
-          <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)", overflow: "hidden" }}>
+          <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)", overflowX: "auto", overflowY: "hidden" }}>
             <div style={{ display: "grid", gridTemplateColumns: COLS, columnGap: 16,
                           padding: cellPad, fontSize: 11, fontWeight: 700, textTransform: "uppercase",
                           letterSpacing: "0.06em", color: "var(--text2)",
@@ -632,7 +632,7 @@ function TrucksListPage({ billings, density, palette, onOpenTruck }) {
         subtitle={`${TODAY} · ${rollups.length} trucks dispatched · ${rollups.reduce((s, t) => s + t.count, 0)} billings · ${fmtTHB(rollups.reduce((s, t) => s + t.total, 0))}`}
       />
       <div style={{ flex: 1, overflow: "auto", padding: 16 }}>
-        <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)", overflow: "hidden" }}>
+        <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)", overflowX: "auto", overflowY: "hidden" }}>
           <div style={{ display: "grid", gridTemplateColumns: COLS, columnGap: 16,
                         padding: cellPad, fontSize: 11, fontWeight: 700, textTransform: "uppercase",
                         letterSpacing: "0.06em", color: "var(--text2)",
@@ -707,7 +707,7 @@ function CustomersListPage({ billings, density, palette, onOpenTruck }) {
         subtitle={`${TODAY} · ${rows.length} customers active · ${rows.reduce((s, r) => s + r.count, 0)} billings · ${fmtTHB(rows.reduce((s, r) => s + r.total, 0))}`}
       />
       <div style={{ flex: 1, overflow: "auto", padding: 16 }}>
-        <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)", overflow: "hidden" }}>
+        <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)", overflowX: "auto", overflowY: "hidden" }}>
           <div style={{ display: "grid", gridTemplateColumns: COLS, columnGap: 16,
                         padding: cellPad, fontSize: 11, fontWeight: 700, textTransform: "uppercase",
                         letterSpacing: "0.06em", color: "var(--text2)",
