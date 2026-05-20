@@ -102,11 +102,15 @@ function App() {
                         onSubmit={(ids, note) => { submitToCashier(ids, note); setDrillTruck(null); }}
                         onEdit={() => flash("Edit billing — opens line-item editor (not in this prototype)", "info")}
                         density={t.density} palette={t.statusPalette}/>
-    : <AdminReport billings={billings} filters={adminFilters} setFilters={setAdminFilters}
-                    density={t.density} palette={t.statusPalette}
-                    view={t.reportView} setView={(v) => setTweak("reportView", v)}
-                    onOpenTruck={onOpenTruck}
-                    onSubmitDrafts={(drafts) => submitToCashier(drafts.map(b => b.billing), "Submitted from daily report")}/>;
+    : (page === "rework" || page === "settled")
+      ? <StatusFilteredPage status={page} billings={billings}
+                            density={t.density} palette={t.statusPalette}
+                            onOpenTruck={onOpenTruck}/>
+      : <AdminReport billings={billings} filters={adminFilters} setFilters={setAdminFilters}
+                      density={t.density} palette={t.statusPalette}
+                      view={t.reportView} setView={(v) => setTweak("reportView", v)}
+                      onOpenTruck={onOpenTruck}
+                      onSubmitDrafts={(drafts) => submitToCashier(drafts.map(b => b.billing), "Submitted from daily report")}/>;
 
   const cashierView = drillTruck
     ? <CashierReview truckNo={drillTruck} billings={billings} onBack={onBackFromTruck}
