@@ -106,6 +106,14 @@ function App() {
       ? <StatusFilteredPage status={page} billings={billings}
                             density={t.density} palette={t.statusPalette}
                             onOpenTruck={onOpenTruck}/>
+    : page === "trucks"
+      ? <TrucksListPage billings={billings}
+                        density={t.density} palette={t.statusPalette}
+                        onOpenTruck={onOpenTruck}/>
+    : page === "customers"
+      ? <CustomersListPage billings={billings}
+                           density={t.density} palette={t.statusPalette}
+                           onOpenTruck={onOpenTruck}/>
       : <AdminReport billings={billings} filters={adminFilters} setFilters={setAdminFilters}
                       density={t.density} palette={t.statusPalette}
                       view={t.reportView} setView={(v) => setTweak("reportView", v)}
@@ -117,9 +125,21 @@ function App() {
                      onApprove={approveBilling} onReject={rejectBilling}
                      onSettleTruck={settleTruck}
                      density={t.density} palette={t.statusPalette}/>
-    : <CashierQueue billings={billings} filters={cashierFilters} setFilters={setCashierFilters}
-                    density={t.density} palette={t.statusPalette}
-                    onOpenTruck={onOpenTruck}/>;
+    : (cashierPage === "settled" || cashierPage === "closed")
+      ? <StatusFilteredPage status={cashierPage} billings={billings}
+                            density={t.density} palette={t.statusPalette}
+                            onOpenTruck={onOpenTruck}/>
+    : cashierPage === "report"
+      ? <AdminReport billings={billings} filters={cashierFilters} setFilters={setCashierFilters}
+                     density={t.density} palette={t.statusPalette}
+                     view={t.reportView} setView={(v) => setTweak("reportView", v)}
+                     onOpenTruck={onOpenTruck}/>
+    : cashierPage === "reports"
+      ? <CashierReportsPage billings={billings}
+                            density={t.density} palette={t.statusPalette}/>
+      : <CashierQueue billings={billings} filters={cashierFilters} setFilters={setCashierFilters}
+                      density={t.density} palette={t.statusPalette}
+                      onOpenTruck={onOpenTruck}/>;
 
   const sysadminView = <AdminHome page={sysadminPage} perms={perms} setPerms={setPerms} density={t.density}/>;
 

@@ -479,24 +479,49 @@ const Legend = ({ dot, label, value }) => (
 );
 
 // ─────────────────────────────────────────────────────────────
-// Side-nav status pages — Rework queue / Settled
-// Focused list view for a single billing status.
+// Side-nav status pages — Rework queue / Settled / Closed
+// Focused list view for a single billing status. Used from both
+// the admin and cashier side-navs.
 // ─────────────────────────────────────────────────────────────
+const STATUS_PAGE_CONFIG = {
+  rework: {
+    title:      "Rework queue",
+    subtitle:   "Billings returned by the cashier — review the rejection reason, correct, and re-submit.",
+    emptyTitle: "No billings in rework right now",
+    emptySub:   "When the cashier rejects a billing it lands here for the sales admin to fix and re-submit.",
+    iconName:   "alert",
+    iconColor:  "var(--warn)",
+    detailColHeader: "Rejection reason",
+    detailColMin:    "minmax(260px, 1.4fr)",
+  },
+  settled: {
+    title:      "Settled",
+    subtitle:   "Billings approved by the cashier — settle the truck to post to SAP.",
+    emptyTitle: "No settled billings yet",
+    emptySub:   "Once the cashier approves a billing it shows here, ready for truck settlement and SAP posting.",
+    iconName:   "check",
+    iconColor:  "var(--pos)",
+    detailColHeader: "Status",
+    detailColMin:    "150px",
+  },
+  closed: {
+    title:      "Closed (posted)",
+    subtitle:   "Settled trucks that have been posted to SAP — final, read-only.",
+    emptyTitle: "No closed billings yet",
+    emptySub:   "After a truck is settled, its billings are posted to SAP and appear here.",
+    iconName:   "file",
+    iconColor:  "var(--text2)",
+    detailColHeader: "Posted",
+    detailColMin:    "200px",
+  },
+};
+
 function StatusFilteredPage({ status, billings, density, palette, onOpenTruck }) {
   const rows = billings.filter(b => b.status === status);
-  const rowH  = density === "compact" ? 36 : 44;
+  const rowH    = density === "compact" ? 36 : 44;
   const cellPad = density === "compact" ? "8px 12px" : "10px 12px";
 
-  const isRework = status === "rework";
-  const config = isRework
-    ? { title: "Rework queue",
-        subtitle: "Billings returned by the cashier — review the rejection reason, correct, and re-submit.",
-        emptyTitle: "No billings in rework right now",
-        emptySub: "When the cashier rejects a billing it lands here for the sales admin to fix and resubmit." }
-    : { title: "Settled",
-        subtitle: "Billings approved by the cashier — settle the truck to post to SAP.",
-        emptyTitle: "No settled billings yet",
-        emptySub: "Once the cashier approves a billing it shows here, ready for truck settlement and SAP posting." };
+  const cfg = STATUS_PAGE_CONFIG[status] || STATUS_PAGE_CONFIG.settled;
 
   const totals = rows.reduce((s, b) => {
     s.qty += b.qty; s.total += b.total;
@@ -504,29 +529,25 @@ function StatusFilteredPage({ status, billings, density, palette, onOpenTruck })
     return s;
   }, { qty: 0, credit: 0, cash: 0, bank: 0, total: 0 });
 
-  const COLS = isRework
-    ? "140px 110px minmax(280px, 1.6fr) 90px 130px 110px minmax(260px, 1.4fr)"
-    : "140px 110px minmax(280px, 1.6fr) 90px 130px 110px 130px";
+  const COLS = `140px 110px minmax(280px, 1.6fr) 90px 150px 130px ${cfg.detailColMin}`;
 
   return (
     <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
       <PageTitle
-        title={config.title}
+        title={cfg.title}
         subtitle={`${TODAY} · ${rows.length} billing${rows.length === 1 ? "" : "s"} · ${totals.qty.toLocaleString()} cases · ${fmtTHB(totals.total)}`}
       />
       <div style={{ flex: 1, overflow: "auto", padding: 16 }}>
         {rows.length === 0 ? (
           <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)",
                         padding: 64, textAlign: "center", color: "var(--text2)" }}>
-            <Icon name={isRework ? "alert" : "check"} size={36}
-                  color={isRework ? "var(--warn)" : "var(--pos)"}
-                  style={{ marginBottom: 12 }}/>
-            <div style={{ fontSize: 16, fontWeight: 700, color: "var(--text)" }}>{config.emptyTitle}</div>
-            <div style={{ fontSize: 13, marginTop: 4 }}>{config.emptySub}</div>
+            <Icon name={cfg.iconName} size={36} color={cfg.iconColor} style={{ marginBottom: 12 }}/>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "var(--text)" }}>{cfg.emptyTitle}</div>
+            <div style={{ fontSize: 13, marginTop: 4 }}>{cfg.emptySub}</div>
           </div>
         ) : (
           <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)", overflow: "hidden" }}>
-            <div style={{ display: "grid", gridTemplateColumns: COLS,
+            <div style={{ display: "grid", gridTemplateColumns: COLS, columnGap: 16,
                           padding: cellPad, fontSize: 11, fontWeight: 700, textTransform: "uppercase",
                           letterSpacing: "0.06em", color: "var(--text2)",
                           background: "var(--bg-shell)", borderBottom: "1px solid var(--border2)" }}>
@@ -536,18 +557,18 @@ function StatusFilteredPage({ status, billings, density, palette, onOpenTruck })
               <div style={{ textAlign: "right" }}>Cases</div>
               <div style={{ textAlign: "right" }}>Total (incl. VAT)</div>
               <div>Payment</div>
-              <div>{isRework ? "Rejection reason" : "Status"}</div>
+              <div>{cfg.detailColHeader}</div>
             </div>
             {rows.map((b, i) => {
               const st = SHIP_TO[b.shipTo];
               const cust = CUSTOMERS[st.code];
               return (
-                <div key={b.billing} style={{ display: "grid", gridTemplateColumns: COLS,
+                <div key={b.billing} style={{ display: "grid", gridTemplateColumns: COLS, columnGap: 16,
                           padding: cellPad, alignItems: "center", minHeight: rowH,
                           borderBottom: i < rows.length - 1 ? "1px solid var(--border3)" : "none",
                           fontSize: 13 }}>
-                  <div style={{ fontFamily: "var(--mono, monospace)", fontWeight: 600 }}>{b.billing}</div>
-                  <div>
+                  <div style={{ fontFamily: "var(--mono, monospace)", fontWeight: 600, whiteSpace: "nowrap" }}>{b.billing}</div>
+                  <div style={{ whiteSpace: "nowrap" }}>
                     <a onClick={() => onOpenTruck?.(b.truck)}
                        style={{ color: "var(--blue-h)", cursor: "pointer", fontWeight: 600 }}>{b.truck}</a>
                   </div>
@@ -559,13 +580,17 @@ function StatusFilteredPage({ status, billings, density, palette, onOpenTruck })
                       {b.shipTo} · {cust.en}
                     </div>
                   </div>
-                  <div style={{ textAlign: "right", fontVariantNumeric: "tabular-nums" }}>{b.qty.toLocaleString()}</div>
-                  <div style={{ textAlign: "right", fontVariantNumeric: "tabular-nums", fontWeight: 600 }}>{fmtTHB(b.total)}</div>
-                  <div><PaymentTag type={b.payment}/></div>
+                  <div style={{ textAlign: "right", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>{b.qty.toLocaleString()}</div>
+                  <div style={{ textAlign: "right", fontVariantNumeric: "tabular-nums", fontWeight: 600, whiteSpace: "nowrap" }}>{fmtTHB(b.total)}</div>
+                  <div style={{ whiteSpace: "nowrap" }}><PaymentTag type={b.payment}/></div>
                   <div style={{ minWidth: 0 }}>
-                    {isRework ? (
+                    {status === "rework" ? (
                       <div style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.4 }} title={b.rejectReason || ""}>
                         {b.rejectReason || <span style={{ fontStyle: "italic" }}>No reason captured.</span>}
+                      </div>
+                    ) : status === "closed" ? (
+                      <div style={{ fontSize: 12, color: "var(--text2)", whiteSpace: "nowrap" }}>
+                        {b.postedAt ? `Posted ${b.postedAt}` : "Posted to SAP"}
                       </div>
                     ) : (
                       <StatusTag status={b.status} palette={palette} size="sm"/>
@@ -581,4 +606,205 @@ function StatusFilteredPage({ status, billings, density, palette, onOpenTruck })
   );
 }
 
-Object.assign(window, { AdminReport, StatusFilteredPage });
+// ─────────────────────────────────────────────────────────────
+// Admin / Trucks — list of trucks with rollup totals
+// ─────────────────────────────────────────────────────────────
+function TrucksListPage({ billings, density, palette, onOpenTruck }) {
+  // Recompute rollups from current billings so status reflects mutations.
+  const rollups = TRUCKS.map(t => {
+    const bs = billings.filter(b => b.truck === t.no);
+    const sum = { qty: 0, credit: 0, cash: 0, bank: 0, total: 0 };
+    bs.forEach(b => { sum.qty += b.qty; sum.total += b.total; sum[b.payment] += b.total; });
+    const order = ["draft","rework","rejected","submitted","review","settled","closed"];
+    const statuses = bs.map(b => b.status);
+    let truckStatus = bs.length ? "closed" : "draft";
+    for (const s of order) if (statuses.includes(s)) { truckStatus = s; break; }
+    return { ...t, ...sum, count: bs.length, status: truckStatus };
+  }).filter(t => t.count > 0);
+
+  const cellPad = density === "compact" ? "10px 12px" : "12px 12px";
+  const COLS = "120px 130px minmax(180px, 1.4fr) 100px 110px 70px 90px 140px 110px";
+
+  return (
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+      <PageTitle
+        title="Trucks"
+        subtitle={`${TODAY} · ${rollups.length} trucks dispatched · ${rollups.reduce((s, t) => s + t.count, 0)} billings · ${fmtTHB(rollups.reduce((s, t) => s + t.total, 0))}`}
+      />
+      <div style={{ flex: 1, overflow: "auto", padding: 16 }}>
+        <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)", overflow: "hidden" }}>
+          <div style={{ display: "grid", gridTemplateColumns: COLS, columnGap: 16,
+                        padding: cellPad, fontSize: 11, fontWeight: 700, textTransform: "uppercase",
+                        letterSpacing: "0.06em", color: "var(--text2)",
+                        background: "var(--bg-shell)", borderBottom: "1px solid var(--border2)" }}>
+            <div>Truck</div>
+            <div>Plate</div>
+            <div>Driver</div>
+            <div>Route</div>
+            <div>Depart / Return</div>
+            <div style={{ textAlign: "right" }}>Billings</div>
+            <div style={{ textAlign: "right" }}>Cases</div>
+            <div style={{ textAlign: "right" }}>Total (incl. VAT)</div>
+            <div>Status</div>
+          </div>
+          {rollups.map((t, i) => (
+            <div key={t.no} onClick={() => onOpenTruck?.(t.no)}
+                 style={{ display: "grid", gridTemplateColumns: COLS, columnGap: 16,
+                          padding: cellPad, alignItems: "center",
+                          borderBottom: i < rollups.length - 1 ? "1px solid var(--border3)" : "none",
+                          fontSize: 13, cursor: "pointer" }}>
+              <div style={{ whiteSpace: "nowrap" }}>
+                <a style={{ color: "var(--blue-h)", fontWeight: 700 }}>{t.no}</a>
+              </div>
+              <div style={{ fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>{t.plate}</div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={t.driver}>{t.driver}</div>
+                <div style={{ fontSize: 11, color: "var(--text2)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={t.driverEn}>{t.driverEn}</div>
+              </div>
+              <div style={{ whiteSpace: "nowrap" }}>{t.route}</div>
+              <div style={{ fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap", fontSize: 12, color: "var(--text2)" }}>
+                {t.depart} → {t.returnT}
+              </div>
+              <div style={{ textAlign: "right", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>{t.count}</div>
+              <div style={{ textAlign: "right", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>{t.qty.toLocaleString()}</div>
+              <div style={{ textAlign: "right", fontVariantNumeric: "tabular-nums", fontWeight: 600, whiteSpace: "nowrap" }}>{fmtTHB(t.total)}</div>
+              <div style={{ whiteSpace: "nowrap" }}><StatusTag status={t.status} palette={palette} size="sm"/></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Admin / Customers — list rollup by customer
+// ─────────────────────────────────────────────────────────────
+function CustomersListPage({ billings, density, palette, onOpenTruck }) {
+  const byCustomer = {};
+  billings.forEach(b => {
+    const code = SHIP_TO[b.shipTo].code;
+    if (!byCustomer[code]) {
+      const c = CUSTOMERS[code];
+      byCustomer[code] = { code, name: c.name, en: c.en, channel: c.channel, pay: c.pay,
+                           count: 0, qty: 0, total: 0, trucks: new Set(), shipTos: new Set(),
+                           statusMix: {} };
+    }
+    const row = byCustomer[code];
+    row.count++; row.qty += b.qty; row.total += b.total;
+    row.trucks.add(b.truck); row.shipTos.add(b.shipTo);
+    row.statusMix[b.status] = (row.statusMix[b.status] || 0) + 1;
+  });
+  const rows = Object.values(byCustomer).sort((a, b) => b.total - a.total);
+
+  const cellPad = density === "compact" ? "10px 12px" : "12px 12px";
+  const COLS = "minmax(280px, 1.8fr) 140px 110px 70px 110px 110px 90px 140px";
+
+  return (
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+      <PageTitle
+        title="Customers"
+        subtitle={`${TODAY} · ${rows.length} customers active · ${rows.reduce((s, r) => s + r.count, 0)} billings · ${fmtTHB(rows.reduce((s, r) => s + r.total, 0))}`}
+      />
+      <div style={{ flex: 1, overflow: "auto", padding: 16 }}>
+        <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)", overflow: "hidden" }}>
+          <div style={{ display: "grid", gridTemplateColumns: COLS, columnGap: 16,
+                        padding: cellPad, fontSize: 11, fontWeight: 700, textTransform: "uppercase",
+                        letterSpacing: "0.06em", color: "var(--text2)",
+                        background: "var(--bg-shell)", borderBottom: "1px solid var(--border2)" }}>
+            <div>Customer</div>
+            <div>Channel</div>
+            <div>Payment</div>
+            <div style={{ textAlign: "right" }}>Bills</div>
+            <div style={{ textAlign: "right" }}>Ship-tos</div>
+            <div style={{ textAlign: "right" }}>Trucks</div>
+            <div style={{ textAlign: "right" }}>Cases</div>
+            <div style={{ textAlign: "right" }}>Total (incl. VAT)</div>
+          </div>
+          {rows.map((r, i) => {
+            const firstTruck = [...r.trucks][0];
+            return (
+              <div key={r.code} onClick={() => onOpenTruck?.(firstTruck)}
+                   style={{ display: "grid", gridTemplateColumns: COLS, columnGap: 16,
+                            padding: cellPad, alignItems: "center",
+                            borderBottom: i < rows.length - 1 ? "1px solid var(--border3)" : "none",
+                            fontSize: 13, cursor: "pointer" }}>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={r.name}>{r.name}</div>
+                  <div style={{ fontSize: 11, color: "var(--text2)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={r.en}>
+                    {r.code} · {r.en}
+                  </div>
+                </div>
+                <div style={{ fontSize: 12, color: "var(--text2)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={r.channel}>{r.channel}</div>
+                <div style={{ whiteSpace: "nowrap" }}><PaymentTag type={r.pay}/></div>
+                <div style={{ textAlign: "right", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>{r.count}</div>
+                <div style={{ textAlign: "right", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>{r.shipTos.size}</div>
+                <div style={{ textAlign: "right", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>{r.trucks.size}</div>
+                <div style={{ textAlign: "right", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>{r.qty.toLocaleString()}</div>
+                <div style={{ textAlign: "right", fontVariantNumeric: "tabular-nums", fontWeight: 600, whiteSpace: "nowrap" }}>{fmtTHB(r.total)}</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Cashier / Reports — small summary placeholder page
+// ─────────────────────────────────────────────────────────────
+function CashierReportsPage({ billings, density, palette }) {
+  const totals = billings.reduce((s, b) => {
+    s.qty += b.qty; s.total += b.total;
+    s[b.payment] += b.total;
+    s.statusMix[b.status] = (s.statusMix[b.status] || 0) + 1;
+    return s;
+  }, { qty: 0, credit: 0, cash: 0, bank: 0, total: 0, statusMix: {} });
+
+  const statuses = ["submitted", "review", "settled", "closed", "rework", "rejected", "draft"];
+
+  return (
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+      <PageTitle
+        title="Reports"
+        subtitle={`${TODAY} · cashier desk overview — totals across all routed trucks`}
+      />
+      <div style={{ flex: 1, overflow: "auto", padding: 16, display: "flex", flexDirection: "column", gap: 16 }}>
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+          <KPITile label="Total billings" value={billings.length} sub={`${totals.qty.toLocaleString()} cases`} icon="receipt"/>
+          <KPITile label="Total amount" value={fmtTHB(totals.total)} sub="incl. VAT 7%" icon="cash" accent="var(--blue)"/>
+          <KPITile label="Credit" value={fmtTHB(totals.credit)} sub={pct(totals.credit, totals.total) + " of total"} icon="file" accent="#0064D9"/>
+          <KPITile label="Cash"   value={fmtTHB(totals.cash)}   sub={pct(totals.cash, totals.total) + " of total"} icon="cash" accent="#30914C"/>
+          <KPITile label="Bank transfer" value={fmtTHB(totals.bank)} sub={pct(totals.bank, totals.total) + " of total"} icon="package" accent="#7B4FAB"/>
+        </div>
+
+        <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)", padding: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Status breakdown</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {statuses.filter(s => totals.statusMix[s]).map(s => {
+              const count = totals.statusMix[s];
+              const ratio = count / billings.length;
+              return (
+                <div key={s} style={{ display: "grid", gridTemplateColumns: "140px 1fr 60px", alignItems: "center", gap: 12 }}>
+                  <StatusTag status={s} palette={palette} size="sm"/>
+                  <div style={{ height: 8, background: "var(--bg-shell)", borderRadius: 4, overflow: "hidden" }}>
+                    <div style={{ width: `${ratio * 100}%`, height: "100%", background: "var(--blue)" }}/>
+                  </div>
+                  <div style={{ textAlign: "right", fontVariantNumeric: "tabular-nums", fontSize: 13, fontWeight: 600 }}>{count}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)", padding: 16,
+                      fontSize: 12, color: "var(--text2)" }}>
+          Full export / scheduled reports are out of scope for this prototype. Use <strong>Daily report</strong> for line-item drill-down and the <strong>Closed (posted)</strong> queue for SAP-posted history.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { AdminReport, StatusFilteredPage, TrucksListPage, CustomersListPage, CashierReportsPage });
