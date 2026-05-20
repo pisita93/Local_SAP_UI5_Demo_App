@@ -13,7 +13,20 @@
 			<form:SimpleForm
 				id="employeeForm"
 				editable="true"
-				layout="ColumnLayout"
+				layout="ResponsiveGridLayout"
+				labelSpanXL="3"
+				labelSpanL="3"
+				labelSpanM="3"
+				labelSpanS="12"
+				adjustLabelSpan="false"
+				emptySpanXL="3"
+				emptySpanL="3"
+				emptySpanM="0"
+				emptySpanS="0"
+				columnsXL="1"
+				columnsL="1"
+				columnsM="1"
+				singleContainerFullSize="false"
 				class="sapUiMediumMargin"
 				title="{i18n>demoFormsSectionTitle}">
 				<form:content>
