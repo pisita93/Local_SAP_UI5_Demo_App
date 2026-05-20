@@ -80,6 +80,7 @@ body.density-compact .tag { height: 20px; font-size: 11px; padding: 0 6px; }
 .table-toolbar-count { color: var(--text2); font-weight: 400; font-size: 14px; }
 
 .table-scroll { flex: 1; overflow: auto; min-height: 0; }
+.table-scroll .sap-table { min-width: max-content; }
 .sap-table th { white-space: nowrap; user-select: none; }
 .sap-table td { font-size: 14px; vertical-align: middle; }
 .sap-table th.sortable { cursor: pointer; }
