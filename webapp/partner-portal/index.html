@@ -187,6 +187,26 @@ const SUPP_WF = [
 const statusCls = { Active: 'tag-approved', Pending: 'tag-pending', Rejected: 'tag-rejected', Draft: 'tag-draft' };
 const ratingColor = { A: '#1A6B35', 'A-': '#1A6B35', 'A+': '#1A6B35', 'B+': '#0070F2', B: '#0070F2', 'B-': '#0070F2', 'C+': '#FF9900', C: '#FF9900', 'C-': '#AA0808' };
 
+const QuickTile = ({ Icon, iconBg, iconStroke, title, subtitle, onClick }) => (
+  <div className="portal-quick-tile" onClick={onClick}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+      <div style={{ width: 32, height: 32, borderRadius: 8, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Icon size={16} stroke={iconStroke} />
+      </div>
+      <span style={{ fontWeight: 700, fontSize: 14 }}>{title}</span>
+    </div>
+    <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>{subtitle}</div>
+  </div>
+);
+
+const EmptyState = ({ title, subtitle }) => (
+  <div className="empty-state">
+    <IcSearch size={28} stroke="var(--sap-color-text-3)" />
+    <div className="empty-state-title">{title}</div>
+    <div>{subtitle}</div>
+  </div>
+);
+
 /* ─── OVERVIEW PAGE ──────────────────────────────────────────── */
 const OverviewPage = ({ setView }) => {
   const pendingApprovals = APPROVALS.length;
@@ -225,161 +245,54 @@ const OverviewPage = ({ setView }) => {
         </div>
       </div>
 
-      {/* Portal quick-access strips */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title">Customer Portal</span>
-            <span className="tag tag-info">Customer View</span>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--sap-color-border-2)' }}>
-            <div className="portal-quick-tile"
-              onClick={() => setView('cust-so')}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EDF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IcShoppingCart size={16} stroke="var(--sap-color-interactive)" />
-                </div>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>Sales Orders</span>
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Track orders from creation to delivery and invoice</div>
-            </div>
-            <div className="portal-quick-tile"
-              onClick={() => setView('cust-ar')}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFDBEF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IcDollar size={16} stroke="var(--sap-color-negative)" />
-                </div>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>Outstanding Invoices</span>
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>View unpaid AR invoices and overdue amounts</div>
-            </div>
-          </div>
+      {/* Apps grid — 8 tiles in 4x2, replaces 4 separate Customer/Supplier/Sales/Admin cards */}
+      <div className="card mb-16" style={{ marginBottom: 16 }}>
+        <div className="card-header">
+          <span className="card-title">Apps</span>
+          <span className="fs-12 text-2">Customer · Supplier · Sales · Admin</span>
         </div>
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title">Supplier Portal</span>
-            <span className="tag tag-purple">Supplier View</span>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--sap-color-border-2)' }}>
-            <div className="portal-quick-tile"
-              onClick={() => setView('supp-po')}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFF3B8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IcFileInv size={16} stroke="var(--sap-color-warning)" />
-                </div>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>Open Purchase Orders</span>
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>View POs and book delivery slots</div>
-            </div>
-            <div className="portal-quick-tile"
-              onClick={() => setView('supp-ap')}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EEE4F8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IcCalendar size={16} stroke="#8B5CF6" />
-                </div>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>AP Invoices</span>
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Track invoices pending payment from buyer</div>
-            </div>
-          </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: 'var(--sap-color-border-2)' }}>
+          <QuickTile Icon={IcShoppingCart} iconBg="#EDF6FF" iconStroke="var(--sap-color-interactive)"
+            title="Sales Orders" subtitle="Track orders from creation to delivery and invoice"
+            onClick={() => setView('cust-so')} />
+          <QuickTile Icon={IcDollar} iconBg="#FFDBEF" iconStroke="var(--sap-color-negative)"
+            title="Outstanding Invoices" subtitle="View unpaid AR invoices and overdue amounts"
+            onClick={() => setView('cust-ar')} />
+          <QuickTile Icon={IcFileInv} iconBg="#FFF3B8" iconStroke="var(--sap-color-warning)"
+            title="Open Purchase Orders" subtitle="View POs and book delivery slots"
+            onClick={() => setView('supp-po')} />
+          <QuickTile Icon={IcCalendar} iconBg="#EEE4F8" iconStroke="#8B5CF6"
+            title="AP Invoices" subtitle="Track invoices pending payment from buyer"
+            onClick={() => setView('supp-ap')} />
+          <QuickTile Icon={IcList} iconBg="#EDF6FF" iconStroke="var(--sap-color-interactive)"
+            title="Billing Report" subtitle="SO → Invoice → Payment transactions by sales group"
+            onClick={() => setView('sales-billing')} />
+          <QuickTile Icon={IcDollar} iconBg="#FFF3B8" iconStroke="var(--sap-color-warning)"
+            title="Cash-in-Advance" subtitle="Export orders pending CIA payment before release"
+            onClick={() => setView('sales-cia')} />
+          <QuickTile Icon={IcUsers} iconBg="#FFDBEF" iconStroke="var(--sap-color-negative)"
+            title="Authorization" subtitle="Manage user roles and sales group access"
+            onClick={() => setView('admin-auth')} />
+          <QuickTile Icon={IcClipboard} iconBg="#F5F6F7" iconStroke="var(--sap-color-text-2)"
+            title="Audit Log" subtitle="View system access and change history" />
         </div>
       </div>
 
-      {/* Sales + Admin quick-access */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title">Sales</span>
-            <span className="tag tag-info">Internal Sales</span>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--sap-color-border-2)' }}>
-            <div className="portal-quick-tile"
-              onClick={() => setView('sales-billing')}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EDF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IcList size={16} stroke="var(--sap-color-interactive)" />
-                </div>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>Billing Report</span>
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>SO → Invoice → Payment transactions by sales group</div>
-            </div>
-            <div className="portal-quick-tile"
-              onClick={() => setView('sales-cia')}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFF3B8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IcDollar size={16} stroke="var(--sap-color-warning)" />
-                </div>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>Cash-in-Advance</span>
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Export orders pending CIA payment before release</div>
-            </div>
-          </div>
-        </div>
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title">Admin</span>
-            <span className="tag tag-error">Restricted</span>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--sap-color-border-2)' }}>
-            <div className="portal-quick-tile"
-              onClick={() => setView('admin-auth')}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFDBEF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IcUsers size={16} stroke="var(--sap-color-negative)" />
-                </div>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>Authorization</span>
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Manage user roles and sales group access</div>
-            </div>
-            <div className="portal-quick-tile">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#F5F6F7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IcClipboard size={16} stroke="var(--sap-color-text-2)" />
-                </div>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>Audit Log</span>
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>View system access and change history</div>
-            </div>
-          </div>
-        </div>
-      </div>
       <div className="card mb-16" style={{ marginBottom: 16 }}>
         <div className="card-header">
           <span className="card-title">Procurement — Internal Tools</span>
           <span className="tag tag-info">Internal</span>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 1, background: 'var(--sap-color-border-2)' }}>
-          <div className="portal-quick-tile"
-            onClick={() => setView('proc-slots')}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EDF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IcCalendar size={16} stroke="var(--sap-color-interactive)" />
-              </div>
-              <span style={{ fontWeight: 700, fontSize: 14 }}>Delivery Slot Management</span>
-            </div>
-            <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Add, confirm and notify suppliers of delivery slots</div>
-          </div>
-          <div className="portal-quick-tile"
-            onClick={() => setView('supp-po')}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFF3B8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IcFileInv size={16} stroke="var(--sap-color-warning)" />
-              </div>
-              <span style={{ fontWeight: 700, fontSize: 14 }}>Open Purchase Orders</span>
-            </div>
-            <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>View all open POs and their delivery status</div>
-          </div>
-          <div className="portal-quick-tile"
-            onClick={() => setView('supp-ap')}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EEE4F8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IcDollar size={16} stroke="#8B5CF6" />
-              </div>
-              <span style={{ fontWeight: 700, fontSize: 14 }}>AP Invoices</span>
-            </div>
-            <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Review and approve supplier invoices for payment</div>
-          </div>
+          <QuickTile Icon={IcCalendar} iconBg="#EDF6FF" iconStroke="var(--sap-color-interactive)"
+            title="Delivery Slot Management" subtitle="Add, confirm and notify suppliers of delivery slots"
+            onClick={() => setView('proc-slots')} />
+          <QuickTile Icon={IcFileInv} iconBg="#FFF3B8" iconStroke="var(--sap-color-warning)"
+            title="Open Purchase Orders" subtitle="View all open POs and their delivery status"
+            onClick={() => setView('supp-po')} />
+          <QuickTile Icon={IcDollar} iconBg="#EEE4F8" iconStroke="#8B5CF6"
+            title="AP Invoices" subtitle="Review and approve supplier invoices for payment"
+            onClick={() => setView('supp-ap')} />
         </div>
       </div>
 
@@ -395,7 +308,7 @@ const OverviewPage = ({ setView }) => {
               const ch = CHANNEL_COLORS[c.channel] || { bg: '#F0F2F5', fg: '#556B82' };
               return (
                 <div key={c.id} onClick={() => setView('cust-detail', c)}
-                  style={{ padding: '10px 18px', borderBottom: '1px solid var(--sap-color-border-2)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                  style={{ padding: '10px 14px', borderBottom: '1px solid var(--sap-color-border-2)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                   <div style={{ minWidth: 0, flex: 1 }}>
                     <a style={{ display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 600, fontSize: 13 }} title={c.name}>{c.name}</a>
                     <div className="flex items-center gap-8 mt-4">
@@ -424,7 +337,7 @@ const OverviewPage = ({ setView }) => {
           </div>
           <div style={{ padding: '8px 0' }}>
             {APPROVALS.map(a => (
-              <div key={a.id} style={{ padding: '10px 18px', borderBottom: '1px solid var(--sap-color-border-2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
+              <div key={a.id} style={{ padding: '10px 14px', borderBottom: '1px solid var(--sap-color-border-2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
                 onClick={() => setView(a.type === 'customer' ? 'cust-approval' : 'supp-approval', a)}>
                 <div>
                   <div className="flex items-center gap-8">
@@ -481,6 +394,9 @@ const CustomerList = ({ setView }) => {
           </div>
           <span className="fs-12 text-2">{rows.length} results</span>
         </div>
+        {rows.length === 0 ? (
+          <EmptyState title="No customers match your search" subtitle={`Try a different search term or clear "${q}" to see all ${CUSTOMERS.length} customers.`} />
+        ) : (
         <table className="sap-table">
           <thead>
             <tr>
@@ -517,6 +433,7 @@ const CustomerList = ({ setView }) => {
             })}
           </tbody>
         </table>
+        )}
         <div className="table-footer">
           <span>{rows.length} of {CUSTOMERS.length} records</span>
           <div className="flex gap-8">
@@ -558,6 +475,9 @@ const SupplierList = ({ setView }) => {
           </div>
           <span className="fs-12 text-2">{rows.length} results</span>
         </div>
+        {rows.length === 0 ? (
+          <EmptyState title="No suppliers match your search" subtitle={`Try a different search term or clear "${q}" to see all ${SUPPLIERS.length} suppliers.`} />
+        ) : (
         <table className="sap-table">
           <thead>
             <tr>
@@ -583,6 +503,7 @@ const SupplierList = ({ setView }) => {
             ))}
           </tbody>
         </table>
+        )}
         <div className="table-footer">
           <span>{rows.length} of {SUPPLIERS.length} records</span>
           <div className="flex gap-8">
