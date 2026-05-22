@@ -194,17 +194,17 @@ const formatMoney = (amount, currency) => {
 };
 
 const SUPPLIERS = [
-  { id: 'S-001', name: 'Raw Materials AG', country: 'DE', taxId: 'DE445566778', paymentTerms: 'Net 45', bankAccount: 'DE89370400440532013000', status: 'Active', requestedBy: 'Anna Weber', createdOn: '2025-01-08', step: 3 },
-  { id: 'S-002', name: 'Logistics Partners BV', country: 'NL', taxId: 'NL556677889', paymentTerms: 'Net 30', bankAccount: 'NL91ABNA0417164300', status: 'Pending', requestedBy: 'Jan Visser', createdOn: '2025-01-12', step: 1 },
-  { id: 'S-003', name: 'IT Services Co.', country: 'FR', taxId: 'FR667788990', paymentTerms: 'Net 60', bankAccount: 'FR7630006000011234567890189', status: 'Pending', requestedBy: 'Sophie Martin', createdOn: '2025-01-16', step: 2 },
-  { id: 'S-004', name: 'Packaging Solutions Ltd', country: 'GB', taxId: 'GB778899001', paymentTerms: 'Net 30', bankAccount: 'GB29NWBK60161331926819', status: 'Active', requestedBy: 'Robert Jones', createdOn: '2024-11-30', step: 3 },
+  { id: 'S-001', name: 'Thai Wah PCL', country: 'TH', taxId: '0107536001234', paymentTerms: 'Net 45', bankAccount: '123-4-56789-0', bankName: 'Bangkok Bank (BBL)', swift: 'BKKBTHBK', status: 'Active', requestedBy: 'Prasit Wongchai', createdOn: '2025-01-08', step: 3 },
+  { id: 'S-002', name: 'SCG Trading Co., Ltd.', country: 'TH', taxId: '0107556002345', paymentTerms: 'Net 30', bankAccount: '234-5-67890-1', bankName: 'Kasikorn Bank (KBANK)', swift: 'KASITHBK', status: 'Pending', requestedBy: 'Wilaiwan Saetang', createdOn: '2025-01-12', step: 1 },
+  { id: 'S-003', name: 'PTT Trading Co., Ltd.', country: 'TH', taxId: '0107519003456', paymentTerms: 'Net 60', bankAccount: '345-6-78901-2', bankName: 'Siam Commercial Bank (SCB)', swift: 'SICOTHBK', status: 'Pending', requestedBy: 'Chaiwat Rungsri', createdOn: '2025-01-16', step: 2 },
+  { id: 'S-004', name: 'DHL Express (Thailand) Ltd.', country: 'TH', taxId: '0107548004567', paymentTerms: 'Net 30', bankAccount: '456-7-89012-3', bankName: 'Krungthai Bank (KTB)', swift: 'KRTHTHBK', status: 'Active', requestedBy: 'Jintana Phomma', createdOn: '2024-11-30', step: 3 },
 ];
 
 const APPROVALS = [
   { id: 'AP-001', type: 'customer', subtype: 'Create', name: 'Big C Supercenter Public Co., Ltd.', id2: 'C-002', priority: 'High', submittedBy: 'Pim Charoenkul', submittedOn: '2025-01-14', step: '1st Level Approval' },
   { id: 'AP-002', type: 'customer', subtype: 'Credit', name: 'CP All Public Co., Ltd. (7-Eleven)', id2: 'C-003', priority: 'Normal', submittedBy: 'Nattaya Boonsom', submittedOn: '2025-01-15', step: 'Credit Evaluation' },
-  { id: 'AP-003', type: 'supplier', subtype: 'Create', name: 'Logistics Partners BV', id2: 'S-002', priority: 'Normal', submittedBy: 'Jan Visser', submittedOn: '2025-01-12', step: '1st Level Approval' },
-  { id: 'AP-004', type: 'supplier', subtype: 'Change', name: 'IT Services Co.', id2: 'S-003', priority: 'High', submittedBy: 'Sophie Martin', submittedOn: '2025-01-16', step: '2nd Level Approval' },
+  { id: 'AP-003', type: 'supplier', subtype: 'Create', name: 'SCG Trading Co., Ltd.', id2: 'S-002', priority: 'Normal', submittedBy: 'Wilaiwan Saetang', submittedOn: '2025-01-12', step: '1st Level Approval' },
+  { id: 'AP-004', type: 'supplier', subtype: 'Change', name: 'PTT Trading Co., Ltd.', id2: 'S-003', priority: 'High', submittedBy: 'Chaiwat Rungsri', submittedOn: '2025-01-16', step: '2nd Level Approval' },
 ];
 
 const CUST_WF = [
@@ -727,7 +727,7 @@ const SupplierDetail = ({ rec, setView }) => {
             <div className="field"><div className="field-label">Country</div><input className="input" readOnly value={rec.country} /></div>
             <div className="field"><div className="field-label">Tax ID / VAT</div><input className="input" readOnly value={rec.taxId} /></div>
             <div className="field"><div className="field-label">Payment Terms</div><input className="input" readOnly value={rec.paymentTerms} /></div>
-            <div className="field"><div className="field-label">Currency</div><input className="input" readOnly value="EUR" /></div>
+            <div className="field"><div className="field-label">Currency</div><input className="input" readOnly value="THB" /></div>
             <div className="field"><div className="field-label">Account Group</div><input className="input" readOnly value="External Supplier" /></div>
           </div>
         </div>
@@ -736,9 +736,9 @@ const SupplierDetail = ({ rec, setView }) => {
         <div className="form-section">
           <div className="form-section-hdr">Bank Details</div>
           <div className="form-grid">
-            <div className="field"><div className="field-label">Bank Account (IBAN)</div><input className="input" readOnly value={rec.bankAccount} style={{ fontFamily: 'monospace' }} /></div>
-            <div className="field"><div className="field-label">Bank Key (BIC/SWIFT)</div><input className="input" readOnly value="DEUTDEDB" /></div>
-            <div className="field"><div className="field-label">Bank Name</div><input className="input" readOnly value="Deutsche Bank AG" /></div>
+            <div className="field"><div className="field-label">Bank Account No.</div><input className="input" readOnly value={rec.bankAccount} style={{ fontFamily: 'monospace' }} /></div>
+            <div className="field"><div className="field-label">SWIFT / BIC</div><input className="input" readOnly value={rec.swift || ''} /></div>
+            <div className="field"><div className="field-label">Bank Name</div><input className="input" readOnly value={rec.bankName || ''} /></div>
             <div className="field"><div className="field-label">Account Holder</div><input className="input" readOnly value={rec.name} /></div>
           </div>
         </div>
@@ -1231,18 +1231,18 @@ const AR_INVOICES = SALES_ORDERS.filter(s => s.invoiceId).map(s => ({
 }));
 
 const PURCHASE_ORDERS = [
-  { id: 'PO-450001', supplier: 'Raw Materials AG', suppId: 'S-001', orderDate: '2026-03-05', deliveryDate: '2026-04-10', netValue: '€88,000', items: 4, status: 'Open', deliveryStatus: 'Pending', plant: '1000', storeLoc: 'WH01' },
-  { id: 'PO-450002', supplier: 'Logistics Partners BV', suppId: 'S-002', orderDate: '2026-03-12', deliveryDate: '2026-03-28', netValue: '€23,500', items: 2, status: 'Open', deliveryStatus: 'Slot Booked', plant: '1000', storeLoc: 'WH02' },
-  { id: 'PO-450003', supplier: 'IT Services Co.', suppId: 'S-003', orderDate: '2026-03-20', deliveryDate: '2026-04-20', netValue: '€45,000', items: 1, status: 'Open', deliveryStatus: 'Pending', plant: '2000', storeLoc: 'WH01' },
-  { id: 'PO-450004', supplier: 'Packaging Solutions Ltd', suppId: 'S-004', orderDate: '2026-02-20', deliveryDate: '2026-03-10', netValue: '€14,200', items: 6, status: 'Closed', deliveryStatus: 'Delivered', plant: '1000', storeLoc: 'WH03' },
-  { id: 'PO-450005', supplier: 'Raw Materials AG', suppId: 'S-001', orderDate: '2026-04-01', deliveryDate: '2026-04-25', netValue: '€62,400', items: 3, status: 'Open', deliveryStatus: 'Pending', plant: '1000', storeLoc: 'WH01' },
+  { id: 'PO-450001', supplier: 'Thai Wah PCL', suppId: 'S-001', orderDate: '2026-03-05', deliveryDate: '2026-04-10', netValue: '฿3,200,000', items: 4, status: 'Open', deliveryStatus: 'Pending', plant: '1000', storeLoc: 'WH01' },
+  { id: 'PO-450002', supplier: 'SCG Trading Co., Ltd.', suppId: 'S-002', orderDate: '2026-03-12', deliveryDate: '2026-03-28', netValue: '฿850,000', items: 2, status: 'Open', deliveryStatus: 'Slot Booked', plant: '1000', storeLoc: 'WH02' },
+  { id: 'PO-450003', supplier: 'PTT Trading Co., Ltd.', suppId: 'S-003', orderDate: '2026-03-20', deliveryDate: '2026-04-20', netValue: '฿1,620,000', items: 1, status: 'Open', deliveryStatus: 'Pending', plant: '2000', storeLoc: 'WH01' },
+  { id: 'PO-450004', supplier: 'DHL Express (Thailand) Ltd.', suppId: 'S-004', orderDate: '2026-02-20', deliveryDate: '2026-03-10', netValue: '฿512,000', items: 6, status: 'Closed', deliveryStatus: 'Delivered', plant: '1000', storeLoc: 'WH03' },
+  { id: 'PO-450005', supplier: 'Thai Wah PCL', suppId: 'S-001', orderDate: '2026-04-01', deliveryDate: '2026-04-25', netValue: '฿2,250,000', items: 3, status: 'Open', deliveryStatus: 'Pending', plant: '1000', storeLoc: 'WH01' },
 ];
 
 const AP_INVOICES = [
-  { id: 'APINV-7001', poId: 'PO-450004', supplier: 'Packaging Solutions Ltd', suppId: 'S-004', invoiceDate: '2026-03-11', dueDate: '2026-04-10', amount: '€14,200', status: 'Approved', paymentDate: null, paymentRef: null },
-  { id: 'APINV-7002', poId: 'PO-450002', supplier: 'Logistics Partners BV', suppId: 'S-002', invoiceDate: '2026-03-29', dueDate: '2026-04-28', amount: '€23,500', status: 'Under Review', paymentDate: null, paymentRef: null },
-  { id: 'APINV-7003', poId: 'PO-450001', supplier: 'Raw Materials AG', suppId: 'S-001', invoiceDate: '2026-04-11', dueDate: '2026-05-11', amount: '€88,000', status: 'Pending', paymentDate: null, paymentRef: null },
-  { id: 'APINV-7004', poId: 'PO-450004', supplier: 'Packaging Solutions Ltd', suppId: 'S-004', invoiceDate: '2026-01-15', dueDate: '2026-02-14', amount: '€9,750', status: 'Paid', paymentDate: '2026-02-12', paymentRef: 'PMT-33201' },
+  { id: 'APINV-7001', poId: 'PO-450004', supplier: 'DHL Express (Thailand) Ltd.', suppId: 'S-004', invoiceDate: '2026-03-11', dueDate: '2026-04-10', amount: '฿512,000', status: 'Approved', paymentDate: null, paymentRef: null },
+  { id: 'APINV-7002', poId: 'PO-450002', supplier: 'SCG Trading Co., Ltd.', suppId: 'S-002', invoiceDate: '2026-03-29', dueDate: '2026-04-28', amount: '฿850,000', status: 'Under Review', paymentDate: null, paymentRef: null },
+  { id: 'APINV-7003', poId: 'PO-450001', supplier: 'Thai Wah PCL', suppId: 'S-001', invoiceDate: '2026-04-11', dueDate: '2026-05-11', amount: '฿3,200,000', status: 'Pending', paymentDate: null, paymentRef: null },
+  { id: 'APINV-7004', poId: 'PO-450004', supplier: 'DHL Express (Thailand) Ltd.', suppId: 'S-004', invoiceDate: '2026-01-15', dueDate: '2026-02-14', amount: '฿352,000', status: 'Paid', paymentDate: '2026-02-12', paymentRef: 'PMT-33201' },
 ];
 
 const SO_STATUS_CLS = { 'Delivered': 'tag-approved', 'In Transit': 'tag-info', 'Processing': 'tag-pending', 'Confirmed': 'tag-pending', 'Cancelled': 'tag-error' };
@@ -1785,10 +1785,10 @@ const SupplierAP = ({ setView }) => {
 
 /* ─── PROCUREMENT: DELIVERY SLOT MANAGEMENT ─────────────────── */
 const SLOT_DATA = [
-  { id: 'DS-001', poId: 'PO-450001', supplier: 'Raw Materials AG', suppEmail: 'delivery@rawmaterials.de', reqDate: '2026-04-10', reqTime: '09:00', plant: '1000', storeLoc: 'WH01', pallets: 12, weight: '4,200 kg', truckRef: 'B-RM 2201', status: 'Pending', notified: false, notes: 'Standard delivery' },
-  { id: 'DS-002', poId: 'PO-450002', supplier: 'Logistics Partners BV', suppEmail: 'ops@logisticspartners.nl', reqDate: '2026-03-28', reqTime: '13:00', plant: '1000', storeLoc: 'WH02', pallets: 6, weight: '1,800 kg', truckRef: 'NL-LP 5544', status: 'Confirmed', notified: true, notes: '' },
-  { id: 'DS-003', poId: 'PO-450003', supplier: 'IT Services Co.', suppEmail: 'contact@itservices.fr', reqDate: '2026-04-20', reqTime: '11:00', plant: '2000', storeLoc: 'WH01', pallets: 2, weight: '320 kg', truckRef: '', status: 'Pending', notified: false, notes: 'Fragile — server equipment' },
-  { id: 'DS-004', poId: 'PO-450005', supplier: 'Raw Materials AG', suppEmail: 'delivery@rawmaterials.de', reqDate: '2026-04-25', reqTime: '07:00', plant: '1000', storeLoc: 'WH01', pallets: 18, weight: '6,100 kg', truckRef: 'B-RM 3302', status: 'Rejected', notified: true, notes: 'Rescheduled — dock full' },
+  { id: 'DS-001', poId: 'PO-450001', supplier: 'Thai Wah PCL', suppEmail: 'logistics@thaiwah.co.th', reqDate: '2026-04-10', reqTime: '09:00', plant: '1000', storeLoc: 'WH01', pallets: 12, weight: '4,200 kg', truckRef: 'กข-2201', status: 'Pending', notified: false, notes: 'Standard delivery' },
+  { id: 'DS-002', poId: 'PO-450002', supplier: 'SCG Trading Co., Ltd.', suppEmail: 'supply@scgtrading.co.th', reqDate: '2026-03-28', reqTime: '13:00', plant: '1000', storeLoc: 'WH02', pallets: 6, weight: '1,800 kg', truckRef: 'กค-5544', status: 'Confirmed', notified: true, notes: '' },
+  { id: 'DS-003', poId: 'PO-450003', supplier: 'PTT Trading Co., Ltd.', suppEmail: 'logistics@ptttrading.co.th', reqDate: '2026-04-20', reqTime: '11:00', plant: '2000', storeLoc: 'WH01', pallets: 2, weight: '320 kg', truckRef: '', status: 'Pending', notified: false, notes: 'Fragile — equipment' },
+  { id: 'DS-004', poId: 'PO-450005', supplier: 'Thai Wah PCL', suppEmail: 'logistics@thaiwah.co.th', reqDate: '2026-04-25', reqTime: '07:00', plant: '1000', storeLoc: 'WH01', pallets: 18, weight: '6,100 kg', truckRef: 'กข-3302', status: 'Rejected', notified: true, notes: 'Rescheduled — dock full' },
 ];
 
 const SLOT_STATUS_CLS = { 'Pending': 'tag-pending', 'Confirmed': 'tag-approved', 'Rejected': 'tag-error', 'Cancelled': 'tag-neutral' };
@@ -2742,7 +2742,7 @@ const AdminAuthorization = ({ setView }) => {
 };
 
 /* ─── SHELL BAR ──────────────────────────────────────────────── */
-const ShellBar = ({ navOpen, setNavOpen }) => (
+const ShellBar = ({ navOpen, setNavOpen, pendingCount = 0 }) => (
   <div className="shell-bar">
     <div className="flex items-center" style={{ gap: 0 }}>
       <button className="shell-btn" onClick={() => setNavOpen(o => !o)}>
@@ -2761,7 +2761,7 @@ const ShellBar = ({ navOpen, setNavOpen }) => (
       </div>
       <div className="notif-wrap">
         <button className="shell-btn"><IcBell size={18} /></button>
-        <div className="notif-badge" />
+        {pendingCount > 0 && <div className="notif-badge" />}
       </div>
       <button className="shell-btn" title="Settings">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -2866,7 +2866,7 @@ const App = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
-      <ShellBar navOpen={navOpen} setNavOpen={setNavOpen} />
+      <ShellBar navOpen={navOpen} setNavOpen={setNavOpen} pendingCount={APPROVALS.length} />
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <SideNav view={view} setView={setView} navOpen={navOpen} />
         <div style={{ flex: 1, overflowY: 'auto' }}>
