@@ -56,6 +56,9 @@ body { font-family: '72', Arial, sans-serif; background: var(--sap-color-bg-shel
 .tag-credit   { background: var(--sap-color-tag-purple); color: #5B2A8C; }
 .tag-neutral  { background: var(--sap-color-bg-shell); color: var(--sap-color-text-2); border: 1px solid var(--sap-color-border-2); }
 .tag-success  { background: var(--sap-color-positive-bg); color: var(--sap-color-positive-dark); }
+.tag-error    { background: var(--sap-color-negative-bg); color: var(--sap-color-negative); }
+.tag-purple   { background: var(--sap-color-tag-purple); color: #5B2A8C; }
+.tag-warning  { background: var(--sap-color-warning-bg); color: #7A4B00; }
 .text-pos { color: var(--sap-color-positive-dark); }
 .mt-16 { margin-top: 16px; }
 .badge { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--sap-color-interactive); color: #fff; font-size: 11px; font-weight: 700; }
@@ -73,6 +76,12 @@ body { font-family: '72', Arial, sans-serif; background: var(--sap-color-bg-shel
 .kpi-card-green  { border-top-color: var(--sap-color-positive); }
 .kpi-card-yellow { border-top-color: var(--sap-color-warning); }
 .kpi-card-purple { border-top-color: #8B5CF6; }
+.kpi-card-clickable { cursor: pointer; transition: box-shadow 0.15s, transform 0.15s; }
+.kpi-card-clickable:hover { box-shadow: var(--sap-shadow-1); transform: translateY(-1px); }
+.kpi-card-clickable:focus-visible { outline: 2px solid var(--sap-color-interactive); outline-offset: 2px; }
+.portal-quick-tile { background: var(--sap-color-bg); padding: 16px 20px; cursor: pointer; transition: background 0.12s; }
+.portal-quick-tile:hover { background: var(--sap-color-bg-hover-blue); }
+.portal-quick-tile:focus-visible { outline: 2px solid var(--sap-color-interactive); outline-offset: -2px; }
 .kpi-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
 .kpi-val { font-size: 26px; font-weight: 700; color: var(--sap-color-text); line-height: 1; }
 .kpi-label { font-size: 12px; color: var(--sap-color-text-2); font-weight: 600; margin-top: 4px; }
