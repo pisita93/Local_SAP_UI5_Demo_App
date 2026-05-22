@@ -126,11 +126,46 @@ const Dialog = ({ title, onClose, footer, children, wide }) => (
 /* ─── DATA ───────────────────────────────────────────────────── */
 // Sourced from GreenSpot_Integrated_Demo_Dataset.xlsx → Sold-to Master.
 const CUSTOMERS = [
-  { id: 'C-001', name: "Lotus's Stores (Thailand) Co., Ltd.",       country: 'TH', taxId: '0105500000111',  paymentTerms: 'Net 45', creditLimit: '฿50,000,000', creditRating: 'A',  status: 'Active',   requestedBy: 'Ploy Suwanwong',   createdOn: '2025-01-10', step: 4 },
-  { id: 'C-002', name: 'Big C Supercenter Public Co., Ltd.',         country: 'TH', taxId: '0107500000222',  paymentTerms: 'Net 60', creditLimit: '฿45,000,000', creditRating: 'B+', status: 'Pending',  requestedBy: 'Pim Charoenkul',   createdOn: '2025-01-14', step: 1 },
-  { id: 'C-003', name: 'CP All Public Co., Ltd. (7-Eleven)',         country: 'TH', taxId: '0107500000333',  paymentTerms: 'Net 30', creditLimit: '฿80,000,000', creditRating: 'A+', status: 'Pending',  requestedBy: 'Nattaya Boonsom',  createdOn: '2025-01-15', step: 2 },
-  { id: 'C-004', name: 'The Mall Group Co., Ltd. (Gourmet Market)',  country: 'TH', taxId: '0105500000444',  paymentTerms: 'Net 45', creditLimit: '฿25,000,000', creditRating: 'A-', status: 'Active',   requestedBy: 'Apinya Tantipanichkit', createdOn: '2024-12-20', step: 4 },
-  { id: 'C-005', name: 'Siam Makro Public Co., Ltd.',                country: 'TH', taxId: '0107500000555',  paymentTerms: 'Net 30', creditLimit: '฿60,000,000', creditRating: 'A',  status: 'Rejected', requestedBy: 'Suchart Inthorn',  createdOn: '2025-01-05', step: 0 },
+  { id: 'C-001', name: "Lotus's Stores (Thailand) Co., Ltd.",
+    country: 'TH', taxId: '0105500000111', paymentTerms: 'Net 45', currency: 'THB',
+    creditLimit: 50000000, creditRating: 'A',  status: 'Active',
+    requestedBy: 'Ploy Suwanwong',        createdOn: '2025-01-10', step: 4,
+    channel: 'Retail',          subChannel: 'Hypermarket',
+    addressEn: '629/1 Nawamin Road',           city: 'Bueng Kum',                  postcode: '10240', province: 'Bangkok',
+    contact: 'Khun Somchai Wattana',  phone: '+66 2 711 1111', email: 'procurement@lotuss.co.th',
+    priceGroup: 'MT01 — Modern Trade Hypermarket' },
+  { id: 'C-002', name: 'Big C Supercenter Public Co., Ltd.',
+    country: 'TH', taxId: '0107500000222', paymentTerms: 'Net 60', currency: 'THB',
+    creditLimit: 45000000, creditRating: 'B+', status: 'Pending',
+    requestedBy: 'Pim Charoenkul',        createdOn: '2025-01-14', step: 1,
+    channel: 'Retail',          subChannel: 'Hypermarket',
+    addressEn: '97/11 Rajdamri Road, Lumpini', city: 'Pathumwan',                  postcode: '10330', province: 'Bangkok',
+    contact: 'Khun Niwat Supply Chain', phone: '+66 2 655 0666', email: 'vendor@bigc.co.th',
+    priceGroup: 'MT01 — Modern Trade Hypermarket' },
+  { id: 'C-003', name: 'CP All Public Co., Ltd. (7-Eleven)',
+    country: 'TH', taxId: '0107500000333', paymentTerms: 'Net 30', currency: 'THB',
+    creditLimit: 80000000, creditRating: 'A+', status: 'Pending',
+    requestedBy: 'Nattaya Boonsom',       createdOn: '2025-01-15', step: 2,
+    channel: 'Retail',          subChannel: 'Convenience Store',
+    addressEn: '313 Silom Road',               city: 'Bang Rak',                   postcode: '10500', province: 'Bangkok',
+    contact: 'Khun Logistics Manager',  phone: '+66 2 071 9000', email: 'procurement@cpall.co.th',
+    priceGroup: 'MT02 — Convenience Chain' },
+  { id: 'C-004', name: 'The Mall Group Co., Ltd. (Gourmet Market)',
+    country: 'TH', taxId: '0105500000444', paymentTerms: 'Net 45', currency: 'THB',
+    creditLimit: 25000000, creditRating: 'A-', status: 'Active',
+    requestedBy: 'Apinya Tantipanichkit', createdOn: '2024-12-20', step: 4,
+    channel: 'Retail',          subChannel: 'Department Store',
+    addressEn: '991 Rama 1 Road, Siam Paragon', city: 'Pathumwan',                 postcode: '10330', province: 'Bangkok',
+    contact: 'Store Operations',        phone: '+66 2 690 1000', email: 'merchandising@themall.co.th',
+    priceGroup: 'MT03 — Premium Supermarket' },
+  { id: 'C-005', name: 'Siam Makro Public Co., Ltd.',
+    country: 'TH', taxId: '0107500000555', paymentTerms: 'Net 30', currency: 'THB',
+    creditLimit: 60000000, creditRating: 'A',  status: 'Rejected',
+    requestedBy: 'Suchart Inthorn',       createdOn: '2025-01-05', step: 0,
+    channel: 'Wholesale',       subChannel: 'Cash & Carry',
+    addressEn: '1468 Phatthanakan Road',        city: 'Suanluang',                 postcode: '10250', province: 'Bangkok',
+    contact: 'Khun Branch Manager',     phone: '+66 2 067 8999', email: 'supplier@siammakro.co.th',
+    priceGroup: 'MT04 — Cash & Carry' },
 ];
 
 /* Channel colors for visual differentiation */
@@ -194,17 +229,41 @@ const formatMoney = (amount, currency) => {
 };
 
 const SUPPLIERS = [
-  { id: 'S-001', name: 'Raw Materials AG', country: 'DE', taxId: 'DE445566778', paymentTerms: 'Net 45', bankAccount: 'DE89370400440532013000', status: 'Active', requestedBy: 'Anna Weber', createdOn: '2025-01-08', step: 3 },
-  { id: 'S-002', name: 'Logistics Partners BV', country: 'NL', taxId: 'NL556677889', paymentTerms: 'Net 30', bankAccount: 'NL91ABNA0417164300', status: 'Pending', requestedBy: 'Jan Visser', createdOn: '2025-01-12', step: 1 },
-  { id: 'S-003', name: 'IT Services Co.', country: 'FR', taxId: 'FR667788990', paymentTerms: 'Net 60', bankAccount: 'FR7630006000011234567890189', status: 'Pending', requestedBy: 'Sophie Martin', createdOn: '2025-01-16', step: 2 },
-  { id: 'S-004', name: 'Packaging Solutions Ltd', country: 'GB', taxId: 'GB778899001', paymentTerms: 'Net 30', bankAccount: 'GB29NWBK60161331926819', status: 'Active', requestedBy: 'Robert Jones', createdOn: '2024-11-30', step: 3 },
+  { id: 'S-001', name: 'Siam Glass Industries Co., Ltd.',
+    country: 'TH', taxId: '0105540001234', paymentTerms: 'Net 45', currency: 'THB',
+    bankAccount: '012-3-45678-9', swift: 'BKKBTHBK', bankName: 'Bangkok Bank (BBL)',
+    status: 'Active',  requestedBy: 'Krit Phongphaew',  createdOn: '2025-01-08', step: 3,
+    accountGroup: 'External Supplier', category: 'Strategic — Glass Bottles',
+    addressEn: '88 Sukhumvit 50 Road, Phra Khanong',  city: 'Khlong Toei',           postcode: '10260', province: 'Bangkok',
+    contact: 'Khun Anan Yuthayothin',  phone: '+66 2 311 2200', email: 'sales@siamglass.co.th' },
+  { id: 'S-002', name: 'Thai UHT Logistics Co., Ltd.',
+    country: 'TH', taxId: '0105550005678', paymentTerms: 'Net 30', currency: 'THB',
+    bankAccount: '123-4-56789-0', swift: 'KASITHBK', bankName: 'Kasikornbank (KBank)',
+    status: 'Pending', requestedBy: 'Malee Suksawat',   createdOn: '2025-01-12', step: 1,
+    accountGroup: 'Service Provider',  category: 'Cold-Chain Logistics',
+    addressEn: '199 Bangna-Trad Road, Km. 8',          city: 'Bang Na',               postcode: '10260', province: 'Bangkok',
+    contact: 'Khun Suwit Charoensak',  phone: '+66 2 312 4500', email: 'ops@thaiuhtlogistics.co.th' },
+  { id: 'S-003', name: 'Bangkok IT Solutions Co., Ltd.',
+    country: 'TH', taxId: '0105560009012', paymentTerms: 'Net 60', currency: 'THB',
+    bankAccount: '234-5-67890-1', swift: 'SICOTHBK', bankName: 'Siam Commercial Bank (SCB)',
+    status: 'Pending', requestedBy: 'Thaksin Chuenklin', createdOn: '2025-01-16', step: 2,
+    accountGroup: 'Service Provider',  category: 'IT & Professional Services',
+    addressEn: '15/3 Sathon Tai Road, Thung Maha Mek', city: 'Sathon',                postcode: '10120', province: 'Bangkok',
+    contact: 'Khun Apirak Nuamkeson',  phone: '+66 2 287 1100', email: 'contact@bkkit.co.th' },
+  { id: 'S-004', name: 'Pattana Packaging Co., Ltd.',
+    country: 'TH', taxId: '0105530003456', paymentTerms: 'Net 30', currency: 'THB',
+    bankAccount: '345-6-78901-2', swift: 'KRTHTHBK', bankName: 'Krungthai Bank (KTB)',
+    status: 'Active',  requestedBy: 'Nattaya Boonsom',  createdOn: '2024-11-30', step: 3,
+    accountGroup: 'External Supplier', category: 'UHT Carton & PET Bottles',
+    addressEn: '77 Phahon Yothin Road, Lat Yao',       city: 'Chatuchak',             postcode: '10900', province: 'Bangkok',
+    contact: 'Khun Wichai Kanjanasiri', phone: '+66 2 941 7700', email: 'orders@pattana-pack.co.th' },
 ];
 
 const APPROVALS = [
   { id: 'AP-001', type: 'customer', subtype: 'Create', name: 'Big C Supercenter Public Co., Ltd.', id2: 'C-002', priority: 'High', submittedBy: 'Pim Charoenkul', submittedOn: '2025-01-14', step: '1st Level Approval' },
   { id: 'AP-002', type: 'customer', subtype: 'Credit', name: 'CP All Public Co., Ltd. (7-Eleven)', id2: 'C-003', priority: 'Normal', submittedBy: 'Nattaya Boonsom', submittedOn: '2025-01-15', step: 'Credit Evaluation' },
-  { id: 'AP-003', type: 'supplier', subtype: 'Create', name: 'Logistics Partners BV', id2: 'S-002', priority: 'Normal', submittedBy: 'Jan Visser', submittedOn: '2025-01-12', step: '1st Level Approval' },
-  { id: 'AP-004', type: 'supplier', subtype: 'Change', name: 'IT Services Co.', id2: 'S-003', priority: 'High', submittedBy: 'Sophie Martin', submittedOn: '2025-01-16', step: '2nd Level Approval' },
+  { id: 'AP-003', type: 'supplier', subtype: 'Create', name: 'Thai UHT Logistics Co., Ltd.',   id2: 'S-002', priority: 'Normal', submittedBy: 'Malee Suksawat',    submittedOn: '2025-01-12', step: '1st Level Approval' },
+  { id: 'AP-004', type: 'supplier', subtype: 'Change', name: 'Bangkok IT Solutions Co., Ltd.', id2: 'S-003', priority: 'High',   submittedBy: 'Thaksin Chuenklin', submittedOn: '2025-01-16', step: '2nd Level Approval' },
 ];
 
 const CUST_WF = [
@@ -720,15 +779,36 @@ const SupplierDetail = ({ rec, setView }) => {
       </div>
 
       {activeTab === 0 && (
-        <div className="form-section">
-          <div className="form-section-hdr">General Information</div>
-          <div className="form-grid form-grid-3">
-            <div className="field"><div className="field-label">Supplier Name</div><input className="input" readOnly value={rec.name} /></div>
-            <div className="field"><div className="field-label">Country</div><input className="input" readOnly value={rec.country} /></div>
-            <div className="field"><div className="field-label">Tax ID / VAT</div><input className="input" readOnly value={rec.taxId} /></div>
-            <div className="field"><div className="field-label">Payment Terms</div><input className="input" readOnly value={rec.paymentTerms} /></div>
-            <div className="field"><div className="field-label">Currency</div><input className="input" readOnly value="EUR" /></div>
-            <div className="field"><div className="field-label">Account Group</div><input className="input" readOnly value="External Supplier" /></div>
+        <div>
+          <div className="form-section">
+            <div className="form-section-hdr">General Information</div>
+            <div className="form-grid form-grid-3">
+              <div className="field"><div className="field-label">Supplier Name</div><input className="input" readOnly value={rec.name} /></div>
+              <div className="field"><div className="field-label">Country</div><input className="input" readOnly value={rec.country} /></div>
+              <div className="field"><div className="field-label">Tax ID / VAT</div><input className="input" readOnly value={rec.taxId} /></div>
+              <div className="field"><div className="field-label">Payment Terms</div><input className="input" readOnly value={rec.paymentTerms} /></div>
+              <div className="field"><div className="field-label">Currency</div><input className="input" readOnly value={rec.currency} /></div>
+              <div className="field"><div className="field-label">Account Group</div><input className="input" readOnly value={rec.accountGroup} /></div>
+              <div className="field"><div className="field-label">Supplier Category</div><input className="input" readOnly value={rec.category} /></div>
+            </div>
+          </div>
+          <div className="form-section">
+            <div className="form-section-hdr">Address</div>
+            <div className="form-grid form-grid-3">
+              <div className="field col-span-2"><div className="field-label">Street / House No.</div><input className="input" readOnly value={rec.addressEn} /></div>
+              <div className="field"><div className="field-label">Postal Code</div><input className="input" readOnly value={rec.postcode} /></div>
+              <div className="field"><div className="field-label">City</div><input className="input" readOnly value={rec.city} /></div>
+              <div className="field"><div className="field-label">Province / Region</div><input className="input" readOnly value={rec.province} /></div>
+              <div className="field"><div className="field-label">Country</div><input className="input" readOnly value={rec.country} /></div>
+            </div>
+          </div>
+          <div className="form-section">
+            <div className="form-section-hdr">Contacts &amp; Communication</div>
+            <div className="form-grid form-grid-3">
+              <div className="field"><div className="field-label">Contact Name</div><input className="input" readOnly value={rec.contact} /></div>
+              <div className="field"><div className="field-label">Phone</div><input className="input" readOnly value={rec.phone} /></div>
+              <div className="field"><div className="field-label">Email</div><input className="input" readOnly value={rec.email} /></div>
+            </div>
           </div>
         </div>
       )}
@@ -736,9 +816,9 @@ const SupplierDetail = ({ rec, setView }) => {
         <div className="form-section">
           <div className="form-section-hdr">Bank Details</div>
           <div className="form-grid">
-            <div className="field"><div className="field-label">Bank Account (IBAN)</div><input className="input" readOnly value={rec.bankAccount} style={{ fontFamily: 'monospace' }} /></div>
-            <div className="field"><div className="field-label">Bank Key (BIC/SWIFT)</div><input className="input" readOnly value="DEUTDEDB" /></div>
-            <div className="field"><div className="field-label">Bank Name</div><input className="input" readOnly value="Deutsche Bank AG" /></div>
+            <div className="field"><div className="field-label">Bank Account</div><input className="input" readOnly value={rec.bankAccount} style={{ fontFamily: 'monospace' }} /></div>
+            <div className="field"><div className="field-label">Bank Key (BIC/SWIFT)</div><input className="input" readOnly value={rec.swift} /></div>
+            <div className="field"><div className="field-label">Bank Name</div><input className="input" readOnly value={rec.bankName} /></div>
             <div className="field"><div className="field-label">Account Holder</div><input className="input" readOnly value={rec.name} /></div>
           </div>
         </div>
@@ -1231,18 +1311,18 @@ const AR_INVOICES = SALES_ORDERS.filter(s => s.invoiceId).map(s => ({
 }));
 
 const PURCHASE_ORDERS = [
-  { id: 'PO-450001', supplier: 'Raw Materials AG', suppId: 'S-001', orderDate: '2026-03-05', deliveryDate: '2026-04-10', netValue: '€88,000', items: 4, status: 'Open', deliveryStatus: 'Pending', plant: '1000', storeLoc: 'WH01' },
-  { id: 'PO-450002', supplier: 'Logistics Partners BV', suppId: 'S-002', orderDate: '2026-03-12', deliveryDate: '2026-03-28', netValue: '€23,500', items: 2, status: 'Open', deliveryStatus: 'Slot Booked', plant: '1000', storeLoc: 'WH02' },
-  { id: 'PO-450003', supplier: 'IT Services Co.', suppId: 'S-003', orderDate: '2026-03-20', deliveryDate: '2026-04-20', netValue: '€45,000', items: 1, status: 'Open', deliveryStatus: 'Pending', plant: '2000', storeLoc: 'WH01' },
-  { id: 'PO-450004', supplier: 'Packaging Solutions Ltd', suppId: 'S-004', orderDate: '2026-02-20', deliveryDate: '2026-03-10', netValue: '€14,200', items: 6, status: 'Closed', deliveryStatus: 'Delivered', plant: '1000', storeLoc: 'WH03' },
-  { id: 'PO-450005', supplier: 'Raw Materials AG', suppId: 'S-001', orderDate: '2026-04-01', deliveryDate: '2026-04-25', netValue: '€62,400', items: 3, status: 'Open', deliveryStatus: 'Pending', plant: '1000', storeLoc: 'WH01' },
+  { id: 'PO-450001', supplier: 'Siam Glass Industries Co., Ltd.', suppId: 'S-001', orderDate: '2026-03-05', deliveryDate: '2026-04-10', netValue: '฿3,350,000', items: 4, status: 'Open', deliveryStatus: 'Pending', plant: '1000', storeLoc: 'WH01' },
+  { id: 'PO-450002', supplier: 'Thai UHT Logistics Co., Ltd.', suppId: 'S-002', orderDate: '2026-03-12', deliveryDate: '2026-03-28', netValue: '฿890,000', items: 2, status: 'Open', deliveryStatus: 'Slot Booked', plant: '1000', storeLoc: 'WH02' },
+  { id: 'PO-450003', supplier: 'Bangkok IT Solutions Co., Ltd.', suppId: 'S-003', orderDate: '2026-03-20', deliveryDate: '2026-04-20', netValue: '฿1,710,000', items: 1, status: 'Open', deliveryStatus: 'Pending', plant: '2000', storeLoc: 'WH01' },
+  { id: 'PO-450004', supplier: 'Pattana Packaging Co., Ltd.', suppId: 'S-004', orderDate: '2026-02-20', deliveryDate: '2026-03-10', netValue: '฿540,000', items: 6, status: 'Closed', deliveryStatus: 'Delivered', plant: '1000', storeLoc: 'WH03' },
+  { id: 'PO-450005', supplier: 'Siam Glass Industries Co., Ltd.', suppId: 'S-001', orderDate: '2026-04-01', deliveryDate: '2026-04-25', netValue: '฿2,370,000', items: 3, status: 'Open', deliveryStatus: 'Pending', plant: '1000', storeLoc: 'WH01' },
 ];
 
 const AP_INVOICES = [
-  { id: 'APINV-7001', poId: 'PO-450004', supplier: 'Packaging Solutions Ltd', suppId: 'S-004', invoiceDate: '2026-03-11', dueDate: '2026-04-10', amount: '€14,200', status: 'Approved', paymentDate: null, paymentRef: null },
-  { id: 'APINV-7002', poId: 'PO-450002', supplier: 'Logistics Partners BV', suppId: 'S-002', invoiceDate: '2026-03-29', dueDate: '2026-04-28', amount: '€23,500', status: 'Under Review', paymentDate: null, paymentRef: null },
-  { id: 'APINV-7003', poId: 'PO-450001', supplier: 'Raw Materials AG', suppId: 'S-001', invoiceDate: '2026-04-11', dueDate: '2026-05-11', amount: '€88,000', status: 'Pending', paymentDate: null, paymentRef: null },
-  { id: 'APINV-7004', poId: 'PO-450004', supplier: 'Packaging Solutions Ltd', suppId: 'S-004', invoiceDate: '2026-01-15', dueDate: '2026-02-14', amount: '€9,750', status: 'Paid', paymentDate: '2026-02-12', paymentRef: 'PMT-33201' },
+  { id: 'APINV-7001', poId: 'PO-450004', supplier: 'Pattana Packaging Co., Ltd.', suppId: 'S-004', invoiceDate: '2026-03-11', dueDate: '2026-04-10', amount: '฿540,000', status: 'Approved', paymentDate: null, paymentRef: null },
+  { id: 'APINV-7002', poId: 'PO-450002', supplier: 'Thai UHT Logistics Co., Ltd.', suppId: 'S-002', invoiceDate: '2026-03-29', dueDate: '2026-04-28', amount: '฿890,000', status: 'Under Review', paymentDate: null, paymentRef: null },
+  { id: 'APINV-7003', poId: 'PO-450001', supplier: 'Siam Glass Industries Co., Ltd.', suppId: 'S-001', invoiceDate: '2026-04-11', dueDate: '2026-05-11', amount: '฿3,350,000', status: 'Pending', paymentDate: null, paymentRef: null },
+  { id: 'APINV-7004', poId: 'PO-450004', supplier: 'Pattana Packaging Co., Ltd.', suppId: 'S-004', invoiceDate: '2026-01-15', dueDate: '2026-02-14', amount: '฿370,000', status: 'Paid', paymentDate: '2026-02-12', paymentRef: 'PMT-33201' },
 ];
 
 const SO_STATUS_CLS = { 'Delivered': 'tag-approved', 'In Transit': 'tag-info', 'Processing': 'tag-pending', 'Confirmed': 'tag-pending', 'Cancelled': 'tag-error' };
@@ -1669,7 +1749,7 @@ const SupplierAP = ({ setView }) => {
   const [filter, setFilter] = useState('all');
   const rows = filter === 'all' ? AP_INVOICES : AP_INVOICES.filter(i => i.status === filter);
   const pending = AP_INVOICES.filter(i => i.status !== 'Paid');
-  const totalPending = '€125,700';
+  const totalPending = '฿4,780,000';
 
   return (
     <div className="page-area">
@@ -1785,10 +1865,10 @@ const SupplierAP = ({ setView }) => {
 
 /* ─── PROCUREMENT: DELIVERY SLOT MANAGEMENT ─────────────────── */
 const SLOT_DATA = [
-  { id: 'DS-001', poId: 'PO-450001', supplier: 'Raw Materials AG', suppEmail: 'delivery@rawmaterials.de', reqDate: '2026-04-10', reqTime: '09:00', plant: '1000', storeLoc: 'WH01', pallets: 12, weight: '4,200 kg', truckRef: 'B-RM 2201', status: 'Pending', notified: false, notes: 'Standard delivery' },
-  { id: 'DS-002', poId: 'PO-450002', supplier: 'Logistics Partners BV', suppEmail: 'ops@logisticspartners.nl', reqDate: '2026-03-28', reqTime: '13:00', plant: '1000', storeLoc: 'WH02', pallets: 6, weight: '1,800 kg', truckRef: 'NL-LP 5544', status: 'Confirmed', notified: true, notes: '' },
-  { id: 'DS-003', poId: 'PO-450003', supplier: 'IT Services Co.', suppEmail: 'contact@itservices.fr', reqDate: '2026-04-20', reqTime: '11:00', plant: '2000', storeLoc: 'WH01', pallets: 2, weight: '320 kg', truckRef: '', status: 'Pending', notified: false, notes: 'Fragile — server equipment' },
-  { id: 'DS-004', poId: 'PO-450005', supplier: 'Raw Materials AG', suppEmail: 'delivery@rawmaterials.de', reqDate: '2026-04-25', reqTime: '07:00', plant: '1000', storeLoc: 'WH01', pallets: 18, weight: '6,100 kg', truckRef: 'B-RM 3302', status: 'Rejected', notified: true, notes: 'Rescheduled — dock full' },
+  { id: 'DS-001', poId: 'PO-450001', supplier: 'Siam Glass Industries Co., Ltd.', suppEmail: 'sales@siamglass.co.th', reqDate: '2026-04-10', reqTime: '09:00', plant: '1000', storeLoc: 'WH01', pallets: 12, weight: '4,200 kg', truckRef: 'B-RM 2201', status: 'Pending', notified: false, notes: 'Standard delivery' },
+  { id: 'DS-002', poId: 'PO-450002', supplier: 'Thai UHT Logistics Co., Ltd.', suppEmail: 'ops@thaiuhtlogistics.co.th', reqDate: '2026-03-28', reqTime: '13:00', plant: '1000', storeLoc: 'WH02', pallets: 6, weight: '1,800 kg', truckRef: 'NL-LP 5544', status: 'Confirmed', notified: true, notes: '' },
+  { id: 'DS-003', poId: 'PO-450003', supplier: 'Bangkok IT Solutions Co., Ltd.', suppEmail: 'contact@bkkit.co.th', reqDate: '2026-04-20', reqTime: '11:00', plant: '2000', storeLoc: 'WH01', pallets: 2, weight: '320 kg', truckRef: '', status: 'Pending', notified: false, notes: 'Fragile — server equipment' },
+  { id: 'DS-004', poId: 'PO-450005', supplier: 'Siam Glass Industries Co., Ltd.', suppEmail: 'sales@siamglass.co.th', reqDate: '2026-04-25', reqTime: '07:00', plant: '1000', storeLoc: 'WH01', pallets: 18, weight: '6,100 kg', truckRef: 'B-RM 3302', status: 'Rejected', notified: true, notes: 'Rescheduled — dock full' },
 ];
 
 const SLOT_STATUS_CLS = { 'Pending': 'tag-pending', 'Confirmed': 'tag-approved', 'Rejected': 'tag-error', 'Cancelled': 'tag-neutral' };
