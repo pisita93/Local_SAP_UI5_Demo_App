@@ -257,12 +257,12 @@ const STATUS_BADGE = {
 const INITIAL_ORDERS = [
 {
   id: 'REQ-100001', soNumber: 'SO-4500012345', status: 'created',
-  customer: 'Siemens AG', customerCode: 'C-1001',
-  soldTo: 'DE-Berlin', shipTo: 'DE-Munich',
+  customer: "Lotus's Stores (Thailand) Co., Ltd.", customerCode: 'C-001',
+  soldTo: 'TH-Bangkok HQ', shipTo: "Lotus's DC Bang Bua Thong",
   requestedDate: '2026-04-10', deliveryDate: '2026-04-20',
-  currency: 'EUR', paymentTerms: 'Net 30',
-  salesOrg: '1000', distributionChannel: '10', division: '00',
-  orderType: 'OR', salesRep: 'John Smith',
+  currency: 'THB', paymentTerms: 'Net 45',
+  salesOrg: '1000', distributionChannel: '10', division: '10',
+  orderType: 'OR', salesRep: 'Ploy Suwanwong',
   priority: 'High', notes: 'Urgent delivery required.',
   items: [
   { id: 1, material: 'GS-VUH-04', description: 'Vitamilk UHT Original 300ml x 36 cartons',         qty: 10, uom: 'CSE', price: 336.96, total: 3369.60 },
@@ -270,47 +270,47 @@ const INITIAL_ORDERS = [
 
   totalAmount: 21153.60,
   history: [
-  { action: 'Submitted', by: 'John Smith', date: '2026-04-08 09:12', comment: '' },
-  { action: 'L1 Approved', by: 'Sarah Lee', date: '2026-04-09 10:30', comment: 'Looks good.' },
-  { action: 'L2 Approved', by: 'Michael Chan', date: '2026-04-10 11:00', comment: 'Approved.' },
+  { action: 'Submitted', by: 'Ploy Suwanwong', date: '2026-04-08 09:12', comment: '' },
+  { action: 'L1 Approved', by: 'James Tan', date: '2026-04-09 10:30', comment: 'Looks good.' },
+  { action: 'L2 Approved', by: 'Linda Chen', date: '2026-04-10 11:00', comment: 'Approved.' },
   { action: 'SAP Order Created', by: 'System', date: '2026-04-10 11:01', comment: '' }],
 
   createdAt: '2026-04-08'
 },
 {
   id: 'REQ-100002', soNumber: null, status: 'pending_approval1',
-  customer: 'BMW Group', customerCode: 'C-1002',
-  soldTo: 'DE-Hamburg', shipTo: 'DE-Leipzig',
+  customer: 'Big C Supercenter Public Co., Ltd.', customerCode: 'C-002',
+  soldTo: 'TH-Ayutthaya', shipTo: 'Big C DC Bang Pa-In',
   requestedDate: '2026-04-25', deliveryDate: '2026-05-05',
-  currency: 'EUR', paymentTerms: 'Net 60',
-  salesOrg: '1000', distributionChannel: '10', division: '00',
-  orderType: 'OR', salesRep: 'Anna Müller',
+  currency: 'THB', paymentTerms: 'Net 60',
+  salesOrg: '1000', distributionChannel: '10', division: '20',
+  orderType: 'OR', salesRep: 'Pim Charoenkul',
   priority: 'Medium', notes: '',
   items: [
   { id: 1, material: 'GS-VSY-03', description: 'V-Soy Almond 1000ml x 12 cartons', qty: 5, uom: 'CSE', price: 702.00, total: 3510.00 }],
 
   totalAmount: 3510.00,
   history: [
-  { action: 'Submitted', by: 'Anna Müller', date: '2026-04-22 14:00', comment: '' }],
+  { action: 'Submitted', by: 'Pim Charoenkul', date: '2026-04-22 14:00', comment: '' }],
 
   createdAt: '2026-04-22'
 },
 {
   id: 'REQ-100003', soNumber: null, status: 'rejected',
-  customer: 'Bosch GmbH', customerCode: 'C-1003',
-  soldTo: 'DE-Stuttgart', shipTo: 'DE-Mannheim',
+  customer: 'CP All Public Co., Ltd. (7-Eleven)', customerCode: 'C-003',
+  soldTo: 'TH-Bangkok HQ', shipTo: '7-Eleven Suvarnabhumi DC',
   requestedDate: '2026-04-15', deliveryDate: '2026-04-28',
-  currency: 'EUR', paymentTerms: 'Net 30',
-  salesOrg: '2000', distributionChannel: '20', division: '00',
-  orderType: 'OR', salesRep: 'John Smith',
+  currency: 'THB', paymentTerms: 'Net 30',
+  salesOrg: '1000', distributionChannel: '30', division: '20',
+  orderType: 'OR', salesRep: 'Nattaya Boonsom',
   priority: 'Low', notes: 'Standard order.',
   items: [
   { id: 1, material: 'GS-VSY-06', description: 'V-Soy Hi-Calcium Unsweetened 230ml x 36', qty: 20, uom: 'CSE', price: 421.20, total: 8424.00 }],
 
   totalAmount: 8424.00,
   history: [
-  { action: 'Submitted', by: 'John Smith', date: '2026-04-12 08:30', comment: '' },
-  { action: 'Rejected (L1)', by: 'Sarah Lee', date: '2026-04-13 09:00', comment: 'Price not aligned with contract. Please revise.' }],
+  { action: 'Submitted', by: 'Nattaya Boonsom', date: '2026-04-12 08:30', comment: '' },
+  { action: 'Rejected (L1)', by: 'James Tan', date: '2026-04-13 09:00', comment: 'Price not aligned with contract. Please revise.' }],
 
   createdAt: '2026-04-12'
 }];
@@ -446,7 +446,7 @@ function ShellBar({ onMenuToggle }) {
       </div>
       <button className="shell-btn" aria-label="Settings" onClick={stub('Settings')}><LucideIcon name="settings" size={18} color="rgba(255,255,255,0.7)" /></button>
       <div className="shell-divider"></div>
-      <div className="avatar-chip" title="John Smith" aria-label="User profile: John Smith">JS</div>
+      <div className="avatar-chip" title="Ploy Suwanwong">PS</div>
     </div>);
 
 }
@@ -649,13 +649,13 @@ function ListPage({ orders, onNav, onViewOrder }) {
 function CreatePage({ onSubmit, onCancel }) {
   const [form, setForm] = useState({
     customer: '', customerCode: '', soldTo: '', shipTo: '',
-    requestedDate: '', deliveryDate: '', currency: 'EUR',
+    requestedDate: '', deliveryDate: '', currency: 'THB',
     paymentTerms: 'Net 30', salesOrg: '1000', distributionChannel: '10',
-    division: '00', orderType: 'OR', salesRep: 'John Smith',
+    division: '10', orderType: 'OR', salesRep: 'Ploy Suwanwong',
     priority: 'Medium', notes: ''
   });
   const [items, setItems] = useState([
-  { id: 1, material: '', description: '', qty: 1, uom: 'EA', price: 0, total: 0 }]
+  { id: 1, material: '', description: '', qty: 1, uom: 'CSE', price: 0, total: 0 }]
   );
   const [errors, setErrors] = useState({});
   const [step, setStep] = useState(1); // 1 = form, 2 = review
@@ -665,7 +665,7 @@ function CreatePage({ onSubmit, onCancel }) {
   const calcItems = (its) => its.map((i) => ({ ...i, total: (parseFloat(i.qty) || 0) * (parseFloat(i.price) || 0) }));
   const totalAmount = items.reduce((s, i) => s + i.total, 0);
 
-  const addItem = () => setItems((its) => [...its, { id: Date.now(), material: '', description: '', qty: 1, uom: 'EA', price: 0, total: 0 }]);
+  const addItem = () => setItems((its) => [...its, { id: Date.now(), material: '', description: '', qty: 1, uom: 'CSE', price: 0, total: 0 }]);
   const removeItem = (id) => setItems((its) => its.filter((i) => i.id !== id));
   const updateItem = (id, key, val) => setItems((its) => calcItems(its.map((i) => i.id === id ? { ...i, [key]: val } : i)));
 
@@ -686,7 +686,7 @@ function CreatePage({ onSubmit, onCancel }) {
     const order = {
       id, soNumber: null, status: 'pending_approval1',
       ...form, items, totalAmount,
-      history: [{ action: 'Submitted', by: 'John Smith', date: new Date().toLocaleString(), comment: '' }],
+      history: [{ action: 'Submitted', by: 'Ploy Suwanwong', date: new Date().toLocaleString(), comment: '' }],
       createdAt: new Date().toISOString().slice(0, 10)
     };
     onSubmit(order);
@@ -792,12 +792,12 @@ function CreatePage({ onSubmit, onCancel }) {
             <div className="form-grid" style={{ marginBottom: 16 }}>
               <div className="form-field">
                 <label className="form-label required">Customer name</label>
-                <input className={`form-input ${errors.customer ? 'error' : ''}`} placeholder="e.g. Siemens AG" value={form.customer} onChange={(e) => set('customer', e.target.value)} />
+                <input className={`form-input ${errors.customer ? 'error' : ''}`} placeholder="e.g. Lotus's Stores (Thailand) Co., Ltd." value={form.customer} onChange={(e) => set('customer', e.target.value)} />
                 {errors.customer && <span className="error-msg">{errors.customer}</span>}
               </div>
               <div className="form-field">
                 <label className="form-label">Customer code</label>
-                <input className="form-input" placeholder="e.g. C-1001" value={form.customerCode} onChange={(e) => set('customerCode', e.target.value)} />
+                <input className="form-input" placeholder="e.g. C-001" value={form.customerCode} onChange={(e) => set('customerCode', e.target.value)} />
               </div>
               <div className="form-field">
                 <label className="form-label">Order type</label>
@@ -819,35 +819,40 @@ function CreatePage({ onSubmit, onCancel }) {
               <div className="form-field">
                 <label className="form-label">Sales organization</label>
                 <select className="form-select" value={form.salesOrg} onChange={(e) => set('salesOrg', e.target.value)}>
-                  <option value="1000">1000 – Germany</option>
-                  <option value="2000">2000 – UK</option>
-                  <option value="3000">3000 – USA</option>
+                  <option value="1000">1000 – Green Spot Thailand (Rangsit HQ)</option>
+                  <option value="2000">2000 – Green Spot South (Surat Thani)</option>
+                  <option value="3000">3000 – Green Spot Health (Nong Kae)</option>
+                  <option value="9000">9000 – Green Spot Export</option>
                 </select>
               </div>
               <div className="form-field">
                 <label className="form-label">Distribution channel</label>
                 <select className="form-select" value={form.distributionChannel} onChange={(e) => set('distributionChannel', e.target.value)}>
-                  <option value="10">10 – Direct</option>
-                  <option value="20">20 – Retail</option>
+                  <option value="10">10 – Modern Trade</option>
+                  <option value="20">20 – Traditional Trade</option>
+                  <option value="30">30 – Convenience Store</option>
+                  <option value="40">40 – HoReCa</option>
+                  <option value="50">50 – Export</option>
                 </select>
               </div>
               <div className="form-field">
                 <label className="form-label">Division</label>
                 <select className="form-select" value={form.division} onChange={(e) => set('division', e.target.value)}>
                   <option value="00">00 – Cross-division</option>
-                  <option value="01">01 – Pumps</option>
-                  <option value="02">02 – Valves</option>
+                  <option value="10">10 – Vitamilk</option>
+                  <option value="20">20 – V-Soy</option>
+                  <option value="30">30 – Other Beverages</option>
                 </select>
               </div>
             </div>
             <div className="form-grid">
               <div className="form-field">
                 <label className="form-label">Sold-to party</label>
-                <input className="form-input" placeholder="Location / party code" value={form.soldTo} onChange={(e) => set('soldTo', e.target.value)} />
+                <input className="form-input" placeholder="e.g. TH-Bangkok HQ" value={form.soldTo} onChange={(e) => set('soldTo', e.target.value)} />
               </div>
               <div className="form-field">
                 <label className="form-label">Ship-to party</label>
-                <input className="form-input" placeholder="Location / party code" value={form.shipTo} onChange={(e) => set('shipTo', e.target.value)} />
+                <input className="form-input" placeholder="e.g. Lotus's DC Bang Bua Thong" value={form.shipTo} onChange={(e) => set('shipTo', e.target.value)} />
               </div>
               <div className="form-field">
                 <label className="form-label required">Requested delivery date</label>
@@ -862,13 +867,13 @@ function CreatePage({ onSubmit, onCancel }) {
               <div className="form-field">
                 <label className="form-label">Currency</label>
                 <select className="form-select" value={form.currency} onChange={(e) => set('currency', e.target.value)}>
-                  <option>EUR</option><option>USD</option><option>GBP</option><option>JPY</option><option>THB</option>
+                  <option>THB</option><option>USD</option><option>EUR</option><option>GBP</option><option>JPY</option>
                 </select>
               </div>
               <div className="form-field">
                 <label className="form-label">Payment terms</label>
                 <select className="form-select" value={form.paymentTerms} onChange={(e) => set('paymentTerms', e.target.value)}>
-                  <option>Net 30</option><option>Net 60</option><option>Net 90</option><option>Immediate</option>
+                  <option>COD / Cash</option><option>Net 7</option><option>Net 15</option><option>Net 30</option><option>Net 45</option><option>Net 60</option><option>Net 90</option><option>L/C 60 days</option><option>Cash in Advance</option>
                 </select>
               </div>
             </div>
@@ -903,7 +908,7 @@ function CreatePage({ onSubmit, onCancel }) {
                     <td className="td-input"><input type="number" className="form-input" style={{ width: '100%', fontSize: 13, textAlign: 'right' }} min="1" value={item.qty} onChange={(e) => updateItem(item.id, 'qty', e.target.value)} /></td>
                     <td className="td-input">
                       <select className="form-select" style={{ width: '100%', fontSize: 13 }} value={item.uom} onChange={(e) => updateItem(item.id, 'uom', e.target.value)}>
-                        <option>EA</option><option>KG</option><option>L</option><option>M</option><option>BOX</option><option>SET</option>
+                        <option>CSE</option><option>BTL</option><option>EA</option><option>BOX</option><option>PAL</option><option>KG</option><option>L</option>
                       </select>
                     </td>
                     <td className="td-input"><input type="number" className="form-input" style={{ width: '100%', fontSize: 13, textAlign: 'right' }} min="0" value={item.price} onChange={(e) => updateItem(item.id, 'price', e.target.value)} /></td>
@@ -940,7 +945,7 @@ function CreatePage({ onSubmit, onCancel }) {
 // ── Approval Dialog ──────────────────────────────────────────────
 function ApprovalDialog({ level, onApprove, onReject, onClose }) {
   const [comment, setComment] = useState('');
-  const approver = level === 1 ? 'Sarah Lee (Sales Manager)' : 'Michael Chan (VP Sales)';
+  const approver = level === 1 ? 'James Tan (Sales Manager)' : 'Linda Chen (VP Sales)';
   return (
     <div className="dialog-overlay" onClick={onClose}>
       <div className="dialog" onClick={(e) => e.stopPropagation()}>
@@ -988,10 +993,10 @@ function OrderDetailPage({ order, onBack, onUpdateOrder }) {
     const now = new Date().toLocaleString();
     if (approvalLevel === 1) {
       updated.status = 'pending_approval2';
-      updated.history = [...updated.history, { action: 'L1 Approved', by: 'Sarah Lee', date: now, comment }];
+      updated.history = [...updated.history, { action: 'L1 Approved', by: 'James Tan', date: now, comment }];
     } else {
       updated.status = 'approved';
-      updated.history = [...updated.history, { action: 'L2 Approved', by: 'Michael Chan', date: now, comment }];
+      updated.history = [...updated.history, { action: 'L2 Approved', by: 'Linda Chen', date: now, comment }];
       // Simulate SAP creation
       setTimeout(() => {
         const soNum = generateSONum();
@@ -1012,7 +1017,7 @@ function OrderDetailPage({ order, onBack, onUpdateOrder }) {
     const updated = {
       ...order,
       status: 'rejected',
-      history: [...order.history, { action: `Rejected (L${approvalLevel})`, by: approvalLevel === 1 ? 'Sarah Lee' : 'Michael Chan', date: new Date().toLocaleString(), comment }]
+      history: [...order.history, { action: `Rejected (L${approvalLevel})`, by: approvalLevel === 1 ? 'James Tan' : 'Linda Chen', date: new Date().toLocaleString(), comment }]
     };
     setShowApprovalDialog(false);
     onUpdateOrder(updated);
@@ -1105,7 +1110,7 @@ function OrderDetailPage({ order, onBack, onUpdateOrder }) {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 700, fontSize: 14 }}>Level 1 approval — Sales Manager</div>
-                  <div className="approval-meta">Approver: Sarah Lee</div>
+                  <div className="approval-meta">Approver: James Tan</div>
                   {order.history.find((h) => h.action === 'L1 Approved') &&
                   <div style={{ marginTop: 6, display: 'flex', gap: 8, alignItems: 'center' }}>
                       <span className="badge badge-approved"><span className="badge-dot"></span>Approved</span>
@@ -1134,7 +1139,7 @@ function OrderDetailPage({ order, onBack, onUpdateOrder }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 700, fontSize: 14 }}>Level 2 approval — VP Sales</div>
-                  <div className="approval-meta">Approver: Michael Chan</div>
+                  <div className="approval-meta">Approver: Linda Chen</div>
                   {order.history.find((h) => h.action === 'L2 Approved') &&
                   <div style={{ marginTop: 6, display: 'flex', gap: 8, alignItems: 'center' }}>
                       <span className="badge badge-approved"><span className="badge-dot"></span>Approved</span>
@@ -1282,22 +1287,22 @@ function PendingApprovalsPage({ orders, onViewOrder }) {
 // ── Transaction Status Page ──────────────────────────────────────
 const TX_DATA = {
   'REQ-100001': {
-    salesOrder: { number: 'SO-4500012345', date: '2026-04-10', customer: 'Siemens AG', netValue: 21153.60, currency: 'EUR', status: 'Completed', items: [{ pos: '10', material: 'GS-VUH-04', desc: 'Vitamilk UHT Original 300ml x 36 cartons', qty: 10, uom: 'CSE', price: 336.96, total: 3369.60 }, { pos: '20', material: 'GS-VTG-01', desc: 'Vitamilk Togo Choco Grande 300ml x 24 bottles', qty: 50, uom: 'CSE', price: 355.68, total: 17784.00 }] },
-    delivery: { number: 'DN-8000023456', date: '2026-04-15', actualDate: '2026-04-14', carrier: 'DHL Express', trackingNo: 'DHL-9876543210', shipFrom: 'DE-Berlin WH', shipTo: 'DE-Munich', status: 'Delivered', items: [{ pos: '10', material: 'GS-VUH-04', desc: 'Vitamilk UHT Original 300ml x 36 cartons', delQty: 10, pickedQty: 10, uom: 'CSE' }, { pos: '20', material: 'GS-VTG-01', desc: 'Vitamilk Togo Choco Grande 300ml x 24 bottles', delQty: 50, pickedQty: 50, uom: 'CSE' }] },
-    billing: { number: 'INV-9000034567', date: '2026-04-16', dueDate: '2026-05-16', netAmount: 21153.60, taxAmount: 4019.18, totalAmount: 25172.78, currency: 'EUR', status: 'Posted', taxCode: 'V1 (19%)', items: [{ pos: '10', desc: 'Vitamilk UHT Original 300ml x 36 cartons', qty: 10, unitPrice: 336.96, total: 3369.60 }, { pos: '20', desc: 'Vitamilk Togo Choco Grande 300ml x 24 bottles', qty: 50, unitPrice: 355.68, total: 17784.00 }] },
-    payment: { status: 'Paid', paidDate: '2026-05-10', method: 'Bank Transfer', reference: 'PAY-TRF-20260510-001', amount: 25172.78, currency: 'EUR', bank: 'Deutsche Bank', accountNo: 'DE89 3704 0044 0532 0130 00', clearedDate: '2026-05-11' },
+    salesOrder: { number: 'SO-4500012345', date: '2026-04-10', customer: "Lotus's Stores (Thailand) Co., Ltd.", netValue: 21153.60, currency: 'THB', status: 'Completed', items: [{ pos: '10', material: 'GS-VUH-04', desc: 'Vitamilk UHT Original 300ml x 36 cartons', qty: 10, uom: 'CSE', price: 336.96, total: 3369.60 }, { pos: '20', material: 'GS-VTG-01', desc: 'Vitamilk Togo Choco Grande 300ml x 24 bottles', qty: 50, uom: 'CSE', price: 355.68, total: 17784.00 }] },
+    delivery: { number: 'DN-8000023456', date: '2026-04-15', actualDate: '2026-04-14', carrier: 'Green Spot Logistics', trackingNo: 'GSL-9876543210', shipFrom: 'Rangsit Factory (FG)', shipTo: "Lotus's DC Bang Bua Thong", status: 'Delivered', items: [{ pos: '10', material: 'GS-VUH-04', desc: 'Vitamilk UHT Original 300ml x 36 cartons', delQty: 10, pickedQty: 10, uom: 'CSE' }, { pos: '20', material: 'GS-VTG-01', desc: 'Vitamilk Togo Choco Grande 300ml x 24 bottles', delQty: 50, pickedQty: 50, uom: 'CSE' }] },
+    billing: { number: 'INV-9000034567', date: '2026-04-16', dueDate: '2026-05-31', netAmount: 21153.60, taxAmount: 1480.75, totalAmount: 22634.35, currency: 'THB', status: 'Posted', taxCode: 'V1 (7% VAT)', items: [{ pos: '10', desc: 'Vitamilk UHT Original 300ml x 36 cartons', qty: 10, unitPrice: 336.96, total: 3369.60 }, { pos: '20', desc: 'Vitamilk Togo Choco Grande 300ml x 24 bottles', qty: 50, unitPrice: 355.68, total: 17784.00 }] },
+    payment: { status: 'Paid', paidDate: '2026-05-25', method: 'Bank Transfer', reference: 'KBANK-2026-052501', amount: 22634.35, currency: 'THB', bank: 'Kasikornbank', accountNo: 'xxx-x-12345-6', clearedDate: '2026-05-26' },
   },
   'REQ-100002': {
-    salesOrder: { number: null, date: '2026-04-22', customer: 'BMW Group', netValue: 3510.00, currency: 'EUR', status: 'Pending Approval', items: [{ pos: '10', material: 'GS-VSY-03', desc: 'V-Soy Almond 1000ml x 12 cartons', qty: 5, uom: 'CSE', price: 702.00, total: 3510.00 }] },
+    salesOrder: { number: null, date: '2026-04-22', customer: 'Big C Supercenter Public Co., Ltd.', netValue: 3510.00, currency: 'THB', status: 'Pending Approval', items: [{ pos: '10', material: 'GS-VSY-03', desc: 'V-Soy Almond 1000ml x 12 cartons', qty: 5, uom: 'CSE', price: 702.00, total: 3510.00 }] },
     delivery: null,
     billing: null,
-    payment: { status: 'Not yet billed', paidDate: null, method: null, reference: null, amount: null, currency: 'EUR', bank: null, accountNo: null, clearedDate: null },
+    payment: { status: 'Not yet billed', paidDate: null, method: null, reference: null, amount: null, currency: 'THB', bank: null, accountNo: null, clearedDate: null },
   },
   'REQ-100003': {
-    salesOrder: { number: null, date: '2026-04-12', customer: 'Bosch GmbH', netValue: 8424.00, currency: 'EUR', status: 'Rejected', items: [{ pos: '10', material: 'GS-VSY-06', desc: 'V-Soy Hi-Calcium Unsweetened 230ml x 36', qty: 20, uom: 'CSE', price: 421.20, total: 8424.00 }] },
+    salesOrder: { number: null, date: '2026-04-12', customer: 'CP All Public Co., Ltd. (7-Eleven)', netValue: 8424.00, currency: 'THB', status: 'Rejected', items: [{ pos: '10', material: 'GS-VSY-06', desc: 'V-Soy Hi-Calcium Unsweetened 230ml x 36', qty: 20, uom: 'CSE', price: 421.20, total: 8424.00 }] },
     delivery: null,
     billing: null,
-    payment: { status: 'N/A', paidDate: null, method: null, reference: null, amount: null, currency: 'EUR', bank: null, accountNo: null, clearedDate: null },
+    payment: { status: 'N/A', paidDate: null, method: null, reference: null, amount: null, currency: 'THB', bank: null, accountNo: null, clearedDate: null },
   },
 };
 
