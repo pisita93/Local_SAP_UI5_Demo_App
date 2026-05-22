@@ -203,17 +203,17 @@ const OverviewPage = ({ setView }) => {
       </div>
 
       <div className="kpi-strip">
-        <div className="kpi-card kpi-card-blue" onClick={() => setView('customers')} style={{ cursor: 'pointer' }}>
+        <div className="kpi-card kpi-card-blue kpi-card-clickable" onClick={() => setView('customers')}>
           <div className="kpi-icon" style={{ background: '#EDF6FF' }}><IcUsers size={16} stroke="var(--sap-color-interactive)" /></div>
           <div className="kpi-val">{CUSTOMERS.length}</div>
           <div className="kpi-label">Total Customers</div>
         </div>
-        <div className="kpi-card kpi-card-green" onClick={() => setView('suppliers')} style={{ cursor: 'pointer' }}>
+        <div className="kpi-card kpi-card-green kpi-card-clickable" onClick={() => setView('suppliers')}>
           <div className="kpi-icon" style={{ background: '#e6f9ee' }}><IcTruck size={16} stroke="var(--sap-color-positive)" /></div>
           <div className="kpi-val">{SUPPLIERS.length}</div>
           <div className="kpi-label">Total Suppliers</div>
         </div>
-        <div className="kpi-card kpi-card-yellow" onClick={() => setView('inbox')} style={{ cursor: 'pointer' }}>
+        <div className="kpi-card kpi-card-yellow kpi-card-clickable" onClick={() => setView('inbox')}>
           <div className="kpi-icon" style={{ background: '#FFF3B8' }}><IcInbox size={16} stroke="var(--sap-color-warning)" /></div>
           <div className="kpi-val">{pendingApprovals}</div>
           <div className="kpi-label">Pending Approvals</div>
@@ -233,10 +233,8 @@ const OverviewPage = ({ setView }) => {
             <span className="tag tag-info">Customer View</span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--sap-color-border-2)' }}>
-            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-              onClick={() => setView('cust-so')}
-              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+            <div className="portal-quick-tile"
+              onClick={() => setView('cust-so')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EDF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <IcShoppingCart size={16} stroke="var(--sap-color-interactive)" />
@@ -245,10 +243,8 @@ const OverviewPage = ({ setView }) => {
               </div>
               <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Track orders from creation to delivery and invoice</div>
             </div>
-            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-              onClick={() => setView('cust-ar')}
-              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+            <div className="portal-quick-tile"
+              onClick={() => setView('cust-ar')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFDBEF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <IcDollar size={16} stroke="var(--sap-color-negative)" />
@@ -266,10 +262,8 @@ const OverviewPage = ({ setView }) => {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--sap-color-border-2)' }}>
-            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-              onClick={() => setView('supp-po')}
-              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+            <div className="portal-quick-tile"
+              onClick={() => setView('supp-po')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFF3B8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <IcFileInv size={16} stroke="var(--sap-color-warning)" />
@@ -278,10 +272,8 @@ const OverviewPage = ({ setView }) => {
               </div>
               <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>View POs and book delivery slots</div>
             </div>
-            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-              onClick={() => setView('supp-ap')}
-              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+            <div className="portal-quick-tile"
+              onClick={() => setView('supp-ap')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EEE4F8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <IcCalendar size={16} stroke="#8B5CF6" />
@@ -302,10 +294,8 @@ const OverviewPage = ({ setView }) => {
             <span className="tag tag-info">Internal Sales</span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--sap-color-border-2)' }}>
-            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-              onClick={() => setView('sales-billing')}
-              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+            <div className="portal-quick-tile"
+              onClick={() => setView('sales-billing')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EDF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <IcList size={16} stroke="var(--sap-color-interactive)" />
@@ -314,10 +304,8 @@ const OverviewPage = ({ setView }) => {
               </div>
               <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>SO → Invoice → Payment transactions by sales group</div>
             </div>
-            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-              onClick={() => setView('sales-cia')}
-              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+            <div className="portal-quick-tile"
+              onClick={() => setView('sales-cia')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFF3B8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <IcDollar size={16} stroke="var(--sap-color-warning)" />
@@ -334,10 +322,8 @@ const OverviewPage = ({ setView }) => {
             <span className="tag tag-error">Restricted</span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--sap-color-border-2)' }}>
-            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-              onClick={() => setView('admin-auth')}
-              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+            <div className="portal-quick-tile"
+              onClick={() => setView('admin-auth')}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFDBEF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <IcUsers size={16} stroke="var(--sap-color-negative)" />
@@ -346,9 +332,7 @@ const OverviewPage = ({ setView }) => {
               </div>
               <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Manage user roles and sales group access</div>
             </div>
-            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+            <div className="portal-quick-tile">
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: '#F5F6F7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <IcClipboard size={16} stroke="var(--sap-color-text-2)" />
@@ -366,10 +350,8 @@ const OverviewPage = ({ setView }) => {
           <span className="tag tag-info">Internal</span>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 1, background: 'var(--sap-color-border-2)' }}>
-          <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-            onClick={() => setView('proc-slots')}
-            onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-            onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+          <div className="portal-quick-tile"
+            onClick={() => setView('proc-slots')}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
               <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EDF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <IcCalendar size={16} stroke="var(--sap-color-interactive)" />
@@ -378,10 +360,8 @@ const OverviewPage = ({ setView }) => {
             </div>
             <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Add, confirm and notify suppliers of delivery slots</div>
           </div>
-          <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-            onClick={() => setView('supp-po')}
-            onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-            onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+          <div className="portal-quick-tile"
+            onClick={() => setView('supp-po')}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
               <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFF3B8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <IcFileInv size={16} stroke="var(--sap-color-warning)" />
@@ -390,10 +370,8 @@ const OverviewPage = ({ setView }) => {
             </div>
             <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>View all open POs and their delivery status</div>
           </div>
-          <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-            onClick={() => setView('supp-ap')}
-            onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-            onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
+          <div className="portal-quick-tile"
+            onClick={() => setView('supp-ap')}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
               <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EEE4F8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <IcDollar size={16} stroke="#8B5CF6" />
