@@ -337,25 +337,10 @@ const FilterField = ({ label, children }) => (
 );
 
 // ── Button ────────────────────────────────────────────────────
-const Btn = ({ variant = "secondary", icon, children, density, ...rest }) => {
-  const h = density === "compact" ? 26 : 32;
-  const base = {
-    display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
-    height: h, padding: density === "compact" ? "0 8px" : "0 12px",
-    fontSize: 13, fontWeight: 700, fontFamily: "inherit", cursor: "pointer",
-    border: "1px solid transparent", borderRadius: 6, transition: "background .15s",
-    whiteSpace: "nowrap",
-  };
-  const styles = {
-    primary:   { background: "var(--blue)", color: "#fff", borderColor: "var(--blue)" },
-    secondary: { background: "var(--bg)", color: "var(--blue-h)", borderColor: "var(--border)" },
-    ghost:     { background: "transparent", color: "var(--blue-h)" },
-    accept:    { background: "#EBFAD3", color: "var(--pos-dark)", borderColor: "#DBEEA1" },
-    reject:    { background: "var(--bg)", color: "var(--neg)", borderColor: "var(--neg)" },
-    danger:    { background: "var(--neg)", color: "#fff", borderColor: "var(--neg)" },
-  }[variant];
+const Btn = ({ variant = "secondary", icon, children, density, className = "", ...rest }) => {
+  const cls = `bk-btn bk-btn-${variant} bk-btn-${density === "compact" ? "compact" : "default"}${className ? " " + className : ""}`;
   return (
-    <button {...rest} style={{ ...base, ...styles, ...(rest.style || {}) }}>
+    <button {...rest} className={cls}>
       {icon && <Icon name={icon} size={13}/>}
       {children}
     </button>

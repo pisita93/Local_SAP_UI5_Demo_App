@@ -98,10 +98,10 @@ const WorklistPage = ({ deliveries, onCreateBilling, onOpenDetail }) => {
           </div>
         </div>
         <div className="flex items-center" style={{ gap: 8 }}>
-          <button className="btn btn-tertiary btn-compact">
+          <button className="btn btn-tertiary btn-compact" aria-label="Export worklist to CSV" onClick={() => alert('Export — demo only')}>
             <Icon name="download" size={14} /> Export
           </button>
-          <button className="btn btn-secondary">
+          <button className="btn btn-secondary" aria-label="Refresh worklist" onClick={() => alert('Refresh — demo only')}>
             <Icon name="refresh" size={14} /> Refresh
           </button>
         </div>
@@ -161,7 +161,7 @@ const WorklistPage = ({ deliveries, onCreateBilling, onOpenDetail }) => {
           </select>
         </div>
         <div className="filter-divider"></div>
-        <button className="btn btn-tertiary btn-compact">
+        <button className="btn btn-tertiary btn-compact" aria-label="Open advanced filter panel" onClick={() => alert('Advanced filters — demo only')}>
           <Icon name="filter" size={13} /> More filters
         </button>
         <div style={{ marginLeft: "auto", fontSize: 12, color: "var(--text2)" }}>

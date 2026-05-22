@@ -19,15 +19,15 @@ const ShellBar = ({ onToggleNav }) => (
         <input placeholder="Search delivery, billing doc, customer…" />
       </div>
       <div className="notif-wrap">
-        <button className="shell-btn" title="Notifications">
+        <button className="shell-btn" title="Notifications" aria-label="Notifications" onClick={() => alert('Notifications — demo only')}>
           <Icon name="bell" size={18} />
         </button>
         <div className="notif-badge">3</div>
       </div>
-      <button className="shell-btn" title="Settings">
+      <button className="shell-btn" title="Settings" aria-label="Settings" onClick={() => alert('Settings — demo only')}>
         <Icon name="settings" size={18} />
       </button>
-      <button className="shell-btn" title="Apps">
+      <button className="shell-btn" title="Apps" aria-label="Apps launcher" onClick={() => alert('Apps launcher — demo only')}>
         <Icon name="apps" size={18} />
       </button>
       <div className="avatar" style={{ width: 32, height: 32, fontSize: 12, marginLeft: 4 }}>SN</div>

@@ -100,13 +100,11 @@ function TreeView({ customers, totals, density, palette, onOpenTruck }) {
       {customers.length === 0 && <EmptyState/>}
       {customers.map(c => (
         <React.Fragment key={c.code}>
-          <div onClick={() => toggle(c.code)} style={{
+          <div onClick={() => toggle(c.code)} className="bk-row-hoverable" style={{
             display: "grid", gridTemplateColumns: COLS, alignItems: "center",
             height: rowH, borderBottom: "1px solid var(--border2)",
             cursor: "pointer", background: expanded.has(c.code) ? "#FBFCFE" : "var(--bg)",
-            transition: "background .15s",
-          }} onMouseOver={e => e.currentTarget.style.background = "var(--bg-shell)"}
-             onMouseOut={e => e.currentTarget.style.background = expanded.has(c.code) ? "#FBFCFE" : "var(--bg)"}>
+          }}>
             <div style={{ padding: cellPad, display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
               <Icon name={expanded.has(c.code) ? "chevDown" : "chevRight"} size={14} color="var(--text2)"/>
               <CustomerCell cust={c}/>
@@ -205,14 +203,12 @@ function ShipToRows({ shipTo, density, palette, cellPad, rowH, onOpenTruck }) {
       {Object.entries(byDel).map(([dn, bs]) => (
         <React.Fragment key={dn}>
           {bs.map((b, i) => (
-            <div key={b.billing} style={{
+            <div key={b.billing} className="bk-row-hoverable" style={{
               display: "grid", gridTemplateColumns: COLS, alignItems: "center",
               minHeight: rowH - 6, padding: density === "compact" ? "4px 0" : "6px 0",
               borderBottom: "1px solid var(--border2)", background: "var(--bg)",
               fontSize: 13, cursor: "pointer",
-            }} onMouseOver={e => e.currentTarget.style.background = "var(--bg-shell)"}
-               onMouseOut={e => e.currentTarget.style.background = "var(--bg)"}
-               onClick={() => onOpenTruck?.(b.truck)}>
+            }} onClick={() => onOpenTruck?.(b.truck)}>
               <div style={{ padding: cellPad, paddingLeft: 68, display: "flex", alignItems: "center", gap: 8 }}>
                 {i === 0 && <span style={{ fontSize: 11, color: "var(--text2)" }}>Delivery {dn}</span>}
                 <span style={{ fontSize: 12, fontFamily: "'72 Duplex','72'", color: "var(--blue-h)", fontWeight: 600 }}>{b.billing}</span>
@@ -326,8 +322,7 @@ function CustomerFlatRow({ cust, density, palette, onOpenTruck }) {
         alignItems: "center", padding: cellPad, gap: 12,
         borderBottom: open ? "1px solid var(--border2)" : "1px solid var(--border3)",
         cursor: "pointer", background: open ? "#FBFCFE" : "var(--bg)",
-      }} onMouseOver={e => !open && (e.currentTarget.style.background = "var(--bg-shell)")}
-         onMouseOut={e => !open && (e.currentTarget.style.background = "var(--bg)")}>
+      }} className={open ? "" : "bk-row-hoverable"}>
         <Icon name={open ? "chevDown" : "chevRight"} size={16} color="var(--text2)"/>
         <CustomerCell cust={cust}/>
         <div style={{ textAlign: "right", fontSize: 12 }}>
