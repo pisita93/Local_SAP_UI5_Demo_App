@@ -154,10 +154,8 @@ function ShellBar({ onToggleNav, currentUser, users, onSwitchUser }) {
                   const active = u.id === currentUser?.id;
                   return (
                     <div key={u.id}
-                      onClick={() => { onSwitchUser(u); setOpen(false); }}
-                      style={{padding:'8px 10px', borderRadius:8, cursor:'pointer', display:'flex', gap:10, alignItems:'center', background: active ? 'var(--blue-tint)' : 'transparent'}}
-                      onMouseEnter={e => e.currentTarget.style.background = active ? 'var(--blue-tint)' : 'var(--bg-shell)'}
-                      onMouseLeave={e => e.currentTarget.style.background = active ? 'var(--blue-tint)' : 'transparent'}>
+                      className={`role-switcher-item ${active ? 'active' : ''}`}
+                      onClick={() => { onSwitchUser(u); setOpen(false); }}>
                       <div className="avatar" style={{width:28, height:28, fontSize:11, background: ur.tone}}>{u.avatar}</div>
                       <div style={{flex:1, minWidth:0}}>
                         <div className="fs13 fw700" style={{color:'var(--text)'}}>{u.name}</div>

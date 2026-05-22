@@ -80,6 +80,7 @@ body.density-compact .tag { height: 20px; font-size: 11px; padding: 0 6px; }
 .table-toolbar-count { color: var(--text2); font-weight: 400; font-size: 14px; }
 
 .table-scroll { flex: 1; overflow: auto; min-height: 0; }
+.table-scroll .sap-table { min-width: max-content; }
 .sap-table th { white-space: nowrap; user-select: none; }
 .sap-table td { font-size: 14px; vertical-align: middle; }
 .sap-table th.sortable { cursor: pointer; }
@@ -276,3 +277,7 @@ body.density-compact .tag { height: 20px; font-size: 11px; padding: 0 6px; }
 /* Loading bar */
 .progress { width: 100%; height: 4px; background: var(--bg-shell); border-radius: 2px; overflow: hidden; }
 .progress-bar { height: 100%; background: var(--blue); transition: width 0.3s; }
+
+/* Tooltip — show on hover/focus of wrapper */
+.tt-wrap:hover .tt,
+.tt-wrap:focus-within .tt { opacity: 1; }

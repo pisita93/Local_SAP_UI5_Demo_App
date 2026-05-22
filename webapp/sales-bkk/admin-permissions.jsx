@@ -343,13 +343,12 @@ function UsersPage({ density }) {
             <div style={{ textAlign: "right" }}>Status</div>
           </div>
           {users.map(u => (
-            <div key={u.id} style={{
+            <div key={u.id} className="bk-row-hoverable" style={{
               display: "grid", gridTemplateColumns: "50px 100px minmax(220px, 1fr) 1fr 140px 180px 100px",
               padding: density === "compact" ? "8px 16px" : "12px 16px", gap: 12,
               alignItems: "center", borderBottom: "1px solid var(--border3)",
-              fontSize: 13, cursor: "pointer",
-            }} onMouseOver={e => e.currentTarget.style.background = "var(--bg-shell)"}
-               onMouseOut={e => e.currentTarget.style.background = "var(--bg)"}>
+              fontSize: 13, cursor: "pointer", background: "var(--bg)",
+            }}>
               <Avatar name={u.name} en={u.en}/>
               <span style={{ fontFamily: "'72 Duplex','72'", color: "var(--text2)", fontSize: 12 }}>{u.id}</span>
               <div>

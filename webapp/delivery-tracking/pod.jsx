@@ -50,7 +50,7 @@ function SignaturePad({ value, onChange, height = 120, dark = false }) {
   }
 
   return (
-    <div className="sig-wrap" style={{position:'relative', background: dark ? '#111' : '#fff', border: dark ? '1px dashed rgba(255,255,255,0.3)' : '1px dashed var(--border)', borderRadius:8, height, overflow:'hidden'}}>
+    <div className={`sig-wrap ${dark ? 'dark' : ''}`} style={{height}}>
       <canvas
         ref={canvasRef}
         style={{width:'100%', height:'100%', display:'block', touchAction:'none', cursor:'crosshair'}}
@@ -233,13 +233,7 @@ function PODEntryWeb({ delivery, customers, drivers, groups, onSubmit, onCancel 
                 ].map(opt => (
                   <button key={opt.v} type="button"
                     onClick={() => f.setMethod(opt.v)}
-                    className="pay-tab"
-                    style={{
-                      flex:1, padding:'12px 14px', borderRadius:8,
-                      border: f.method === opt.v ? '2px solid var(--blue)' : '1px solid var(--border)',
-                      background: f.method === opt.v ? 'var(--blue-tint)' : 'var(--bg)',
-                      cursor:'pointer', textAlign:'left',
-                    }}>
+                    className={`pay-tab ${f.method === opt.v ? 'selected' : ''}`}>
                     <div className="fw700 fs13" style={{color: f.method === opt.v ? 'var(--blue-a)' : 'var(--text)'}}>{opt.label}</div>
                     <div className="t3 fs12 mt4">{opt.sub}</div>
                   </button>

@@ -133,6 +133,66 @@ const CUSTOMERS = [
   { id: 'C-005', name: 'Siam Makro Public Co., Ltd.',                country: 'TH', taxId: '0107500000555',  paymentTerms: 'Net 30', creditLimit: '฿60,000,000', creditRating: 'A',  status: 'Rejected', requestedBy: 'Suchart Inthorn',  createdOn: '2025-01-05', step: 0 },
 ];
 
+/* Channel colors for visual differentiation */
+const CHANNEL_COLORS = {
+  'B2B Enterprise':   { bg: '#EDF6FF', fg: '#0070F2' },
+  'Wholesale':        { bg: '#FFF3E0', fg: '#B7610E' },
+  'Retail':           { bg: '#EEE4F8', fg: '#6B3FA0' },
+  'E-Commerce':       { bg: '#FFE5F0', fg: '#A8095D' },
+  'Export':           { bg: '#E6F9EE', fg: '#1A6B35' },
+};
+
+/* Thailand-specific value lists for Create / Change forms */
+const TH_COUNTRIES = [
+  { code: 'TH', label: 'Thailand (TH)' },
+  { code: 'LA', label: 'Laos (LA)' },
+  { code: 'MM', label: 'Myanmar (MM)' },
+  { code: 'KH', label: 'Cambodia (KH)' },
+  { code: 'VN', label: 'Vietnam (VN)' },
+  { code: 'MY', label: 'Malaysia (MY)' },
+  { code: 'SG', label: 'Singapore (SG)' },
+  { code: 'ID', label: 'Indonesia (ID)' },
+  { code: 'CN', label: 'China (CN)' },
+  { code: 'JP', label: 'Japan (JP)' },
+  { code: 'US', label: 'United States (US)' },
+];
+const TH_PROVINCES = [
+  'Bangkok', 'Nonthaburi', 'Pathum Thani', 'Samut Prakan', 'Samut Sakhon',
+  'Nakhon Pathom', 'Chonburi', 'Rayong', 'Chachoengsao', 'Ayutthaya',
+  'Chiang Mai', 'Chiang Rai', 'Lampang', 'Phitsanulok',
+  'Nakhon Ratchasima', 'Khon Kaen', 'Udon Thani', 'Ubon Ratchathani',
+  'Phuket', 'Surat Thani', 'Songkhla', 'Krabi', 'Hat Yai',
+];
+const TH_SUB_CHANNELS = [
+  'Hypermarket', 'Supermarket', 'Convenience Store', 'Cash & Carry',
+  'Department Store', 'Wholesale', 'Traditional Trade', 'HoReCa',
+  'E-Commerce Marketplace', 'B2B Direct', 'Modern Trade', 'Export',
+];
+const TH_BANKS = [
+  'Bangkok Bank (BBL)',
+  'Kasikornbank (KBank)',
+  'Siam Commercial Bank (SCB)',
+  'Krungthai Bank (KTB)',
+  'Krungsri Bank (BAY)',
+  'TMBThanachart Bank (ttb)',
+  'CIMB Thai Bank',
+  'United Overseas Bank Thai (UOB)',
+  'Government Savings Bank (GSB)',
+];
+
+/* Format helper for credit limit by currency */
+const formatMoney = (amount, currency) => {
+  if (amount == null) return '—';
+  const n = Number(amount);
+  if (!isFinite(n)) return String(amount);
+  const formatted = n.toLocaleString('en-US');
+  if (currency === 'EUR') return '€' + formatted;
+  if (currency === 'USD') return '$' + formatted;
+  if (currency === 'GBP') return '£' + formatted;
+  if (currency === 'THB') return '฿' + formatted;
+  return formatted + ' ' + (currency || '');
+};
+
 const SUPPLIERS = [
   { id: 'S-001', name: 'Raw Materials AG', country: 'DE', taxId: 'DE445566778', paymentTerms: 'Net 45', bankAccount: 'DE89370400440532013000', status: 'Active', requestedBy: 'Anna Weber', createdOn: '2025-01-08', step: 3 },
   { id: 'S-002', name: 'Logistics Partners BV', country: 'NL', taxId: 'NL556677889', paymentTerms: 'Net 30', bankAccount: 'NL91ABNA0417164300', status: 'Pending', requestedBy: 'Jan Visser', createdOn: '2025-01-12', step: 1 },
@@ -162,8 +222,28 @@ const SUPP_WF = [
   { label: 'SAP Created', role: 'System' },
 ];
 
-const statusCls = { Active: 'tag-approved', Pending: 'tag-pending', Rejected: 'tag-error', Draft: 'tag-draft' };
+const statusCls = { Active: 'tag-approved', Pending: 'tag-pending', Rejected: 'tag-rejected', Draft: 'tag-draft' };
 const ratingColor = { A: '#1A6B35', 'A-': '#1A6B35', 'A+': '#1A6B35', 'B+': '#0070F2', B: '#0070F2', 'B-': '#0070F2', 'C+': '#FF9900', C: '#FF9900', 'C-': '#AA0808' };
+
+const QuickTile = ({ Icon, iconBg, iconStroke, title, subtitle, onClick }) => (
+  <div className="portal-quick-tile" onClick={onClick}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+      <div style={{ width: 32, height: 32, borderRadius: 8, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Icon size={16} stroke={iconStroke} />
+      </div>
+      <span style={{ fontWeight: 700, fontSize: 14 }}>{title}</span>
+    </div>
+    <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>{subtitle}</div>
+  </div>
+);
+
+const EmptyState = ({ title, subtitle }) => (
+  <div className="empty-state">
+    <IcSearch size={28} stroke="var(--sap-color-text-3)" />
+    <div className="empty-state-title">{title}</div>
+    <div>{subtitle}</div>
+  </div>
+);
 
 /* ─── OVERVIEW PAGE ──────────────────────────────────────────── */
 const OverviewPage = ({ setView }) => {
@@ -181,17 +261,17 @@ const OverviewPage = ({ setView }) => {
       </div>
 
       <div className="kpi-strip">
-        <div className="kpi-card kpi-card-blue" onClick={() => setView('customers')} style={{ cursor: 'pointer' }}>
+        <div className="kpi-card kpi-card-blue kpi-card-clickable" onClick={() => setView('customers')}>
           <div className="kpi-icon" style={{ background: '#EDF6FF' }}><IcUsers size={16} stroke="var(--sap-color-interactive)" /></div>
           <div className="kpi-val">{CUSTOMERS.length}</div>
           <div className="kpi-label">Total Customers</div>
         </div>
-        <div className="kpi-card kpi-card-green" onClick={() => setView('suppliers')} style={{ cursor: 'pointer' }}>
+        <div className="kpi-card kpi-card-green kpi-card-clickable" onClick={() => setView('suppliers')}>
           <div className="kpi-icon" style={{ background: '#e6f9ee' }}><IcTruck size={16} stroke="var(--sap-color-positive)" /></div>
           <div className="kpi-val">{SUPPLIERS.length}</div>
           <div className="kpi-label">Total Suppliers</div>
         </div>
-        <div className="kpi-card kpi-card-yellow" onClick={() => setView('inbox')} style={{ cursor: 'pointer' }}>
+        <div className="kpi-card kpi-card-yellow kpi-card-clickable" onClick={() => setView('inbox')}>
           <div className="kpi-icon" style={{ background: '#FFF3B8' }}><IcInbox size={16} stroke="var(--sap-color-warning)" /></div>
           <div className="kpi-val">{pendingApprovals}</div>
           <div className="kpi-label">Pending Approvals</div>
@@ -203,183 +283,54 @@ const OverviewPage = ({ setView }) => {
         </div>
       </div>
 
-      {/* Portal quick-access strips */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title">Customer Portal</span>
-            <span className="tag tag-info">Customer View</span>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--sap-color-border-2)' }}>
-            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-              onClick={() => setView('cust-so')}
-              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EDF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IcShoppingCart size={16} stroke="var(--sap-color-interactive)" />
-                </div>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>Sales Orders</span>
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Track orders from creation to delivery and invoice</div>
-            </div>
-            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-              onClick={() => setView('cust-ar')}
-              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFDBEF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IcDollar size={16} stroke="var(--sap-color-negative)" />
-                </div>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>Outstanding Invoices</span>
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>View unpaid AR invoices and overdue amounts</div>
-            </div>
-          </div>
+      {/* Apps grid — 8 tiles in 4x2, replaces 4 separate Customer/Supplier/Sales/Admin cards */}
+      <div className="card mb-16" style={{ marginBottom: 16 }}>
+        <div className="card-header">
+          <span className="card-title">Apps</span>
+          <span className="fs-12 text-2">Customer · Supplier · Sales · Admin</span>
         </div>
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title">Supplier Portal</span>
-            <span className="tag tag-purple">Supplier View</span>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--sap-color-border-2)' }}>
-            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-              onClick={() => setView('supp-po')}
-              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFF3B8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IcFileInv size={16} stroke="var(--sap-color-warning)" />
-                </div>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>Open Purchase Orders</span>
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>View POs and book delivery slots</div>
-            </div>
-            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-              onClick={() => setView('supp-ap')}
-              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EEE4F8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IcCalendar size={16} stroke="#8B5CF6" />
-                </div>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>AP Invoices</span>
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Track invoices pending payment from buyer</div>
-            </div>
-          </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: 'var(--sap-color-border-2)' }}>
+          <QuickTile Icon={IcShoppingCart} iconBg="#EDF6FF" iconStroke="var(--sap-color-interactive)"
+            title="Sales Orders" subtitle="Track orders from creation to delivery and invoice"
+            onClick={() => setView('cust-so')} />
+          <QuickTile Icon={IcDollar} iconBg="#FFDBEF" iconStroke="var(--sap-color-negative)"
+            title="Outstanding Invoices" subtitle="View unpaid AR invoices and overdue amounts"
+            onClick={() => setView('cust-ar')} />
+          <QuickTile Icon={IcFileInv} iconBg="#FFF3B8" iconStroke="var(--sap-color-warning)"
+            title="Open Purchase Orders" subtitle="View POs and book delivery slots"
+            onClick={() => setView('supp-po')} />
+          <QuickTile Icon={IcCalendar} iconBg="#EEE4F8" iconStroke="#8B5CF6"
+            title="AP Invoices" subtitle="Track invoices pending payment from buyer"
+            onClick={() => setView('supp-ap')} />
+          <QuickTile Icon={IcList} iconBg="#EDF6FF" iconStroke="var(--sap-color-interactive)"
+            title="Billing Report" subtitle="SO → Invoice → Payment transactions by sales group"
+            onClick={() => setView('sales-billing')} />
+          <QuickTile Icon={IcDollar} iconBg="#FFF3B8" iconStroke="var(--sap-color-warning)"
+            title="Cash-in-Advance" subtitle="Export orders pending CIA payment before release"
+            onClick={() => setView('sales-cia')} />
+          <QuickTile Icon={IcUsers} iconBg="#FFDBEF" iconStroke="var(--sap-color-negative)"
+            title="Authorization" subtitle="Manage user roles and sales group access"
+            onClick={() => setView('admin-auth')} />
+          <QuickTile Icon={IcClipboard} iconBg="#F5F6F7" iconStroke="var(--sap-color-text-2)"
+            title="Audit Log" subtitle="View system access and change history" />
         </div>
       </div>
 
-      {/* Sales + Admin quick-access */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title">Sales</span>
-            <span className="tag tag-info">Internal Sales</span>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--sap-color-border-2)' }}>
-            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-              onClick={() => setView('sales-billing')}
-              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EDF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IcList size={16} stroke="var(--sap-color-interactive)" />
-                </div>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>Billing Report</span>
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>SO → Invoice → Payment transactions by sales group</div>
-            </div>
-            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-              onClick={() => setView('sales-cia')}
-              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFF3B8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IcDollar size={16} stroke="var(--sap-color-warning)" />
-                </div>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>Cash-in-Advance</span>
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Export orders pending CIA payment before release</div>
-            </div>
-          </div>
-        </div>
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title">Admin</span>
-            <span className="tag tag-error">Restricted</span>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, background: 'var(--sap-color-border-2)' }}>
-            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-              onClick={() => setView('admin-auth')}
-              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFDBEF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IcUsers size={16} stroke="var(--sap-color-negative)" />
-                </div>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>Authorization</span>
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Manage user roles and sales group access</div>
-            </div>
-            <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-              onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-              onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#F5F6F7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IcClipboard size={16} stroke="var(--sap-color-text-2)" />
-                </div>
-                <span style={{ fontWeight: 700, fontSize: 14 }}>Audit Log</span>
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>View system access and change history</div>
-            </div>
-          </div>
-        </div>
-      </div>
       <div className="card mb-16" style={{ marginBottom: 16 }}>
         <div className="card-header">
           <span className="card-title">Procurement — Internal Tools</span>
           <span className="tag tag-info">Internal</span>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 1, background: 'var(--sap-color-border-2)' }}>
-          <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-            onClick={() => setView('proc-slots')}
-            onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-            onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EDF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IcCalendar size={16} stroke="var(--sap-color-interactive)" />
-              </div>
-              <span style={{ fontWeight: 700, fontSize: 14 }}>Delivery Slot Management</span>
-            </div>
-            <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Add, confirm and notify suppliers of delivery slots</div>
-          </div>
-          <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-            onClick={() => setView('supp-po')}
-            onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-            onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FFF3B8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IcFileInv size={16} stroke="var(--sap-color-warning)" />
-              </div>
-              <span style={{ fontWeight: 700, fontSize: 14 }}>Open Purchase Orders</span>
-            </div>
-            <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>View all open POs and their delivery status</div>
-          </div>
-          <div style={{ background: 'var(--sap-color-bg)', padding: '16px 20px', cursor: 'pointer', transition: 'background 0.12s' }}
-            onClick={() => setView('supp-ap')}
-            onMouseEnter={e => e.currentTarget.style.background='var(--sap-color-bg-hover-blue)'}
-            onMouseLeave={e => e.currentTarget.style.background='var(--sap-color-bg)'}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EEE4F8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <IcDollar size={16} stroke="#8B5CF6" />
-              </div>
-              <span style={{ fontWeight: 700, fontSize: 14 }}>AP Invoices</span>
-            </div>
-            <div style={{ fontSize: 12, color: 'var(--sap-color-text-2)' }}>Review and approve supplier invoices for payment</div>
-          </div>
+          <QuickTile Icon={IcCalendar} iconBg="#EDF6FF" iconStroke="var(--sap-color-interactive)"
+            title="Delivery Slot Management" subtitle="Add, confirm and notify suppliers of delivery slots"
+            onClick={() => setView('proc-slots')} />
+          <QuickTile Icon={IcFileInv} iconBg="#FFF3B8" iconStroke="var(--sap-color-warning)"
+            title="Open Purchase Orders" subtitle="View all open POs and their delivery status"
+            onClick={() => setView('supp-po')} />
+          <QuickTile Icon={IcDollar} iconBg="#EEE4F8" iconStroke="#8B5CF6"
+            title="AP Invoices" subtitle="Review and approve supplier invoices for payment"
+            onClick={() => setView('supp-ap')} />
         </div>
       </div>
 
@@ -390,20 +341,26 @@ const OverviewPage = ({ setView }) => {
             <span className="card-title">Recent Customers</span>
             <button className="btn btn-ghost btn-sm" onClick={() => setView('customers')}>View All</button>
           </div>
-          <div style={{ padding: 0 }}>
-            <table className="sap-table">
-              <thead><tr><th>Name</th><th>Country</th><th>Status</th><th>Credit</th></tr></thead>
-              <tbody>
-                {CUSTOMERS.slice(0, 4).map(c => (
-                  <tr key={c.id} onClick={() => setView('cust-detail', c)}>
-                    <td><a>{c.name}</a></td>
-                    <td><span className="fs-13">{c.country}</span></td>
-                    <td><span className={`tag ${statusCls[c.status]}`}>{c.status}</span></td>
-                    <td style={{ color: ratingColor[c.creditRating], fontWeight: 700, fontSize: 13 }}>{c.creditRating}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div style={{ padding: '4px 0' }}>
+            {CUSTOMERS.slice(0, 5).map(c => {
+              const ch = CHANNEL_COLORS[c.channel] || { bg: '#F0F2F5', fg: '#556B82' };
+              return (
+                <div key={c.id} onClick={() => setView('cust-detail', c)}
+                  style={{ padding: '10px 14px', borderBottom: '1px solid var(--sap-color-border-2)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <a style={{ display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 600, fontSize: 13 }} title={c.name}>{c.name}</a>
+                    <div className="flex items-center gap-8 mt-4">
+                      <span className="tag" style={{ background: ch.bg, color: ch.fg, fontWeight: 600, fontSize: 10 }}>{c.channel}</span>
+                      <span className="fs-12 text-2">{c.province}</span>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                    <div style={{ fontWeight: 700, fontSize: 13 }}>{formatMoney(c.creditLimit, c.currency)}</div>
+                    <div className="mt-4"><span className={`tag ${statusCls[c.status]}`} style={{ fontSize: 10 }}>{c.status}</span></div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -418,7 +375,7 @@ const OverviewPage = ({ setView }) => {
           </div>
           <div style={{ padding: '8px 0' }}>
             {APPROVALS.map(a => (
-              <div key={a.id} style={{ padding: '10px 18px', borderBottom: '1px solid var(--sap-color-border-2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
+              <div key={a.id} style={{ padding: '10px 14px', borderBottom: '1px solid var(--sap-color-border-2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
                 onClick={() => setView(a.type === 'customer' ? 'cust-approval' : 'supp-approval', a)}>
                 <div>
                   <div className="flex items-center gap-8">
@@ -441,7 +398,15 @@ const OverviewPage = ({ setView }) => {
 const CustomerList = ({ setView }) => {
   const [q, setQ] = useState('');
   const [showCreate, setShowCreate] = useState(false);
-  const rows = CUSTOMERS.filter(c => c.name.toLowerCase().includes(q.toLowerCase()) || c.id.includes(q));
+  const rows = CUSTOMERS.filter(c => {
+    if (!q) return true;
+    const s = q.toLowerCase();
+    return c.name.toLowerCase().includes(s)
+      || c.id.toLowerCase().includes(s)
+      || c.taxId.toLowerCase().includes(s)
+      || (c.province && c.province.toLowerCase().includes(s))
+      || (c.channel && c.channel.toLowerCase().includes(s));
+  });
 
   return (
     <div className="page-area">
@@ -449,7 +414,7 @@ const CustomerList = ({ setView }) => {
       <div className="page-title-row">
         <div>
           <div className="page-title">Customer Master Data</div>
-          <div className="page-subtitle">{CUSTOMERS.length} customers · including credit master data</div>
+          <div className="page-subtitle">{CUSTOMERS.length} customers · {[...new Set(CUSTOMERS.map(c => c.channel))].length} channels · including credit master data</div>
         </div>
         <div className="flex gap-8">
           <button className="btn btn-secondary btn-sm"><IcFilter size={13} /> Filter</button>
@@ -463,36 +428,50 @@ const CustomerList = ({ setView }) => {
         <div className="table-toolbar">
           <div className="search-field" style={{ width: 280 }}>
             <IcSearch size={14} stroke="var(--sap-color-text-2)" />
-            <input placeholder="Search customers..." value={q} onChange={e => setQ(e.target.value)} />
+            <input placeholder="Search customer / code / tax ID..." value={q} onChange={e => setQ(e.target.value)} />
           </div>
           <span className="fs-12 text-2">{rows.length} results</span>
         </div>
+        {rows.length === 0 ? (
+          <EmptyState title="No customers match your search" subtitle={`Try a different search term or clear "${q}" to see all ${CUSTOMERS.length} customers.`} />
+        ) : (
         <table className="sap-table">
           <thead>
             <tr>
-              <th>Customer ID</th><th>Name</th><th>Country</th><th>Tax ID</th>
-              <th>Payment Terms</th><th>Credit Limit</th><th>Rating</th><th>Status</th><th>Actions</th>
+              <th>Code</th><th>Name</th><th>Channel</th><th>Sub-Channel</th>
+              <th>Province</th><th>Payment</th><th style={{ textAlign: 'right' }}>Credit Limit</th>
+              <th>Status</th><th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {rows.map(c => (
-              <tr key={c.id} onClick={() => setView('cust-detail', c)}>
-                <td><a>{c.id}</a></td>
-                <td style={{ fontWeight: 600 }}>{c.name}</td>
-                <td>{c.country}</td>
-                <td className="text-2">{c.taxId}</td>
-                <td>{c.paymentTerms}</td>
-                <td style={{ fontWeight: 600 }}>{c.creditLimit}</td>
-                <td><span style={{ fontWeight: 700, color: ratingColor[c.creditRating] }}>{c.creditRating}</span></td>
-                <td><span className={`tag ${statusCls[c.status]}`}>{c.status}</span></td>
-                <td onClick={e => e.stopPropagation()} style={{ whiteSpace: 'nowrap' }}>
-                  <button className="btn btn-ghost btn-sm" onClick={() => setView('cust-detail', c)}><IcEye size={13} /></button>
-                  <button className="btn btn-ghost btn-sm" onClick={() => setView('cust-change', c)}><IcEdit size={13} /></button>
-                </td>
-              </tr>
-            ))}
+            {rows.map(c => {
+              const ch = CHANNEL_COLORS[c.channel] || { bg: '#F0F2F5', fg: '#556B82' };
+              return (
+                <tr key={c.id} onClick={() => setView('cust-detail', c)}>
+                  <td><a style={{ fontFamily: 'monospace', fontSize: 12 }}>{c.id}</a></td>
+                  <td style={{ fontWeight: 600, maxWidth: 320 }}>
+                    <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={c.name}>{c.name}</div>
+                    <div className="fs-12 text-2" style={{ fontWeight: 400 }}>{c.contact}</div>
+                  </td>
+                  <td><span className="tag" style={{ background: ch.bg, color: ch.fg, fontWeight: 600 }}>{c.channel}</span></td>
+                  <td className="fs-13">{c.subChannel}</td>
+                  <td>
+                    <div className="fs-13">{c.province}</div>
+                    <div className="fs-12 text-2">{c.postcode} · {c.country}</div>
+                  </td>
+                  <td className="fs-13">{c.paymentTerms}</td>
+                  <td style={{ fontWeight: 600, textAlign: 'right', whiteSpace: 'nowrap' }}>{formatMoney(c.creditLimit, c.currency)}</td>
+                  <td><span className={`tag ${statusCls[c.status]}`}>{c.status}</span></td>
+                  <td onClick={e => e.stopPropagation()} style={{ whiteSpace: 'nowrap' }}>
+                    <button className="btn btn-ghost btn-sm" onClick={() => setView('cust-detail', c)}><IcEye size={13} /></button>
+                    <button className="btn btn-ghost btn-sm" onClick={() => setView('cust-change', c)}><IcEdit size={13} /></button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
+        )}
         <div className="table-footer">
           <span>{rows.length} of {CUSTOMERS.length} records</span>
           <div className="flex gap-8">
@@ -534,6 +513,9 @@ const SupplierList = ({ setView }) => {
           </div>
           <span className="fs-12 text-2">{rows.length} results</span>
         </div>
+        {rows.length === 0 ? (
+          <EmptyState title="No suppliers match your search" subtitle={`Try a different search term or clear "${q}" to see all ${SUPPLIERS.length} suppliers.`} />
+        ) : (
         <table className="sap-table">
           <thead>
             <tr>
@@ -559,6 +541,7 @@ const SupplierList = ({ setView }) => {
             ))}
           </tbody>
         </table>
+        )}
         <div className="table-footer">
           <span>{rows.length} of {SUPPLIERS.length} records</span>
           <div className="flex gap-8">
@@ -588,18 +571,22 @@ const CustomerDetail = ({ rec, setView }) => {
       <div className="obj-header">
         <div className="obj-title-row">
           <div>
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-8" style={{ flexWrap: 'wrap' }}>
               <div className="obj-title">{rec.name}</div>
               <span className={`tag ${statusCls[rec.status]}`}>{rec.status}</span>
+              {rec.channel && (() => { const ch = CHANNEL_COLORS[rec.channel] || { bg: '#F0F2F5', fg: '#556B82' }; return (
+                <span className="tag" style={{ background: ch.bg, color: ch.fg, fontWeight: 600 }}>{rec.channel} · {rec.subChannel}</span>
+              ); })()}
               {rec.creditRating && <span className="tag tag-credit">Rating: {rec.creditRating}</span>}
             </div>
             <div className="obj-attrs">
-              <div className="obj-attr"><div className="obj-attr-label">Customer ID</div><div className="obj-attr-val">{rec.id}</div></div>
-              <div className="obj-attr"><div className="obj-attr-label">Country</div><div className="obj-attr-val">{rec.country}</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Customer Code</div><div className="obj-attr-val" style={{ fontFamily: 'monospace' }}>{rec.id}</div></div>
               <div className="obj-attr"><div className="obj-attr-label">Tax ID</div><div className="obj-attr-val">{rec.taxId}</div></div>
-              <div className="obj-attr"><div className="obj-attr-label">Credit Limit</div><div className="obj-attr-val">{rec.creditLimit}</div></div>
-              <div className="obj-attr"><div className="obj-attr-label">Requested By</div><div className="obj-attr-val">{rec.requestedBy}</div></div>
-              <div className="obj-attr"><div className="obj-attr-label">Created On</div><div className="obj-attr-val">{rec.createdOn}</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Province</div><div className="obj-attr-val">{rec.province} ({rec.country})</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Payment Terms</div><div className="obj-attr-val">{rec.paymentTerms}</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Credit Limit</div><div className="obj-attr-val">{formatMoney(rec.creditLimit, rec.currency)}</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Price Group</div><div className="obj-attr-val">{rec.priceGroup}</div></div>
+              <div className="obj-attr"><div className="obj-attr-label">Contact</div><div className="obj-attr-val">{rec.contact}</div></div>
             </div>
           </div>
           <div className="flex gap-8">
@@ -619,22 +606,35 @@ const CustomerDetail = ({ rec, setView }) => {
           <div className="form-section">
             <div className="form-section-hdr">General Information</div>
             <div className="form-grid form-grid-3">
-              <div className="field"><div className="field-label">Customer Name</div><input className="input readonly" readOnly value={rec.name} /></div>
-              <div className="field"><div className="field-label">Country</div><input className="input readonly" readOnly value={rec.country} /></div>
+              <div className="field col-span-2"><div className="field-label">Customer Name</div><input className="input readonly" readOnly value={rec.name} /></div>
+              <div className="field"><div className="field-label">Customer Code</div><input className="input readonly" readOnly value={rec.id} style={{ fontFamily: 'monospace' }} /></div>
+              <div className="field"><div className="field-label">Channel</div><input className="input readonly" readOnly value={rec.channel} /></div>
+              <div className="field"><div className="field-label">Sub-Channel</div><input className="input readonly" readOnly value={rec.subChannel} /></div>
+              <div className="field"><div className="field-label">Price Group</div><input className="input readonly" readOnly value={rec.priceGroup} /></div>
               <div className="field"><div className="field-label">Tax ID / VAT</div><input className="input readonly" readOnly value={rec.taxId} /></div>
               <div className="field"><div className="field-label">Payment Terms</div><input className="input readonly" readOnly value={rec.paymentTerms} /></div>
-              <div className="field"><div className="field-label">Currency</div><input className="input readonly" readOnly value="EUR" /></div>
-              <div className="field"><div className="field-label">Account Group</div><input className="input readonly" readOnly value="External Customer" /></div>
+              <div className="field"><div className="field-label">Currency</div><input className="input readonly" readOnly value={rec.currency} /></div>
             </div>
           </div>
           <div className="form-section">
             <div className="form-section-hdr">Address</div>
             <div className="form-grid form-grid-3">
-              <div className="field col-span-2"><div className="field-label">Street / House No.</div><input className="input readonly" readOnly value="123 Business Street" /></div>
-              <div className="field"><div className="field-label">Postal Code</div><input className="input readonly" readOnly value="10115" /></div>
-              <div className="field"><div className="field-label">City</div><input className="input readonly" readOnly value="Berlin" /></div>
-              <div className="field"><div className="field-label">Region</div><input className="input readonly" readOnly value="Brandenburg" /></div>
+              <div className="field col-span-2"><div className="field-label">Street / House No.</div><input className="input readonly" readOnly value={rec.addressEn} /></div>
+              <div className="field"><div className="field-label">Postal Code</div><input className="input readonly" readOnly value={rec.postcode} /></div>
+              <div className="field"><div className="field-label">City</div><input className="input readonly" readOnly value={rec.city} /></div>
+              <div className="field"><div className="field-label">Province / Region</div><input className="input readonly" readOnly value={rec.province} /></div>
               <div className="field"><div className="field-label">Country</div><input className="input readonly" readOnly value={rec.country} /></div>
+            </div>
+          </div>
+          <div className="form-section">
+            <div className="form-section-hdr">Contact &amp; Communication</div>
+            <div className="form-grid form-grid-3">
+              <div className="field"><div className="field-label">Contact Name</div><input className="input readonly" readOnly value={rec.contact} /></div>
+              <div className="field"><div className="field-label">Phone</div><input className="input readonly" readOnly value={rec.phone} /></div>
+              <div className="field"><div className="field-label">Email</div><input className="input readonly" readOnly value={rec.email || '—'} /></div>
+              <div className="field"><div className="field-label">Requested By</div><input className="input readonly" readOnly value={rec.requestedBy} /></div>
+              <div className="field"><div className="field-label">Created On</div><input className="input readonly" readOnly value={rec.createdOn} /></div>
+              <div className="field"><div className="field-label">Account Group</div><input className="input readonly" readOnly value="External Customer" /></div>
             </div>
           </div>
         </div>
@@ -645,13 +645,14 @@ const CustomerDetail = ({ rec, setView }) => {
           <div className="form-section">
             <div className="form-section-hdr">Credit Information</div>
             <div className="form-grid form-grid-3">
-              <div className="field"><div className="field-label">Credit Limit</div><input className="input readonly" readOnly value={rec.creditLimit} /></div>
+              <div className="field"><div className="field-label">Credit Limit</div><input className="input readonly" readOnly value={formatMoney(rec.creditLimit, rec.currency)} /></div>
+              <div className="field"><div className="field-label">Currency</div><input className="input readonly" readOnly value={rec.currency} /></div>
               <div className="field"><div className="field-label">Credit Rating</div>
                 <input className="input readonly" readOnly value={rec.creditRating} style={{ color: ratingColor[rec.creditRating], fontWeight: 700 }} />
               </div>
               <div className="field"><div className="field-label">Risk Category</div><input className="input readonly" readOnly value={rec.creditRating?.startsWith('A') ? 'Low Risk' : rec.creditRating?.startsWith('B') ? 'Medium Risk' : 'High Risk'} /></div>
-              <div className="field"><div className="field-label">Credit Exposure</div><input className="input readonly" readOnly value="€127,450" /></div>
-              <div className="field"><div className="field-label">Days Sales Outstanding</div><input className="input readonly" readOnly value="28 days" /></div>
+              <div className="field"><div className="field-label">Credit Exposure</div><input className="input readonly" readOnly value={formatMoney(Math.round(rec.creditLimit * 0.42), rec.currency)} /></div>
+              <div className="field"><div className="field-label">Days Sales Outstanding</div><input className="input readonly" readOnly value={rec.paymentTerms === 'Net 60' ? '52 days' : rec.paymentTerms === 'Net 45' ? '38 days' : rec.paymentTerms === 'Net 30' ? '26 days' : '12 days'} /></div>
               <div className="field"><div className="field-label">Last Review Date</div><input className="input readonly" readOnly value={rec.createdOn} /></div>
             </div>
           </div>
@@ -766,10 +767,14 @@ const SupplierDetail = ({ rec, setView }) => {
 const CustomerForm = ({ rec, mode, setView }) => {
   const isChange = mode === 'change';
   const [form, setForm] = useState({
-    name: rec?.name || '', country: rec?.country || 'DE', taxId: rec?.taxId || '',
-    street: rec?.street || '', city: rec?.city || '', postal: rec?.postal || '',
-    paymentTerms: rec?.paymentTerms || 'Net 30', currency: 'EUR', accountGroup: 'External Customer',
-    phone: '', email: '', website: '', notes: ''
+    name: rec?.name || '', country: rec?.country || 'TH', taxId: rec?.taxId || '',
+    street: rec?.addressEn || '', city: rec?.city || '', postal: rec?.postcode || '',
+    province: rec?.province || 'Bangkok',
+    paymentTerms: rec?.paymentTerms || 'Net 30', currency: rec?.currency || 'THB', accountGroup: 'External Customer',
+    channel: rec?.channel || 'B2B Enterprise', subChannel: rec?.subChannel || 'Modern Trade',
+    priceGroup: rec?.priceGroup || '',
+    phone: rec?.phone || '', email: rec?.email || '', website: '', notes: '',
+    contact: rec?.contact || ''
   });
   const [submitted, setSubmitted] = useState(false);
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
@@ -813,31 +818,42 @@ const CustomerForm = ({ rec, mode, setView }) => {
             </select></div>
           <div className="field"><div className="field-label">Country <span className="req">*</span></div>
             <select className="input" value={form.country} onChange={e => set('country', e.target.value)}>
-              <option value="DE">Germany (DE)</option><option value="GB">United Kingdom (GB)</option>
-              <option value="FR">France (FR)</option><option value="NL">Netherlands (NL)</option>
-              <option value="ES">Spain (ES)</option><option value="US">United States (US)</option>
+              {TH_COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
             </select></div>
-          <div className="field"><div className="field-label">Tax ID / VAT Number <span className="req">*</span></div>
-            <input className="input" value={form.taxId} onChange={e => set('taxId', e.target.value)} placeholder="e.g. DE123456789" /></div>
+          <div className="field"><div className="field-label">Tax ID (เลขประจำตัวผู้เสียภาษี) <span className="req">*</span></div>
+            <input className="input" value={form.taxId} onChange={e => set('taxId', e.target.value)} placeholder="13-digit (e.g. 0105500000111)" /></div>
           <div className="field"><div className="field-label">Currency</div>
             <select className="input" value={form.currency} onChange={e => set('currency', e.target.value)}>
-              <option>EUR</option><option>USD</option><option>GBP</option><option>CHF</option>
+              <option>THB</option><option>USD</option><option>EUR</option><option>JPY</option><option>CNY</option>
             </select></div>
+          <div className="field"><div className="field-label">Channel <span className="req">*</span></div>
+            <select className="input" value={form.channel} onChange={e => set('channel', e.target.value)}>
+              <option>B2B Enterprise</option><option>Wholesale</option><option>Retail</option>
+              <option>E-Commerce</option><option>Export</option>
+            </select></div>
+          <div className="field"><div className="field-label">Sub-Channel</div>
+            <select className="input" value={form.subChannel} onChange={e => set('subChannel', e.target.value)}>
+              {TH_SUB_CHANNELS.map(s => <option key={s}>{s}</option>)}
+            </select></div>
+          <div className="field"><div className="field-label">Price Group</div>
+            <input className="input" value={form.priceGroup} onChange={e => set('priceGroup', e.target.value)} placeholder="e.g. TH01-MODERN, TH02-TT" /></div>
         </div>
       </div>
 
       <div className="form-section">
         <div className="form-section-hdr">Address</div>
         <div className="form-grid form-grid-3">
-          <div className="field col-span-2"><div className="field-label">Street / House No. <span className="req">*</span></div>
-            <input className="input" value={form.street} onChange={e => set('street', e.target.value)} placeholder="Street address" /></div>
+          <div className="field col-span-2"><div className="field-label">Street / Building No. <span className="req">*</span></div>
+            <input className="input" value={form.street} onChange={e => set('street', e.target.value)} placeholder="e.g. 123/4 Sukhumvit Road" /></div>
           <div className="field"><div className="field-label">Postal Code <span className="req">*</span></div>
-            <input className="input" value={form.postal} onChange={e => set('postal', e.target.value)} placeholder="Postal code" /></div>
-          <div className="field"><div className="field-label">City <span className="req">*</span></div>
-            <input className="input" value={form.city} onChange={e => set('city', e.target.value)} placeholder="City" /></div>
-          <div className="field"><div className="field-label">Region / State</div>
-            <input className="input" placeholder="Region" /></div>
-          <div className="field"><div className="field-label">P.O. Box</div>
+            <input className="input" value={form.postal} onChange={e => set('postal', e.target.value)} placeholder="5-digit (e.g. 10110)" /></div>
+          <div className="field"><div className="field-label">District / City <span className="req">*</span></div>
+            <input className="input" value={form.city} onChange={e => set('city', e.target.value)} placeholder="e.g. Watthana, Klongtoey" /></div>
+          <div className="field"><div className="field-label">Province (จังหวัด)</div>
+            <select className="input" value={form.province} onChange={e => set('province', e.target.value)}>
+              {TH_PROVINCES.map(p => <option key={p}>{p}</option>)}
+            </select></div>
+          <div className="field"><div className="field-label">Sub-district (แขวง/ตำบล)</div>
             <input className="input" placeholder="Optional" /></div>
         </div>
       </div>
@@ -847,18 +863,18 @@ const CustomerForm = ({ rec, mode, setView }) => {
         <div className="form-grid form-grid-3">
           <div className="field"><div className="field-label">Payment Terms <span className="req">*</span></div>
             <select className="input" value={form.paymentTerms} onChange={e => set('paymentTerms', e.target.value)}>
-              <option>Net 30</option><option>Net 45</option><option>Net 60</option><option>2/10 Net 30</option><option>Immediate</option>
+              <option>CASH — Cash on Delivery</option><option>Net 30</option><option>Net 45</option><option>Net 60</option><option>Net 90</option><option>LC — Letter of Credit</option><option>TT — Advance Telegraphic Transfer</option>
             </select></div>
           <div className="field"><div className="field-label">Sales Organisation</div>
-            <select className="input"><option>1000 — Germany</option><option>2000 — UK</option></select></div>
+            <select className="input"><option>1000 — Thailand</option><option>2000 — ASEAN Regional</option></select></div>
           <div className="field"><div className="field-label">Distribution Channel</div>
-            <select className="input"><option>10 — Direct</option><option>20 — Wholesale</option></select></div>
+            <select className="input"><option>10 — Direct Sales</option><option>20 — Wholesale</option><option>30 — Modern Trade</option><option>40 — Traditional Trade</option><option>50 — Export</option></select></div>
           <div className="field"><div className="field-label">Division</div>
-            <select className="input"><option>00 — Cross-division</option><option>01 — Products</option></select></div>
+            <select className="input"><option>00 — Cross-division</option><option>01 — Food & Beverage</option><option>02 — Consumer Goods</option><option>03 — Industrial</option></select></div>
           <div className="field"><div className="field-label">Incoterms</div>
-            <select className="input"><option>DAP — Delivered at Place</option><option>EXW — Ex Works</option><option>CIF — Cost Insurance Freight</option></select></div>
+            <select className="input"><option>DAP — Delivered at Place</option><option>EXW — Ex Works (Bangkok)</option><option>FOB — Free on Board (Laem Chabang)</option><option>CIF — Cost Insurance Freight</option><option>CFR — Cost & Freight</option></select></div>
           <div className="field"><div className="field-label">Price Group</div>
-            <select className="input"><option>01 — Standard</option><option>02 — Premium</option></select></div>
+            <select className="input"><option>01 — Standard</option><option>02 — Premium</option><option>03 — Promotional</option><option>04 — Export</option></select></div>
         </div>
       </div>
 
@@ -867,13 +883,13 @@ const CustomerForm = ({ rec, mode, setView }) => {
         <div className="msg-strip msg-warning" style={{ margin: '14px 18px 0' }}><IcAlert size={14} /><span>Credit limit and rating will be assigned by the Credit Processor during evaluation. Provide guidance below.</span></div>
         <div className="form-grid form-grid-3" style={{ paddingTop: 8 }}>
           <div className="field"><div className="field-label">Requested Credit Limit</div>
-            <input className="input" placeholder="e.g. €250,000" /></div>
+            <input className="input" placeholder="e.g. ฿10,000,000" /></div>
           <div className="field"><div className="field-label">Credit Risk Category</div>
             <select className="input"><option>Low Risk</option><option>Medium Risk</option><option>High Risk</option></select></div>
           <div className="field"><div className="field-label">Credit Control Area</div>
-            <select className="input"><option>1000 — Germany</option><option>2000 — Group</option></select></div>
+            <select className="input"><option>1000 — Thailand</option><option>2000 — ASEAN Regional</option></select></div>
           <div className="field col-span-3"><div className="field-label">Justification / Notes for Credit Processor</div>
-            <textarea className="input" rows={3} placeholder="Describe business relationship, expected volumes, and any relevant credit information..." /></div>
+            <textarea className="input" rows={3} placeholder="Describe business relationship, expected monthly volume, and any relevant credit information..." /></div>
         </div>
       </div>
 
@@ -881,7 +897,7 @@ const CustomerForm = ({ rec, mode, setView }) => {
         <div className="form-section-hdr">Contacts &amp; Communication</div>
         <div className="form-grid form-grid-3">
           <div className="field"><div className="field-label">Phone Number</div>
-            <input className="input" value={form.phone} onChange={e => set('phone', e.target.value)} placeholder="+49 30 12345678" /></div>
+            <input className="input" value={form.phone} onChange={e => set('phone', e.target.value)} placeholder="+66 2 123 4567" /></div>
           <div className="field"><div className="field-label">Email Address</div>
             <input className="input" type="email" value={form.email} onChange={e => set('email', e.target.value)} placeholder="contact@company.com" /></div>
           <div className="field"><div className="field-label">Website</div>
@@ -903,10 +919,10 @@ const CustomerForm = ({ rec, mode, setView }) => {
 const SupplierForm = ({ rec, mode, setView }) => {
   const isChange = mode === 'change';
   const [form, setForm] = useState({
-    name: rec?.name || '', country: rec?.country || 'DE', taxId: rec?.taxId || '',
-    paymentTerms: rec?.paymentTerms || 'Net 30', currency: 'EUR',
-    iban: rec?.bankAccount || '', bic: '', bankName: '',
-    street: '', city: '', postal: '', notes: ''
+    name: rec?.name || '', country: rec?.country || 'TH', taxId: rec?.taxId || '',
+    paymentTerms: rec?.paymentTerms || 'Net 30', currency: 'THB',
+    bankAccount: rec?.bankAccount || '', swift: '', bankName: 'Bangkok Bank (BBL)',
+    street: '', city: '', postal: '', province: 'Bangkok', notes: ''
   });
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
 
@@ -943,18 +959,16 @@ const SupplierForm = ({ rec, mode, setView }) => {
           <div className="field col-span-2"><div className="field-label">Supplier / Company Name <span className="req">*</span></div>
             <input className="input" value={form.name} onChange={e => set('name', e.target.value)} placeholder="Enter company name" /></div>
           <div className="field"><div className="field-label">Account Group <span className="req">*</span></div>
-            <select className="input"><option>External Supplier</option><option>Service Provider</option><option>One-Time Supplier</option></select></div>
+            <select className="input"><option>External Supplier</option><option>Service Provider</option><option>One-Time Supplier</option><option>Intercompany</option></select></div>
           <div className="field"><div className="field-label">Country <span className="req">*</span></div>
             <select className="input" value={form.country} onChange={e => set('country', e.target.value)}>
-              <option value="DE">Germany (DE)</option><option value="GB">United Kingdom (GB)</option>
-              <option value="FR">France (FR)</option><option value="NL">Netherlands (NL)</option>
-              <option value="ES">Spain (ES)</option><option value="US">United States (US)</option>
+              {TH_COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
             </select></div>
-          <div className="field"><div className="field-label">Tax ID / VAT Number <span className="req">*</span></div>
-            <input className="input" value={form.taxId} onChange={e => set('taxId', e.target.value)} placeholder="e.g. DE123456789" /></div>
+          <div className="field"><div className="field-label">Tax ID (เลขประจำตัวผู้เสียภาษี) <span className="req">*</span></div>
+            <input className="input" value={form.taxId} onChange={e => set('taxId', e.target.value)} placeholder="13-digit (e.g. 0105500000111)" /></div>
           <div className="field"><div className="field-label">Currency</div>
             <select className="input" value={form.currency} onChange={e => set('currency', e.target.value)}>
-              <option>EUR</option><option>USD</option><option>GBP</option>
+              <option>THB</option><option>USD</option><option>EUR</option><option>JPY</option><option>CNY</option>
             </select></div>
         </div>
       </div>
@@ -962,13 +976,16 @@ const SupplierForm = ({ rec, mode, setView }) => {
       <div className="form-section">
         <div className="form-section-hdr">Address</div>
         <div className="form-grid form-grid-3">
-          <div className="field col-span-2"><div className="field-label">Street / House No. <span className="req">*</span></div>
-            <input className="input" value={form.street} onChange={e => set('street', e.target.value)} placeholder="Street address" /></div>
+          <div className="field col-span-2"><div className="field-label">Street / Building No. <span className="req">*</span></div>
+            <input className="input" value={form.street} onChange={e => set('street', e.target.value)} placeholder="e.g. 555 Rama IV Road" /></div>
           <div className="field"><div className="field-label">Postal Code <span className="req">*</span></div>
-            <input className="input" value={form.postal} onChange={e => set('postal', e.target.value)} placeholder="Postal code" /></div>
-          <div className="field"><div className="field-label">City <span className="req">*</span></div>
-            <input className="input" value={form.city} onChange={e => set('city', e.target.value)} placeholder="City" /></div>
-          <div className="field"><div className="field-label">Region</div><input className="input" placeholder="Region/State" /></div>
+            <input className="input" value={form.postal} onChange={e => set('postal', e.target.value)} placeholder="5-digit (e.g. 10500)" /></div>
+          <div className="field"><div className="field-label">District / City <span className="req">*</span></div>
+            <input className="input" value={form.city} onChange={e => set('city', e.target.value)} placeholder="e.g. Bang Rak, Sathon" /></div>
+          <div className="field"><div className="field-label">Province (จังหวัด)</div>
+            <select className="input" value={form.province} onChange={e => set('province', e.target.value)}>
+              {TH_PROVINCES.map(p => <option key={p}>{p}</option>)}
+            </select></div>
         </div>
       </div>
 
@@ -977,32 +994,36 @@ const SupplierForm = ({ rec, mode, setView }) => {
         <div className="form-grid form-grid-3">
           <div className="field"><div className="field-label">Payment Terms <span className="req">*</span></div>
             <select className="input" value={form.paymentTerms} onChange={e => set('paymentTerms', e.target.value)}>
-              <option>Net 30</option><option>Net 45</option><option>Net 60</option><option>2/10 Net 30</option>
+              <option>CASH — Cash on Delivery</option><option>Net 30</option><option>Net 45</option><option>Net 60</option><option>Net 90</option><option>LC — Letter of Credit</option><option>TT — Advance Telegraphic Transfer</option>
             </select></div>
           <div className="field"><div className="field-label">Purchasing Organisation</div>
-            <select className="input"><option>1000 — Germany</option><option>2000 — Group</option></select></div>
+            <select className="input"><option>1000 — Thailand</option><option>2000 — ASEAN Regional</option></select></div>
           <div className="field"><div className="field-label">Order Currency</div>
-            <select className="input"><option>EUR</option><option>USD</option><option>GBP</option></select></div>
+            <select className="input"><option>THB</option><option>USD</option><option>EUR</option><option>JPY</option><option>CNY</option></select></div>
           <div className="field"><div className="field-label">Incoterms</div>
-            <select className="input"><option>DAP — Delivered at Place</option><option>EXW — Ex Works</option><option>FCA — Free Carrier</option></select></div>
+            <select className="input"><option>DAP — Delivered at Place</option><option>EXW — Ex Works (Bangkok)</option><option>FOB — Free on Board (Laem Chabang)</option><option>FCA — Free Carrier</option><option>CIF — Cost Insurance Freight</option><option>CFR — Cost & Freight</option></select></div>
           <div className="field"><div className="field-label">Reconciliation Account</div>
             <input className="input" placeholder="G/L Account No." /></div>
-          <div className="field"><div className="field-label">Sort Key</div>
-            <input className="input" placeholder="e.g. 001" /></div>
+          <div className="field"><div className="field-label">VAT Status</div>
+            <select className="input"><option>VAT Registered (7%)</option><option>Zero-rated Export</option><option>VAT Exempt</option></select></div>
         </div>
       </div>
 
       <div className="form-section">
         <div className="form-section-hdr">Bank Details</div>
         <div className="form-grid form-grid-3">
-          <div className="field col-span-2"><div className="field-label">IBAN <span className="req">*</span></div>
-            <input className="input" value={form.iban} onChange={e => set('iban', e.target.value)} placeholder="e.g. DE89 3704 0044 0532 0130 00" style={{ fontFamily: 'monospace' }} /></div>
-          <div className="field"><div className="field-label">BIC / SWIFT Code</div>
-            <input className="input" value={form.bic} onChange={e => set('bic', e.target.value)} placeholder="e.g. DEUTDEDB" /></div>
-          <div className="field"><div className="field-label">Bank Name</div>
-            <input className="input" value={form.bankName} onChange={e => set('bankName', e.target.value)} placeholder="Bank name" /></div>
+          <div className="field"><div className="field-label">Bank Name <span className="req">*</span></div>
+            <select className="input" value={form.bankName} onChange={e => set('bankName', e.target.value)}>
+              {TH_BANKS.map(b => <option key={b}>{b}</option>)}
+            </select></div>
+          <div className="field col-span-2"><div className="field-label">Bank Account No. <span className="req">*</span></div>
+            <input className="input" value={form.bankAccount} onChange={e => set('bankAccount', e.target.value)} placeholder="10-digit account number (e.g. 123-4-56789-0)" style={{ fontFamily: 'monospace' }} /></div>
+          <div className="field"><div className="field-label">SWIFT Code</div>
+            <input className="input" value={form.swift} onChange={e => set('swift', e.target.value)} placeholder="e.g. BKKBTHBK" /></div>
+          <div className="field"><div className="field-label">Branch</div>
+            <input className="input" placeholder="e.g. Silom Branch" /></div>
           <div className="field"><div className="field-label">Account Holder</div>
-            <input className="input" placeholder="Account holder name" /></div>
+            <input className="input" placeholder="Account holder name (per ID/Tax document)" /></div>
         </div>
       </div>
 

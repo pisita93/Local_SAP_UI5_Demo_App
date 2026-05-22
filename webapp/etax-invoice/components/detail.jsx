@@ -174,10 +174,10 @@ const DetailDialog = ({ delivery, onClose, onCreate }) => {
               </button>
             )}
             {delivery.status === "sent" && (
-              <button className="btn btn-primary"><Icon name="printer" size={14} /> Reprint</button>
+              <button className="btn btn-primary" aria-label="Reprint billing documents" onClick={() => alert('Reprint — demo only')}><Icon name="printer" size={14} /> Reprint</button>
             )}
             {delivery.status === "error" && (
-              <button className="btn btn-primary"><Icon name="refresh" size={14} /> Retry submission</button>
+              <button className="btn btn-primary" aria-label="Retry iNet submission" onClick={() => alert('Retry submission — demo only')}><Icon name="refresh" size={14} /> Retry submission</button>
             )}
           </div>
         </div>

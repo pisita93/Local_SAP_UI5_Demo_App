@@ -136,9 +136,7 @@ function TruckQueueCard({ truck, billings, palette, onOpen, done }) {
       borderLeft: done ? "3px solid var(--pos)" : "3px solid var(--warn)",
       display: "grid", gridTemplateColumns: "auto 1fr auto auto auto auto auto",
       gap: 20, alignItems: "center",
-      transition: "transform .12s, box-shadow .12s",
-    }} onMouseOver={e => e.currentTarget.style.boxShadow = "var(--sh1)"}
-       onMouseOut={e => e.currentTarget.style.boxShadow = "var(--sh0)"}>
+    }} className="bk-card-hoverable">
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
         <Icon name="truck" size={22} color={done ? "var(--pos)" : "var(--warn)"}/>
         <span style={{ fontSize: 10, color: "var(--text2)", fontWeight: 700 }}>{truck.plate}</span>

@@ -56,6 +56,9 @@ body { font-family: '72', Arial, sans-serif; background: var(--sap-color-bg-shel
 .tag-credit   { background: var(--sap-color-tag-purple); color: #5B2A8C; }
 .tag-neutral  { background: var(--sap-color-bg-shell); color: var(--sap-color-text-2); border: 1px solid var(--sap-color-border-2); }
 .tag-success  { background: var(--sap-color-positive-bg); color: var(--sap-color-positive-dark); }
+.tag-error    { background: var(--sap-color-negative-bg); color: var(--sap-color-negative); }
+.tag-purple   { background: var(--sap-color-tag-purple); color: #5B2A8C; }
+.tag-warning  { background: var(--sap-color-warning-bg); color: #7A4B00; }
 .text-pos { color: var(--sap-color-positive-dark); }
 .mt-16 { margin-top: 16px; }
 .badge { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--sap-color-interactive); color: #fff; font-size: 11px; font-weight: 700; }
@@ -73,12 +76,22 @@ body { font-family: '72', Arial, sans-serif; background: var(--sap-color-bg-shel
 .kpi-card-green  { border-top-color: var(--sap-color-positive); }
 .kpi-card-yellow { border-top-color: var(--sap-color-warning); }
 .kpi-card-purple { border-top-color: #8B5CF6; }
+.kpi-card-clickable { cursor: pointer; transition: box-shadow 0.15s, transform 0.15s; }
+.kpi-card-clickable:hover { box-shadow: var(--sap-shadow-1); transform: translateY(-1px); }
+.kpi-card-clickable:focus-visible { outline: 2px solid var(--sap-color-interactive); outline-offset: 2px; }
+.portal-quick-tile { background: var(--sap-color-bg); padding: 16px 20px; cursor: pointer; transition: background 0.12s; }
+.portal-quick-tile:hover { background: var(--sap-color-bg-hover-blue); }
+.portal-quick-tile:focus-visible { outline: 2px solid var(--sap-color-interactive); outline-offset: -2px; }
 .kpi-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
 .kpi-val { font-size: 26px; font-weight: 700; color: var(--sap-color-text); line-height: 1; }
 .kpi-label { font-size: 12px; color: var(--sap-color-text-2); font-weight: 600; margin-top: 4px; }
 
 /* ── Table ── */
-.table-wrap { background: var(--sap-color-bg); border-radius: var(--sap-radius-md); box-shadow: var(--sap-shadow-0); overflow: hidden; }
+/* Grid layout so the toolbar, table, and footer all stretch to the table's
+   intrinsic width when it overflows — otherwise the toolbar/footer look like
+   they "stop" before the last column when the table is horizontally scrolled. */
+.table-wrap { background: var(--sap-color-bg); border-radius: var(--sap-radius-md); box-shadow: var(--sap-shadow-0); display: grid; grid-template-columns: minmax(100%, max-content); overflow-x: auto; overflow-y: hidden; }
+.table-wrap .sap-table { min-width: max-content; }
 .table-toolbar { padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--sap-color-border-2); flex-wrap: wrap; gap: 8px; }
 .sap-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .sap-table th { padding: 8px 14px; font-size: 12px; font-weight: 700; color: var(--sap-color-text-2); text-align: left; border-bottom: 2px solid var(--sap-color-border-2); white-space: nowrap; background: var(--sap-color-bg-shell); }
@@ -118,12 +131,12 @@ textarea.input { height: auto; min-height: 72px; padding: 8px 10px; resize: vert
 .obj-header { background: var(--sap-color-bg); border-radius: var(--sap-radius-md); box-shadow: var(--sap-shadow-0); padding: 18px 22px; margin-bottom: 14px; }
 .obj-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .obj-title { font-size: 18px; font-weight: 700; }
-.obj-attrs { display: flex; gap: 28px; margin-top: 12px; flex-wrap: wrap; }
+.obj-attrs { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px 24px; margin-top: 12px; }
 .obj-attr-label { font-size: 11px; font-weight: 700; color: var(--sap-color-text-2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
 .obj-attr-val { font-size: 13px; font-weight: 600; color: var(--sap-color-text); }
 
 /* ── Tabs ── */
-.page-tabs { display: flex; border-bottom: 1px solid var(--sap-color-border-2); background: var(--sap-color-bg); padding: 0 20px; box-shadow: var(--sap-shadow-0); border-radius: var(--sap-radius-md) var(--sap-radius-md) 0 0; margin-bottom: -4px; }
+.page-tabs { display: flex; border-bottom: 1px solid var(--sap-color-border-2); background: var(--sap-color-bg); padding: 0 20px; box-shadow: var(--sap-shadow-0); border-radius: var(--sap-radius-md) var(--sap-radius-md) 0 0; }
 .tab { padding: 12px 16px; font-size: 13px; font-weight: 600; color: var(--sap-color-text-2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.12s; white-space: nowrap; }
 .tab:hover { color: var(--sap-color-text); }
 .tab.active { color: var(--sap-color-interactive); border-bottom-color: var(--sap-color-interactive); }
@@ -194,9 +207,9 @@ textarea.input { height: auto; min-height: 72px; padding: 8px 10px; resize: vert
 .text-warn { color: #7A4B00; }
 .text-link { color: var(--sap-color-interactive); cursor: pointer; }
 .text-link:hover { text-decoration: underline; }
-.col-span-2 { grid-column: span 2; }
-.col-span-3 { grid-column: span 3; }
 .w-full { width: 100%; }
+.empty-state { padding: 36px 18px; text-align: center; color: var(--sap-color-text-2); font-size: 13px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.empty-state-title { font-size: 14px; font-weight: 700; color: var(--sap-color-text); }
 
 @media (max-width: 900px) {
   .side-nav { width: 48px; }
