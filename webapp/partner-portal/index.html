@@ -142,6 +142,44 @@ const CHANNEL_COLORS = {
   'Export':           { bg: '#E6F9EE', fg: '#1A6B35' },
 };
 
+/* Thailand-specific value lists for Create / Change forms */
+const TH_COUNTRIES = [
+  { code: 'TH', label: 'Thailand (TH)' },
+  { code: 'LA', label: 'Laos (LA)' },
+  { code: 'MM', label: 'Myanmar (MM)' },
+  { code: 'KH', label: 'Cambodia (KH)' },
+  { code: 'VN', label: 'Vietnam (VN)' },
+  { code: 'MY', label: 'Malaysia (MY)' },
+  { code: 'SG', label: 'Singapore (SG)' },
+  { code: 'ID', label: 'Indonesia (ID)' },
+  { code: 'CN', label: 'China (CN)' },
+  { code: 'JP', label: 'Japan (JP)' },
+  { code: 'US', label: 'United States (US)' },
+];
+const TH_PROVINCES = [
+  'Bangkok', 'Nonthaburi', 'Pathum Thani', 'Samut Prakan', 'Samut Sakhon',
+  'Nakhon Pathom', 'Chonburi', 'Rayong', 'Chachoengsao', 'Ayutthaya',
+  'Chiang Mai', 'Chiang Rai', 'Lampang', 'Phitsanulok',
+  'Nakhon Ratchasima', 'Khon Kaen', 'Udon Thani', 'Ubon Ratchathani',
+  'Phuket', 'Surat Thani', 'Songkhla', 'Krabi', 'Hat Yai',
+];
+const TH_SUB_CHANNELS = [
+  'Hypermarket', 'Supermarket', 'Convenience Store', 'Cash & Carry',
+  'Department Store', 'Wholesale', 'Traditional Trade', 'HoReCa',
+  'E-Commerce Marketplace', 'B2B Direct', 'Modern Trade', 'Export',
+];
+const TH_BANKS = [
+  'Bangkok Bank (BBL)',
+  'Kasikornbank (KBank)',
+  'Siam Commercial Bank (SCB)',
+  'Krungthai Bank (KTB)',
+  'Krungsri Bank (BAY)',
+  'TMBThanachart Bank (ttb)',
+  'CIMB Thai Bank',
+  'United Overseas Bank Thai (UOB)',
+  'Government Savings Bank (GSB)',
+];
+
 /* Format helper for credit limit by currency */
 const formatMoney = (amount, currency) => {
   if (amount == null) return '—';
@@ -729,10 +767,11 @@ const SupplierDetail = ({ rec, setView }) => {
 const CustomerForm = ({ rec, mode, setView }) => {
   const isChange = mode === 'change';
   const [form, setForm] = useState({
-    name: rec?.name || '', country: rec?.country || 'DE', taxId: rec?.taxId || '',
+    name: rec?.name || '', country: rec?.country || 'TH', taxId: rec?.taxId || '',
     street: rec?.addressEn || '', city: rec?.city || '', postal: rec?.postcode || '',
-    paymentTerms: rec?.paymentTerms || 'Net 30', currency: rec?.currency || 'EUR', accountGroup: 'External Customer',
-    channel: rec?.channel || 'B2B Enterprise', subChannel: rec?.subChannel || 'Large Account',
+    province: rec?.province || 'Bangkok',
+    paymentTerms: rec?.paymentTerms || 'Net 30', currency: rec?.currency || 'THB', accountGroup: 'External Customer',
+    channel: rec?.channel || 'B2B Enterprise', subChannel: rec?.subChannel || 'Modern Trade',
     priceGroup: rec?.priceGroup || '',
     phone: rec?.phone || '', email: rec?.email || '', website: '', notes: '',
     contact: rec?.contact || ''
@@ -779,15 +818,13 @@ const CustomerForm = ({ rec, mode, setView }) => {
             </select></div>
           <div className="field"><div className="field-label">Country <span className="req">*</span></div>
             <select className="input" value={form.country} onChange={e => set('country', e.target.value)}>
-              <option value="DE">Germany (DE)</option><option value="GB">United Kingdom (GB)</option>
-              <option value="FR">France (FR)</option><option value="NL">Netherlands (NL)</option>
-              <option value="ES">Spain (ES)</option><option value="US">United States (US)</option>
+              {TH_COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
             </select></div>
-          <div className="field"><div className="field-label">Tax ID / VAT Number <span className="req">*</span></div>
-            <input className="input" value={form.taxId} onChange={e => set('taxId', e.target.value)} placeholder="e.g. DE123456789" /></div>
+          <div className="field"><div className="field-label">Tax ID (เลขประจำตัวผู้เสียภาษี) <span className="req">*</span></div>
+            <input className="input" value={form.taxId} onChange={e => set('taxId', e.target.value)} placeholder="13-digit (e.g. 0105500000111)" /></div>
           <div className="field"><div className="field-label">Currency</div>
             <select className="input" value={form.currency} onChange={e => set('currency', e.target.value)}>
-              <option>EUR</option><option>USD</option><option>GBP</option><option>CHF</option>
+              <option>THB</option><option>USD</option><option>EUR</option><option>JPY</option><option>CNY</option>
             </select></div>
           <div className="field"><div className="field-label">Channel <span className="req">*</span></div>
             <select className="input" value={form.channel} onChange={e => set('channel', e.target.value)}>
@@ -795,24 +832,28 @@ const CustomerForm = ({ rec, mode, setView }) => {
               <option>E-Commerce</option><option>Export</option>
             </select></div>
           <div className="field"><div className="field-label">Sub-Channel</div>
-            <input className="input" value={form.subChannel} onChange={e => set('subChannel', e.target.value)} placeholder="e.g. Large Account, Mid-Market" /></div>
+            <select className="input" value={form.subChannel} onChange={e => set('subChannel', e.target.value)}>
+              {TH_SUB_CHANNELS.map(s => <option key={s}>{s}</option>)}
+            </select></div>
           <div className="field"><div className="field-label">Price Group</div>
-            <input className="input" value={form.priceGroup} onChange={e => set('priceGroup', e.target.value)} placeholder="e.g. EU01-LARGE" /></div>
+            <input className="input" value={form.priceGroup} onChange={e => set('priceGroup', e.target.value)} placeholder="e.g. TH01-MODERN, TH02-TT" /></div>
         </div>
       </div>
 
       <div className="form-section">
         <div className="form-section-hdr">Address</div>
         <div className="form-grid form-grid-3">
-          <div className="field col-span-2"><div className="field-label">Street / House No. <span className="req">*</span></div>
-            <input className="input" value={form.street} onChange={e => set('street', e.target.value)} placeholder="Street address" /></div>
+          <div className="field col-span-2"><div className="field-label">Street / Building No. <span className="req">*</span></div>
+            <input className="input" value={form.street} onChange={e => set('street', e.target.value)} placeholder="e.g. 123/4 Sukhumvit Road" /></div>
           <div className="field"><div className="field-label">Postal Code <span className="req">*</span></div>
-            <input className="input" value={form.postal} onChange={e => set('postal', e.target.value)} placeholder="Postal code" /></div>
-          <div className="field"><div className="field-label">City <span className="req">*</span></div>
-            <input className="input" value={form.city} onChange={e => set('city', e.target.value)} placeholder="City" /></div>
-          <div className="field"><div className="field-label">Region / State</div>
-            <input className="input" placeholder="Region" /></div>
-          <div className="field"><div className="field-label">P.O. Box</div>
+            <input className="input" value={form.postal} onChange={e => set('postal', e.target.value)} placeholder="5-digit (e.g. 10110)" /></div>
+          <div className="field"><div className="field-label">District / City <span className="req">*</span></div>
+            <input className="input" value={form.city} onChange={e => set('city', e.target.value)} placeholder="e.g. Watthana, Klongtoey" /></div>
+          <div className="field"><div className="field-label">Province (จังหวัด)</div>
+            <select className="input" value={form.province} onChange={e => set('province', e.target.value)}>
+              {TH_PROVINCES.map(p => <option key={p}>{p}</option>)}
+            </select></div>
+          <div className="field"><div className="field-label">Sub-district (แขวง/ตำบล)</div>
             <input className="input" placeholder="Optional" /></div>
         </div>
       </div>
@@ -822,18 +863,18 @@ const CustomerForm = ({ rec, mode, setView }) => {
         <div className="form-grid form-grid-3">
           <div className="field"><div className="field-label">Payment Terms <span className="req">*</span></div>
             <select className="input" value={form.paymentTerms} onChange={e => set('paymentTerms', e.target.value)}>
-              <option>Net 30</option><option>Net 45</option><option>Net 60</option><option>2/10 Net 30</option><option>Immediate</option>
+              <option>CASH — Cash on Delivery</option><option>Net 30</option><option>Net 45</option><option>Net 60</option><option>Net 90</option><option>LC — Letter of Credit</option><option>TT — Advance Telegraphic Transfer</option>
             </select></div>
           <div className="field"><div className="field-label">Sales Organisation</div>
-            <select className="input"><option>1000 — Germany</option><option>2000 — UK</option></select></div>
+            <select className="input"><option>1000 — Thailand</option><option>2000 — ASEAN Regional</option></select></div>
           <div className="field"><div className="field-label">Distribution Channel</div>
-            <select className="input"><option>10 — Direct</option><option>20 — Wholesale</option></select></div>
+            <select className="input"><option>10 — Direct Sales</option><option>20 — Wholesale</option><option>30 — Modern Trade</option><option>40 — Traditional Trade</option><option>50 — Export</option></select></div>
           <div className="field"><div className="field-label">Division</div>
-            <select className="input"><option>00 — Cross-division</option><option>01 — Products</option></select></div>
+            <select className="input"><option>00 — Cross-division</option><option>01 — Food & Beverage</option><option>02 — Consumer Goods</option><option>03 — Industrial</option></select></div>
           <div className="field"><div className="field-label">Incoterms</div>
-            <select className="input"><option>DAP — Delivered at Place</option><option>EXW — Ex Works</option><option>CIF — Cost Insurance Freight</option></select></div>
+            <select className="input"><option>DAP — Delivered at Place</option><option>EXW — Ex Works (Bangkok)</option><option>FOB — Free on Board (Laem Chabang)</option><option>CIF — Cost Insurance Freight</option><option>CFR — Cost & Freight</option></select></div>
           <div className="field"><div className="field-label">Price Group</div>
-            <select className="input"><option>01 — Standard</option><option>02 — Premium</option></select></div>
+            <select className="input"><option>01 — Standard</option><option>02 — Premium</option><option>03 — Promotional</option><option>04 — Export</option></select></div>
         </div>
       </div>
 
@@ -842,13 +883,13 @@ const CustomerForm = ({ rec, mode, setView }) => {
         <div className="msg-strip msg-warning" style={{ margin: '14px 18px 0' }}><IcAlert size={14} /><span>Credit limit and rating will be assigned by the Credit Processor during evaluation. Provide guidance below.</span></div>
         <div className="form-grid form-grid-3" style={{ paddingTop: 8 }}>
           <div className="field"><div className="field-label">Requested Credit Limit</div>
-            <input className="input" placeholder="e.g. €250,000" /></div>
+            <input className="input" placeholder="e.g. ฿10,000,000" /></div>
           <div className="field"><div className="field-label">Credit Risk Category</div>
             <select className="input"><option>Low Risk</option><option>Medium Risk</option><option>High Risk</option></select></div>
           <div className="field"><div className="field-label">Credit Control Area</div>
-            <select className="input"><option>1000 — Germany</option><option>2000 — Group</option></select></div>
+            <select className="input"><option>1000 — Thailand</option><option>2000 — ASEAN Regional</option></select></div>
           <div className="field col-span-3"><div className="field-label">Justification / Notes for Credit Processor</div>
-            <textarea className="input" rows={3} placeholder="Describe business relationship, expected volumes, and any relevant credit information..." /></div>
+            <textarea className="input" rows={3} placeholder="Describe business relationship, expected monthly volume, and any relevant credit information..." /></div>
         </div>
       </div>
 
@@ -856,7 +897,7 @@ const CustomerForm = ({ rec, mode, setView }) => {
         <div className="form-section-hdr">Contacts &amp; Communication</div>
         <div className="form-grid form-grid-3">
           <div className="field"><div className="field-label">Phone Number</div>
-            <input className="input" value={form.phone} onChange={e => set('phone', e.target.value)} placeholder="+49 30 12345678" /></div>
+            <input className="input" value={form.phone} onChange={e => set('phone', e.target.value)} placeholder="+66 2 123 4567" /></div>
           <div className="field"><div className="field-label">Email Address</div>
             <input className="input" type="email" value={form.email} onChange={e => set('email', e.target.value)} placeholder="contact@company.com" /></div>
           <div className="field"><div className="field-label">Website</div>
@@ -878,10 +919,10 @@ const CustomerForm = ({ rec, mode, setView }) => {
 const SupplierForm = ({ rec, mode, setView }) => {
   const isChange = mode === 'change';
   const [form, setForm] = useState({
-    name: rec?.name || '', country: rec?.country || 'DE', taxId: rec?.taxId || '',
-    paymentTerms: rec?.paymentTerms || 'Net 30', currency: 'EUR',
-    iban: rec?.bankAccount || '', bic: '', bankName: '',
-    street: '', city: '', postal: '', notes: ''
+    name: rec?.name || '', country: rec?.country || 'TH', taxId: rec?.taxId || '',
+    paymentTerms: rec?.paymentTerms || 'Net 30', currency: 'THB',
+    bankAccount: rec?.bankAccount || '', swift: '', bankName: 'Bangkok Bank (BBL)',
+    street: '', city: '', postal: '', province: 'Bangkok', notes: ''
   });
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
 
@@ -918,18 +959,16 @@ const SupplierForm = ({ rec, mode, setView }) => {
           <div className="field col-span-2"><div className="field-label">Supplier / Company Name <span className="req">*</span></div>
             <input className="input" value={form.name} onChange={e => set('name', e.target.value)} placeholder="Enter company name" /></div>
           <div className="field"><div className="field-label">Account Group <span className="req">*</span></div>
-            <select className="input"><option>External Supplier</option><option>Service Provider</option><option>One-Time Supplier</option></select></div>
+            <select className="input"><option>External Supplier</option><option>Service Provider</option><option>One-Time Supplier</option><option>Intercompany</option></select></div>
           <div className="field"><div className="field-label">Country <span className="req">*</span></div>
             <select className="input" value={form.country} onChange={e => set('country', e.target.value)}>
-              <option value="DE">Germany (DE)</option><option value="GB">United Kingdom (GB)</option>
-              <option value="FR">France (FR)</option><option value="NL">Netherlands (NL)</option>
-              <option value="ES">Spain (ES)</option><option value="US">United States (US)</option>
+              {TH_COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
             </select></div>
-          <div className="field"><div className="field-label">Tax ID / VAT Number <span className="req">*</span></div>
-            <input className="input" value={form.taxId} onChange={e => set('taxId', e.target.value)} placeholder="e.g. DE123456789" /></div>
+          <div className="field"><div className="field-label">Tax ID (เลขประจำตัวผู้เสียภาษี) <span className="req">*</span></div>
+            <input className="input" value={form.taxId} onChange={e => set('taxId', e.target.value)} placeholder="13-digit (e.g. 0105500000111)" /></div>
           <div className="field"><div className="field-label">Currency</div>
             <select className="input" value={form.currency} onChange={e => set('currency', e.target.value)}>
-              <option>EUR</option><option>USD</option><option>GBP</option>
+              <option>THB</option><option>USD</option><option>EUR</option><option>JPY</option><option>CNY</option>
             </select></div>
         </div>
       </div>
@@ -937,13 +976,16 @@ const SupplierForm = ({ rec, mode, setView }) => {
       <div className="form-section">
         <div className="form-section-hdr">Address</div>
         <div className="form-grid form-grid-3">
-          <div className="field col-span-2"><div className="field-label">Street / House No. <span className="req">*</span></div>
-            <input className="input" value={form.street} onChange={e => set('street', e.target.value)} placeholder="Street address" /></div>
+          <div className="field col-span-2"><div className="field-label">Street / Building No. <span className="req">*</span></div>
+            <input className="input" value={form.street} onChange={e => set('street', e.target.value)} placeholder="e.g. 555 Rama IV Road" /></div>
           <div className="field"><div className="field-label">Postal Code <span className="req">*</span></div>
-            <input className="input" value={form.postal} onChange={e => set('postal', e.target.value)} placeholder="Postal code" /></div>
-          <div className="field"><div className="field-label">City <span className="req">*</span></div>
-            <input className="input" value={form.city} onChange={e => set('city', e.target.value)} placeholder="City" /></div>
-          <div className="field"><div className="field-label">Region</div><input className="input" placeholder="Region/State" /></div>
+            <input className="input" value={form.postal} onChange={e => set('postal', e.target.value)} placeholder="5-digit (e.g. 10500)" /></div>
+          <div className="field"><div className="field-label">District / City <span className="req">*</span></div>
+            <input className="input" value={form.city} onChange={e => set('city', e.target.value)} placeholder="e.g. Bang Rak, Sathon" /></div>
+          <div className="field"><div className="field-label">Province (จังหวัด)</div>
+            <select className="input" value={form.province} onChange={e => set('province', e.target.value)}>
+              {TH_PROVINCES.map(p => <option key={p}>{p}</option>)}
+            </select></div>
         </div>
       </div>
 
@@ -952,32 +994,36 @@ const SupplierForm = ({ rec, mode, setView }) => {
         <div className="form-grid form-grid-3">
           <div className="field"><div className="field-label">Payment Terms <span className="req">*</span></div>
             <select className="input" value={form.paymentTerms} onChange={e => set('paymentTerms', e.target.value)}>
-              <option>Net 30</option><option>Net 45</option><option>Net 60</option><option>2/10 Net 30</option>
+              <option>CASH — Cash on Delivery</option><option>Net 30</option><option>Net 45</option><option>Net 60</option><option>Net 90</option><option>LC — Letter of Credit</option><option>TT — Advance Telegraphic Transfer</option>
             </select></div>
           <div className="field"><div className="field-label">Purchasing Organisation</div>
-            <select className="input"><option>1000 — Germany</option><option>2000 — Group</option></select></div>
+            <select className="input"><option>1000 — Thailand</option><option>2000 — ASEAN Regional</option></select></div>
           <div className="field"><div className="field-label">Order Currency</div>
-            <select className="input"><option>EUR</option><option>USD</option><option>GBP</option></select></div>
+            <select className="input"><option>THB</option><option>USD</option><option>EUR</option><option>JPY</option><option>CNY</option></select></div>
           <div className="field"><div className="field-label">Incoterms</div>
-            <select className="input"><option>DAP — Delivered at Place</option><option>EXW — Ex Works</option><option>FCA — Free Carrier</option></select></div>
+            <select className="input"><option>DAP — Delivered at Place</option><option>EXW — Ex Works (Bangkok)</option><option>FOB — Free on Board (Laem Chabang)</option><option>FCA — Free Carrier</option><option>CIF — Cost Insurance Freight</option><option>CFR — Cost & Freight</option></select></div>
           <div className="field"><div className="field-label">Reconciliation Account</div>
             <input className="input" placeholder="G/L Account No." /></div>
-          <div className="field"><div className="field-label">Sort Key</div>
-            <input className="input" placeholder="e.g. 001" /></div>
+          <div className="field"><div className="field-label">VAT Status</div>
+            <select className="input"><option>VAT Registered (7%)</option><option>Zero-rated Export</option><option>VAT Exempt</option></select></div>
         </div>
       </div>
 
       <div className="form-section">
         <div className="form-section-hdr">Bank Details</div>
         <div className="form-grid form-grid-3">
-          <div className="field col-span-2"><div className="field-label">IBAN <span className="req">*</span></div>
-            <input className="input" value={form.iban} onChange={e => set('iban', e.target.value)} placeholder="e.g. DE89 3704 0044 0532 0130 00" style={{ fontFamily: 'monospace' }} /></div>
-          <div className="field"><div className="field-label">BIC / SWIFT Code</div>
-            <input className="input" value={form.bic} onChange={e => set('bic', e.target.value)} placeholder="e.g. DEUTDEDB" /></div>
-          <div className="field"><div className="field-label">Bank Name</div>
-            <input className="input" value={form.bankName} onChange={e => set('bankName', e.target.value)} placeholder="Bank name" /></div>
+          <div className="field"><div className="field-label">Bank Name <span className="req">*</span></div>
+            <select className="input" value={form.bankName} onChange={e => set('bankName', e.target.value)}>
+              {TH_BANKS.map(b => <option key={b}>{b}</option>)}
+            </select></div>
+          <div className="field col-span-2"><div className="field-label">Bank Account No. <span className="req">*</span></div>
+            <input className="input" value={form.bankAccount} onChange={e => set('bankAccount', e.target.value)} placeholder="10-digit account number (e.g. 123-4-56789-0)" style={{ fontFamily: 'monospace' }} /></div>
+          <div className="field"><div className="field-label">SWIFT Code</div>
+            <input className="input" value={form.swift} onChange={e => set('swift', e.target.value)} placeholder="e.g. BKKBTHBK" /></div>
+          <div className="field"><div className="field-label">Branch</div>
+            <input className="input" placeholder="e.g. Silom Branch" /></div>
           <div className="field"><div className="field-label">Account Holder</div>
-            <input className="input" placeholder="Account holder name" /></div>
+            <input className="input" placeholder="Account holder name (per ID/Tax document)" /></div>
         </div>
       </div>
 
