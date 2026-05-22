@@ -25,8 +25,8 @@ const SoldToPage = ({ customers, onUpdate }) => {
           <div className="page-subtitle">Number of master copies and PO attachment per Sold-to (รหัสลูกค้า)</div>
         </div>
         <div className="flex" style={{ gap: 8 }}>
-          <button className="btn btn-tertiary btn-compact"><Icon name="download" size={14} /> Export CSV</button>
-          <button className="btn btn-secondary"><Icon name="plus" size={14} /> New entry</button>
+          <button className="btn btn-tertiary btn-compact" aria-label="Export to CSV" onClick={() => alert('Export CSV — demo only')}><Icon name="download" size={14} /> Export CSV</button>
+          <button className="btn btn-secondary" aria-label="Create new entry" onClick={() => alert('New entry — demo only')}><Icon name="plus" size={14} /> New entry</button>
         </div>
       </div>
 
@@ -143,8 +143,8 @@ const ShipToPage = ({ shipTos, customers, onUpdate }) => {
           <div className="page-subtitle">Flag a Ship-to to receive an extra Delivery Note (without price) printed with the master set</div>
         </div>
         <div className="flex" style={{ gap: 8 }}>
-          <button className="btn btn-tertiary btn-compact"><Icon name="download" size={14} /> Export CSV</button>
-          <button className="btn btn-secondary"><Icon name="plus" size={14} /> New entry</button>
+          <button className="btn btn-tertiary btn-compact" aria-label="Export to CSV" onClick={() => alert('Export CSV — demo only')}><Icon name="download" size={14} /> Export CSV</button>
+          <button className="btn btn-secondary" aria-label="Create new entry" onClick={() => alert('New entry — demo only')}><Icon name="plus" size={14} /> New entry</button>
         </div>
       </div>
 

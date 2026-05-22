@@ -184,12 +184,6 @@ body { display: flex; flex-direction: column; background: #F5F6F7; color: #131E2
 .kpi-val { font-size: 28px; font-weight: 700; color: #131E29; line-height: 1; }
 .kpi-label { font-size: 12px; color: #556B82; margin-top: 4px; font-weight: 600; }
 
-/* Tabs */
-.page-tabs { display: flex; border-bottom: 1px solid #D9D9D9; background: #fff; padding: 0 32px; }
-.page-tab { padding: 12px 16px; font-size: 14px; font-weight: 700; color: #556B82; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.12s; white-space: nowrap; }
-.page-tab:hover { color: #131E29; }
-.page-tab.active { color: #0070F2; border-bottom-color: #0070F2; }
-
 /* Message strip */
 .msg-strip { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; border-radius: 8px; font-size: 14px; margin-bottom: 16px; }
 .msg-strip.info { background: #D1EFFF; color: #0057BF; }
@@ -433,6 +427,7 @@ function LucideIcon({ name, size = 16, color, style = {} }) {
 
 // ── Shell Bar ────────────────────────────────────────────────────
 function ShellBar({ onMenuToggle }) {
+  const stub = (label) => () => alert(`${label} — demo only`);
   return (
     <div className="shell-bar">
       <button className="shell-btn" onClick={onMenuToggle}><LucideIcon name="menu" size={20} color="rgba(255,255,255,0.7)" /></button>
@@ -444,14 +439,14 @@ function ShellBar({ onMenuToggle }) {
       <div className="shell-divider"></div>
       <span className="shell-title">Sales Order Portal</span>
       <div className="shell-spacer"></div>
-      <button className="shell-btn"><LucideIcon name="search" size={18} color="rgba(255,255,255,0.7)" /></button>
+      <button className="shell-btn" aria-label="Search" onClick={stub('Search')}><LucideIcon name="search" size={18} color="rgba(255,255,255,0.7)" /></button>
       <div className="notif-wrap">
-        <button className="shell-btn"><LucideIcon name="bell" size={18} color="rgba(255,255,255,0.7)" /></button>
+        <button className="shell-btn" aria-label="Notifications" onClick={stub('Notifications')}><LucideIcon name="bell" size={18} color="rgba(255,255,255,0.7)" /></button>
         <span className="notif-dot"></span>
       </div>
-      <button className="shell-btn"><LucideIcon name="settings" size={18} color="rgba(255,255,255,0.7)" /></button>
+      <button className="shell-btn" aria-label="Settings" onClick={stub('Settings')}><LucideIcon name="settings" size={18} color="rgba(255,255,255,0.7)" /></button>
       <div className="shell-divider"></div>
-      <div className="avatar-chip" title="John Smith">JS</div>
+      <div className="avatar-chip" title="John Smith" aria-label="User profile: John Smith">JS</div>
     </div>);
 
 }
@@ -477,7 +472,7 @@ function SideNav({ collapsed, activePage, onNav }) {
         )}
       </div>
       <div className="nav-footer">
-        <div className="nav-item" title={collapsed ? 'Sign out' : ''}>
+        <div className="nav-item" title={collapsed ? 'Sign out' : ''} onClick={() => { if (confirm('Sign out and return to overview?')) onNav('home'); }}>
           <LucideIcon name="log-out" size={16} color="#556B82" />
           <span>Sign out</span>
         </div>
@@ -1107,7 +1102,7 @@ function OrderDetailPage({ order, onBack, onUpdateOrder }) {
           <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {/* L1 */}
             <div className={`approval-card ${order.status === 'pending_approval1' ? 'pending' : order.history.some((h) => h.action === 'L1 Approved') ? 'approved' : order.history.some((h) => h.action.startsWith('Rejected (L1)')) ? 'rejected' : 'waiting'}`}>
-              <div style={{ display: 'flex', alignItems: 'center', justify: 'space-between', gap: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 700, fontSize: 14 }}>Level 1 approval — Sales Manager</div>
                   <div className="approval-meta">Approver: Sarah Lee</div>

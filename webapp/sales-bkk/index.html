@@ -49,6 +49,31 @@
     body[data-density="compact"] .twk-only-cozy { display: none; }
     @keyframes sp-rot { to { transform: rotate(360deg); } }
 
+    /* Button component — variant CSS replaces inline-style + JS hover */
+    .bk-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; border: 1px solid transparent; border-radius: 6px; transition: background 0.15s, border-color 0.15s; white-space: nowrap; }
+    .bk-btn:disabled { opacity: 0.4; pointer-events: none; }
+    .bk-btn-default { height: 32px; padding: 0 12px; }
+    .bk-btn-compact { height: 26px; padding: 0 8px; }
+    .bk-btn-primary   { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .bk-btn-primary:hover   { background: var(--blue-h); border-color: var(--blue-h); }
+    .bk-btn-secondary { background: var(--bg); color: var(--blue-h); border-color: var(--border); }
+    .bk-btn-secondary:hover { background: var(--bg-shell); }
+    .bk-btn-ghost     { background: transparent; color: var(--blue-h); }
+    .bk-btn-ghost:hover     { background: var(--bg-shell); }
+    .bk-btn-accept    { background: #EBFAD3; color: var(--pos-dark); border-color: #DBEEA1; }
+    .bk-btn-accept:hover    { background: #DFF5C2; }
+    .bk-btn-reject    { background: var(--bg); color: var(--neg); border-color: var(--neg); }
+    .bk-btn-reject:hover    { background: #FFEDED; }
+    .bk-btn-danger    { background: var(--neg); color: #fff; border-color: var(--neg); }
+    .bk-btn-danger:hover    { background: #8B0606; border-color: #8B0606; }
+    .bk-btn:focus-visible   { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+    /* Hoverable grid rows (admin-report, admin-permissions, etc.) — CSS replaces inline onMouseOver handlers */
+    .bk-row-hoverable { transition: background 0.15s; }
+    .bk-row-hoverable:hover { background: var(--bg-shell) !important; }
+    .bk-card-hoverable { transition: transform .12s, box-shadow .12s; }
+    .bk-card-hoverable:hover { box-shadow: var(--sh1); }
+
     /* PRINT mode — only the .print-paper renders */
     @media print {
       @page { size: A4 portrait; margin: 0; }
