@@ -13,7 +13,7 @@ function totalsFor(deliveryIds, deliveries) {
   return { weight: Math.round(w*10)/10, volume: Math.round(v*100)/100, pallets: p, lines };
 }
 
-function Stepper({ step }) {
+function WizardStepper({ step }) {
   const steps = ['Select deliveries', 'Review products', 'Confirm & generate'];
   return (
     <div className="stepper">
@@ -168,14 +168,14 @@ function GroupingScreen({ deliveries, customers, truckSpec, drivers, statusMode,
   function generateRef() {
     // Build a sensible next number from existing groups (highest +1)
     const existing = Object.keys(AppData.groups);
-    let n = 14;
+    let n = 0;
     existing.forEach(r => { const m = r.match(/Truck-2026-(\d+)/); if (m) n = Math.max(n, parseInt(m[1], 10)); });
     return `Truck-2026-${String(n+1).padStart(5, '0')}`;
   }
 
   return (
     <div className="flex-col" style={{gap:0, height:'100%'}}>
-      <Stepper step={step}/>
+      <WizardStepper step={step}/>
       <div style={{padding: '16px 24px 0'}}>
         <div className="page-title-row">
           <div>
