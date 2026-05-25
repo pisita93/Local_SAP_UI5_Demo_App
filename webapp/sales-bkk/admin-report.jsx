@@ -122,7 +122,7 @@ function TreeView({ customers, totals, density, palette, onOpenTruck }) {
             <div style={{ padding: cellPad, textAlign: "right", fontVariantNumeric: "tabular-nums", fontWeight: 700,
                           fontFamily: "'72 Duplex','72'" }}>{fmtTHB(c.sums.total)}</div>
             <div style={{ padding: cellPad }}>
-              <BillingStatusMix billings={c.billings} palette={palette}/>
+              <ReportBillingStatusMix billings={c.billings} palette={palette}/>
             </div>
           </div>
           {expanded.has(c.code) && Object.values(c.shipTos).map(st => (
@@ -162,7 +162,7 @@ const CustomerCell = ({ cust }) => (
   </div>
 );
 
-const BillingStatusMix = ({ billings, palette }) => {
+const ReportBillingStatusMix = ({ billings, palette }) => {
   // group by status
   const groups = {};
   billings.forEach(b => { groups[b.status] = (groups[b.status] || 0) + 1; });
@@ -335,7 +335,7 @@ function CustomerFlatRow({ cust, density, palette, onOpenTruck }) {
         <div style={{ fontFamily: "'72 Duplex','72'", fontSize: 16, fontWeight: 700, textAlign: "right" }}>
           {fmtTHB(cust.sums.total)}
         </div>
-        <div><BillingStatusMix billings={cust.billings} palette={palette}/></div>
+        <div><ReportBillingStatusMix billings={cust.billings} palette={palette}/></div>
       </div>
       {open && (
         <div style={{ background: "#FBFCFE", borderBottom: "1px solid var(--border2)" }}>
@@ -432,7 +432,7 @@ function CustomerCard({ cust, density, palette, onOpenTruck }) {
           <div style={{ fontSize: 15, fontWeight: 700, marginTop: 2 }}>{cust.en}</div>
           <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{cust.name}</div>
         </div>
-        <BillingStatusMix billings={cust.billings} palette={palette}/>
+        <ReportBillingStatusMix billings={cust.billings} palette={palette}/>
       </div>
 
       <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
