@@ -7,10 +7,8 @@ sap.ui.define([
 		"sap/ui/core/ComponentContainer"
 	], function (ComponentContainer) {
 		new ComponentContainer({
+			id: "myapp",
 			name: "com.myorg.myapp",
-			settings: {
-				id: "myapp"
-			},
 			async: true
 		}).placeAt("content");
 	});
