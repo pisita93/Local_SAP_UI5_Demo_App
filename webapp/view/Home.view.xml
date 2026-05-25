@@ -18,8 +18,7 @@
 						icon="{icon}"
 						iconDensityAware="false"
 						iconInset="false"
-						type="Navigation"
-						press=".onDemoPress" />
+						type="Navigation" />
 				</List>
 			</VBox>
 		</content>
