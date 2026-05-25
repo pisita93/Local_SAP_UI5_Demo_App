@@ -78,12 +78,14 @@ function ReceiptUploader({ value, onChange, dark = false }) {
 
 // ───────── Shared form state ─────────
 function usePODForm(delivery) {
-  const [items, setItems] = useState(() => delivery.items.map(it => ({...it, received: it.qty, rejected: 0, reason:''})));
-  const [method, setMethod] = useState(() => {
-    if (delivery.paymentTerms?.startsWith('COD — Cash')) return 'cash';
-    if (delivery.paymentTerms?.startsWith('COD — Bank')) return 'bank';
+  const deriveItems = (dl) => dl.items.map(it => ({...it, received: it.qty, rejected: 0, reason:''}));
+  const deriveMethod = (dl) => {
+    if (dl.paymentTermsCode === 'CASH') return 'cash';
+    if (dl.paymentTermsCode === 'BT07' || dl.paymentTermsCode === 'BT15') return 'bank';
     return 'none';
-  });
+  };
+  const [items, setItems] = useState(() => deriveItems(delivery));
+  const [method, setMethod] = useState(() => deriveMethod(delivery));
   const [cashAmount, setCashAmount] = useState('');
   const [receipt, setReceipt] = useState(null);
   const [reference, setReference] = useState('');
@@ -92,6 +94,20 @@ function usePODForm(delivery) {
   const [notes, setNotes] = useState('');
   const [podPhoto, setPodPhoto] = useState(null); // optional photo evidence (e.g. signed paper, delivered goods)
   const [sigMode, setSigMode] = useState('draw'); // 'draw' | 'photo'
+
+  // Reset all form state when the selected delivery changes (lazy useState initializers run only once)
+  useEffect(() => {
+    setItems(deriveItems(delivery));
+    setMethod(deriveMethod(delivery));
+    setCashAmount('');
+    setReceipt(null);
+    setReference('');
+    setSignature(null);
+    setSignerName('');
+    setNotes('');
+    setPodPhoto(null);
+    setSigMode('draw');
+  }, [delivery.id]);
 
   const totalRejected = items.reduce((s, it) => s + (it.rejected || 0), 0);
   const hasReject = totalRejected > 0;
@@ -116,7 +132,7 @@ function usePODForm(delivery) {
     return {
       items, method, cashAmount: cashNum, change, receipt, reference,
       signature: sigMode === 'draw' ? signature : null,
-      podPhoto: sigMode === 'photo' ? podPhoto : podPhoto, // always include if user took one
+      podPhoto, // always include if user took one
       sigMode,
       signerName, notes,
       status: hasReject ? 'POD Reject' : 'POD',
@@ -351,7 +367,7 @@ function PODEntryWeb({ delivery, customers, drivers, groups, onSubmit, onCancel 
               </div>
               <div style={{borderTop:'1px solid var(--border2)', marginTop:14, paddingTop:12}}>
                 <div className="flex justify-between fs13"><span className="t2">Subtotal</span><span className="num">{M(delivery.subtotal)}</span></div>
-                <div className="flex justify-between fs13 mt4"><span className="t2">VAT 19%</span><span className="num">{M(delivery.tax)}</span></div>
+                <div className="flex justify-between fs13 mt4"><span className="t2">VAT 7%</span><span className="num">{M(delivery.tax)}</span></div>
                 <div className="flex justify-between mt8" style={{paddingTop:8, borderTop:'1px solid var(--border2)'}}><span className="fw700">Total due</span><span className="fw700 fs16 num">{M(delivery.invoiceAmount)}</span></div>
               </div>
 
