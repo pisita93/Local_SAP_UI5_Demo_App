@@ -35,6 +35,15 @@ function CashierQueue({ billings, filters, setFilters, density, palette, onOpenT
     return s;
   }, { qty: 0, total: 0, credit: 0, cash: 0, bank: 0, count: 0 });
 
+  const settled = billings.reduce((s, b) => {
+    if (b.status !== "settled" && b.status !== "closed") return s;
+    s.total += b.total; s.qty += b.qty;
+    s[b.payment] += b.total;
+    s.count++;
+    if (b.status === "closed") { s.posted += b.total; s.postedCount++; }
+    return s;
+  }, { qty: 0, total: 0, credit: 0, cash: 0, bank: 0, count: 0, posted: 0, postedCount: 0 });
+
   return (
     <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
       <PageTitle
@@ -53,6 +62,34 @@ function CashierQueue({ billings, filters, setFilters, density, palette, onOpenT
         <KPITile label="Cash to clear"   value={fmtTHB(totals.cash)}   sub={pct2(totals.cash, totals.total)} icon="cash" accent="#30914C"/>
         <KPITile label="Bank to clear"   value={fmtTHB(totals.bank)}   sub={pct2(totals.bank, totals.total)} icon="package" accent="#7B4FAB"/>
       </div>
+
+      {settled.count > 0 && (
+        <div style={{ padding: "12px 24px 0" }}>
+          <div style={{ background: "var(--bg)", borderRadius: 10, boxShadow: "var(--sh0)",
+                        padding: "12px 16px", display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text2)", textTransform: "uppercase",
+                          letterSpacing: "0.07em", whiteSpace: "nowrap" }}>Today's settlement</div>
+            <div style={{ display: "flex", gap: 20, flexWrap: "wrap", flex: 1 }}>
+              <div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: "var(--pos)", fontVariantNumeric: "tabular-nums" }}>{fmtTHB(settled.total)}</div>
+                <div style={{ fontSize: 11, color: "var(--text2)" }}>{settled.count} billings · {settled.qty.toLocaleString()} cases</div>
+              </div>
+              <div style={{ width: 1, background: "var(--border2)", alignSelf: "stretch" }}/>
+              <div style={{ fontSize: 12, color: "var(--text2)", display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
+                <span><span style={{ fontWeight: 700, color: "var(--text)" }}>{fmtTHB(settled.credit)}</span> credit</span>
+                <span><span style={{ fontWeight: 700, color: "var(--text)" }}>{fmtTHB(settled.cash)}</span> cash</span>
+                <span><span style={{ fontWeight: 700, color: "var(--text)" }}>{fmtTHB(settled.bank)}</span> bank</span>
+              </div>
+              {settled.postedCount > 0 && <>
+                <div style={{ width: 1, background: "var(--border2)", alignSelf: "stretch" }}/>
+                <div style={{ fontSize: 12, color: "var(--text2)" }}>
+                  <span style={{ fontWeight: 700, color: "var(--pos)" }}>{fmtTHB(settled.posted)}</span> SAP posted ({settled.postedCount})
+                </div>
+              </>}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div style={{ padding: "16px 24px 8px" }}>
         <FilterBarMini filters={filters} onChange={setFilters} density={density}/>
