@@ -64,7 +64,11 @@ sap.ui.define([
 		},
 
 		onDemoPress: function (oEvent) {
-			var oContext = oEvent.getSource().getBindingContext();
+			var oItem = oEvent.getParameter("listItem") || oEvent.getSource();
+			var oContext = oItem.getBindingContext();
+			if (!oContext) {
+				return;
+			}
 			var sRouteName = oContext.getProperty("key");
 			this.getOwnerComponent().getRouter().navTo(sRouteName);
 		}
