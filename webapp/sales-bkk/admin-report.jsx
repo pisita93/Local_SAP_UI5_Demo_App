@@ -28,11 +28,13 @@ function AdminReport({ billings, filters, setFilters, density, palette, onOpenTr
         actions={<>
           <ViewSwitcher value={view} onChange={setView}/>
           <Btn variant="secondary" icon="download" density={density}>Export</Btn>
-          <Btn variant="primary" icon="send" density={density}
-               disabled={totals.drafts === 0}
-               onClick={() => onSubmitDrafts(filtered.filter(b => b.status === "draft"))}>
-            Submit drafts ({totals.drafts})
-          </Btn>
+          {onSubmitDrafts && (
+            <Btn variant="primary" icon="send" density={density}
+                 disabled={totals.drafts === 0}
+                 onClick={() => onSubmitDrafts(filtered.filter(b => b.status === "draft"))}>
+              Submit drafts ({totals.drafts})
+            </Btn>
+          )}
         </>}
       />
       <FilterBar filters={filters} onChange={setFilters} density={density}

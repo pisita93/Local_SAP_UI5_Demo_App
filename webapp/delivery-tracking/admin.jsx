@@ -50,7 +50,10 @@ function UsersAdmin({ users, onChange }) {
   }, [users, roles]);
 
   function saveUser(u, isNew) {
-    if (isNew) onChange([...users, { ...u, id: 'U' + String(users.length + 101).padStart(3, '0'), lastLogin: '—' }]);
+    if (isNew) {
+      const nextNum = users.reduce((m, x) => Math.max(m, parseInt(String(x.id).replace(/\D/g, ''), 10) || 0), 0) + 1;
+      onChange([...users, { ...u, id: 'U' + String(nextNum).padStart(3, '0'), lastLogin: '—' }]);
+    }
     else onChange(users.map(x => x.id === u.id ? { ...x, ...u } : x));
     setEditing(null); setCreating(false);
     window.toast(`User ${isNew ? 'created' : 'updated'}`, 'success');

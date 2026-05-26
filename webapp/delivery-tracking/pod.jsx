@@ -78,8 +78,9 @@ function ReceiptUploader({ value, onChange, dark = false }) {
 
 // ───────── Shared form state ─────────
 function usePODForm(delivery) {
-  const deriveItems = (dl) => dl.items.map(it => ({...it, received: it.qty, rejected: 0, reason:''}));
+  const deriveItems = (dl) => (dl?.items || []).map(it => ({...it, received: it.qty, rejected: 0, reason:''}));
   const deriveMethod = (dl) => {
+    if (!dl) return 'none';
     if (dl.paymentTermsCode === 'CASH') return 'cash';
     if (dl.paymentTermsCode === 'BT07' || dl.paymentTermsCode === 'BT15') return 'bank';
     return 'none';
@@ -107,13 +108,14 @@ function usePODForm(delivery) {
     setNotes('');
     setPodPhoto(null);
     setSigMode('draw');
-  }, [delivery.id]);
+  }, [delivery?.id]);
 
+  const invoiceAmount = delivery?.invoiceAmount || 0;
   const totalRejected = items.reduce((s, it) => s + (it.rejected || 0), 0);
   const hasReject = totalRejected > 0;
   const cashNum = parseFloat(cashAmount) || 0;
-  const change = method === 'cash' ? Math.max(0, cashNum - delivery.invoiceAmount) : 0;
-  const cashShort = method === 'cash' ? Math.max(0, delivery.invoiceAmount - cashNum) : 0;
+  const change = method === 'cash' ? Math.max(0, cashNum - invoiceAmount) : 0;
+  const cashShort = method === 'cash' ? Math.max(0, invoiceAmount - cashNum) : 0;
 
   const updateItem = (sku, patch) => setItems(arr => arr.map(it => it.sku === sku ? { ...it, ...patch } : it));
 
@@ -121,12 +123,12 @@ function usePODForm(delivery) {
     const haveSignature = sigMode === 'draw' ? !!signature : !!podPhoto;
     if (!haveSignature) return { ok:false, reason: sigMode === 'draw' ? 'Customer signature is required.' : 'Photo of signed proof is required.' };
     if (!signerName.trim()) return { ok:false, reason:'Enter the signer name.' };
-    if (method === 'cash' && cashNum < delivery.invoiceAmount) return { ok:false, reason:'Cash collected is less than the invoice amount.' };
+    if (method === 'cash' && cashNum < invoiceAmount) return { ok:false, reason:'Cash collected is less than the invoice amount.' };
     if (method === 'bank' && !receipt) return { ok:false, reason:'Attach the bank transfer receipt photo.' };
     if (method === 'bank' && !reference.trim()) return { ok:false, reason:'Enter the bank transfer reference.' };
     if (hasReject && items.some(it => it.rejected > 0 && !it.reason.trim())) return { ok:false, reason:'Provide a reject reason for each rejected line.' };
     return { ok:true };
-  }, [signature, podPhoto, sigMode, signerName, method, cashNum, receipt, reference, items, hasReject, delivery.invoiceAmount]);
+  }, [signature, podPhoto, sigMode, signerName, method, cashNum, receipt, reference, items, hasReject, invoiceAmount]);
 
   function buildPayload() {
     return {
