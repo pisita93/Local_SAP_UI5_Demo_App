@@ -57,6 +57,12 @@ sap.ui.define([
 						title: oBundle.getText("demoEtaxInvoiceTitle"),
 						description: oBundle.getText("demoEtaxInvoiceDesc"),
 						icon: "sap-icon://document-text"
+					},
+					{
+						key: "leanAccountingDemo",
+						title: oBundle.getText("demoLeanAccountingTitle"),
+						description: oBundle.getText("demoLeanAccountingDesc"),
+						icon: "sap-icon://business-objects-experience"
 					}
 				]
 			});

@@ -1,0 +1,286 @@
+/* ============================================================================
+   SAP Analytics Cloud — Design Tokens
+   Theme: SAP Fiori "Morning Horizon" (the SAC Stories default light theme)
+   Source: SAC_Dashboard_Hi-Fi_UI_Kit.fig (official SAP Analytics Cloud UI Kit)
+
+   Font note: the authentic typeface is SAP "72" (proprietary, not on Google
+   Fonts). This file substitutes "Public Sans" as the nearest free match and
+   FLAGS the substitution. Drop real 72 .woff2 files into /fonts and the
+   @font-face block below will pick them up automatically.
+   ============================================================================ */
+
+/* Public Sans kept only as a metric-friendly fallback if a weight is missing. */
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Public+Sans:wght@900&display=swap');
+
+/* ----------------------------------------------------------------------------
+   SAP "72" — the authentic brand typeface (self-hosted from /fonts).
+   ---------------------------------------------------------------------------- */
+@font-face { font-family: "72"; src: url("fonts/72-Light-full.woff") format("woff");        font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: "72"; src: url("fonts/72-Regular-full.woff") format("woff");      font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "72"; src: url("fonts/72-Italic-full.woff") format("woff");       font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "72"; src: url("fonts/72-Semibold-full.woff") format("woff");     font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "72"; src: url("fonts/72-Bold-full.woff") format("woff");         font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "72"; src: url("fonts/72-BoldItalic-full.woff") format("woff");   font-weight: 700; font-style: italic; font-display: swap; }
+@font-face { font-family: "72"; src: url("fonts/72-Black-full.woff") format("woff");        font-weight: 900; font-style: normal; font-display: swap; }
+
+/* Condensed cut (dense tables / tight labels) */
+@font-face { font-family: "72 Condensed"; src: url("fonts/72-Condensed-full.woff") format("woff");     font-weight: 400; font-display: swap; }
+@font-face { font-family: "72 Condensed"; src: url("fonts/72-CondensedBold-full.woff") format("woff"); font-weight: 700; font-display: swap; }
+
+/* Monospace numerals */
+@font-face { font-family: "72 Mono"; src: url("fonts/72Mono-Bold-full.woff") format("woff"); font-weight: 700; font-display: swap; }
+
+:root {
+  /* ---------------------------------------------------------------------
+     FONT FAMILIES — authentic SAP "72", self-hosted.
+     The display/"brand" role uses the 72 Black (900) & Light (300) cuts
+     for big numerals and section headers (the separate "72 Brand"
+     marketing cut was not provided; 72 Black is the nearest authentic
+     stand-in). Public Sans remains only as a missing-weight fallback.
+     --------------------------------------------------------------------- */
+  --sap-font:        "72", "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --sap-font-brand:  "72", "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --sap-font-cond:   "72 Condensed", "72", "Public Sans", system-ui, sans-serif;
+  --sap-font-mono:   "72 Mono", "Roboto Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* =====================================================================
+     COLOR — Morning Horizon theme
+     ===================================================================== */
+
+  /* Brand */
+  --sap-brand-blue:        #008FD3;   /* SAP logo cyan-blue (gradient top) */
+  --sap-brand-blue-deep:   #1E5FA8;   /* SAP logo blue (gradient bottom) */
+
+  /* Action / interactive */
+  --sap-action:            #0070F2;   /* primary button bg (0,112,242) */
+  --sap-action-active:     #0064D9;   /* pressed / link / active value (0,100,217) */
+  --sap-link:              #0065C3;   /* hyperlink, filter value (0,101,195) */
+  --sap-action-hover-bg:   #ECF5FF;   /* tertiary button hover wash */
+
+  /* Text */
+  --sap-text:              #1D2D3E;   /* primary text / labels (29,45,62) */
+  --sap-text-heading:      #233549;   /* titles, strong text (35,53,73) */
+  --sap-text-secondary:    #556B82;   /* subtitles, secondary (85,107,130) */
+  --sap-text-muted:        #758CA4;   /* chart labels, axis, muted (117,140,164) */
+  --sap-text-disabled:     #A9B4C0;
+
+  /* Surfaces */
+  --sap-bg-page:           #F5F6F7;   /* canvas / page background (245,246,247) */
+  --sap-bg-card:           #FFFFFF;   /* widget / tile surface */
+  --sap-bg-shell:          #FFFFFF;   /* application & story bars */
+  --sap-bg-hover:          #F5F6F7;   /* list/row hover */
+  --sap-bg-selected:       #EBF5FF;   /* selected row / nav wash */
+  --sap-bg-dark:           #1A2733;   /* dark banner (26,39,51) */
+
+  /* Borders & dividers */
+  --sap-border-strong:     #233549;   /* high-contrast frame */
+  --sap-border:            #A8B3BD;   /* default control border (168,179,189) */
+  --sap-border-field:      #D5DADF;   /* input field border (213,218,223) */
+  --sap-border-subtle:     #C5CFD9;   /* subtle separators (197,207,217) */
+  --sap-divider:           #EDF0F3;   /* hairline divider (237,240,243) */
+  --sap-field-underline:   #556B82;   /* input bottom accent */
+  --sap-focus:             #0040B0;   /* focus dashes are #000 in kit; brand focus blue */
+
+  /* Semantic — status */
+  --sap-positive:          #178236;   /* good / up (23,130,54) */
+  --sap-positive-text:     #256F3A;
+  --sap-positive-bg:       #EBF5CB;   /* accept button wash */
+  --sap-negative:          #D00A0A;   /* bad / down (208,10,10) */
+  --sap-negative-text:     #AA0808;
+  --sap-negative-bg:       #FFD6E9;   /* reject button wash */
+  --sap-critical:          #C87B00;   /* warning / attention (200,123,0) */
+  --sap-critical-text:     #B44F00;
+  --sap-critical-bg:       #FFF3B7;   /* attention button wash */
+  --sap-information:       #0070F2;
+  --sap-neutral:           #758CA4;
+
+  /* =====================================================================
+     CHART PALETTES (SAC visualization colors)
+     ===================================================================== */
+
+  /* IBCS / variance semantics — the analytical default */
+  --sap-ibcs-actual:       #233549;   /* solid actual bars (dark navy) */
+  --sap-ibcs-actual-2:     #758CA4;   /* secondary measure (grey-blue) */
+  --sap-ibcs-reference:    #1D2D3E;   /* reference / forecast outline */
+  --sap-var-positive:      #178236;   /* positive variance pin/bar */
+  --sap-var-negative:      #D00A0A;   /* negative variance pin/bar */
+
+  /* "Colorful" categorical palette */
+  --sap-cat-1:  #168EFF;
+  --sap-cat-2:  #C87B00;
+  --sap-cat-3:  #75980B;
+  --sap-cat-4:  #049F9A;
+  --sap-cat-5:  #8B47D7;
+  --sap-cat-6:  #DF1278;
+  --sap-cat-7:  #62B3FF;
+  --sap-cat-8:  #5E5E5E;
+
+  /* "Blue" sequential palette */
+  --sap-seq-1:  #003B72;
+  --sap-seq-2:  #0065C3;
+  --sap-seq-3:  #168EFF;
+  --sap-seq-4:  #62B3FF;
+  --sap-seq-5:  #8BC7FF;
+  --sap-seq-6:  #C7E2FF;
+
+  /* =====================================================================
+     RADIUS — Fiori Horizon uses generous rounding on containers,
+     small rounding on controls.
+     ===================================================================== */
+  --sap-radius-card:    16px;   /* widgets, panels, tiles, dialogs */
+  --sap-radius-control: 8px;    /* buttons, toggles, menu buttons */
+  --sap-radius-field:   4px;    /* inputs, selects, checkboxes */
+  --sap-radius-pill:    9999px; /* tokens, status pills */
+
+  /* =====================================================================
+     ELEVATION
+     ===================================================================== */
+  --sap-shadow-card:   0px 0px 2px 0px rgba(34,53,72,0.2), 0px 2px 4px 0px rgba(34,53,72,0.2);
+  --sap-shadow-popover:0px 0px 2px 0px rgba(34,53,72,0.2), 0px 8px 16px 0px rgba(34,53,72,0.2);
+  --sap-shadow-toolbar:inset 0px -1px 0px 0px rgba(34,53,72,0.10);
+
+  /* =====================================================================
+     SPACING — SAC layouts run on a 4 / 8 / 16 px rhythm.
+     ===================================================================== */
+  --sap-space-1: 4px;
+  --sap-space-2: 8px;
+  --sap-space-3: 12px;
+  --sap-space-4: 16px;   /* default gutter between widgets */
+  --sap-space-5: 24px;
+  --sap-space-6: 32px;
+  --sap-space-8: 64px;
+
+  /* Standard control heights */
+  --sap-h-shellbar:  44px;
+  --sap-h-appbar:    52px;
+  --sap-h-toolbar:   40px;
+  --sap-h-button:    32px;
+  --sap-h-field:     26px;   /* compact density (default in stories) */
+  --sap-sidepanel-w: 360px;
+
+  /* =====================================================================
+     TYPE SCALE
+     ===================================================================== */
+  --sap-fs-cover:   64px;   /* cover / hero numerals (72 Brand) */
+  --sap-fs-display: 32px;   /* section headers, big KPI (72 Brand Medium / 72 Black) */
+  --sap-fs-h1:      24px;   /* page title (72 Black) */
+  --sap-fs-h2:      20px;   /* large headings */
+  --sap-fs-h3:      18px;   /* tile headings (72 Brand Medium) */
+  --sap-fs-title:   16px;   /* widget title (72 Bold) */
+  --sap-fs-body:    14px;   /* controls, body copy */
+  --sap-fs-label:   12px;   /* labels, captions, axis, data labels (most common) */
+
+  --sap-lh-tight:   1.0;    /* headings & numerals */
+  --sap-lh-snug:    1.25;
+  --sap-lh-body:    1.4;    /* SAP default */
+  --sap-lh-loose:   1.5;
+}
+
+/* ============================================================================
+   SEMANTIC TYPOGRAPHY HELPERS
+   ============================================================================ */
+.sap-cover {
+  font-family: var(--sap-font-brand);
+  font-weight: 900;
+  font-size: var(--sap-fs-cover);
+  line-height: var(--sap-lh-tight);
+  color: var(--sap-text-heading);
+}
+.sap-display {
+  font-family: var(--sap-font-brand);
+  font-weight: 500;
+  font-size: var(--sap-fs-display);
+  line-height: var(--sap-lh-tight);
+  color: var(--sap-text-heading);
+}
+.sap-h1 {                       /* page title */
+  font-family: var(--sap-font);
+  font-weight: 800;
+  font-size: var(--sap-fs-h1);
+  line-height: var(--sap-lh-tight);
+  color: var(--sap-text-heading);
+}
+.sap-h2 {
+  font-family: var(--sap-font);
+  font-weight: 700;
+  font-size: var(--sap-fs-h2);
+  line-height: var(--sap-lh-snug);
+  color: var(--sap-text-heading);
+}
+.sap-h3 {
+  font-family: var(--sap-font-brand);
+  font-weight: 500;
+  font-size: var(--sap-fs-h3);
+  line-height: var(--sap-lh-snug);
+  color: var(--sap-text-heading);
+}
+.sap-widget-title {             /* widget / panel header */
+  font-family: var(--sap-font);
+  font-weight: 700;
+  font-size: var(--sap-fs-title);
+  line-height: var(--sap-lh-snug);
+  color: var(--sap-text-heading);
+}
+.sap-kpi {                      /* big numeric point */
+  font-family: var(--sap-font-brand);
+  font-weight: 900;
+  font-size: var(--sap-fs-display);
+  line-height: var(--sap-lh-tight);
+  color: var(--sap-text-heading);
+  font-variant-numeric: tabular-nums;
+}
+.sap-body {
+  font-family: var(--sap-font);
+  font-weight: 400;
+  font-size: var(--sap-fs-body);
+  line-height: var(--sap-lh-body);
+  color: var(--sap-text);
+}
+.sap-subtitle {
+  font-family: var(--sap-font);
+  font-weight: 400;
+  font-size: var(--sap-fs-body);
+  line-height: var(--sap-lh-body);
+  color: var(--sap-text-secondary);
+}
+.sap-label {
+  font-family: var(--sap-font);
+  font-weight: 400;
+  font-size: var(--sap-fs-label);
+  line-height: var(--sap-lh-body);
+  color: var(--sap-text-muted);
+}
+.sap-link {
+  font-family: var(--sap-font);
+  font-size: var(--sap-fs-body);
+  color: var(--sap-link);
+  cursor: pointer;
+}
+.sap-link:hover { text-decoration: underline; }
+
+/* ============================================================================
+   IBCS SEMANTIC PATTERNS (SAP / IBCS data-fill convention)
+   Distinguish what values MEAN by fill pattern, not just color:
+     Actual       — what values ARE      → solid, dark
+     Previous Year— what values WERE      → solid, neutral grey
+     Forecast     — what values MIGHT be  → hatched
+     Plan/Budget  — what values SHOULD be → outline / empty
+   Apply to any bar/column element. Pair with green/red variance + a dotted
+   plan reference line. (Ref: SAP "Visualizing Data with SAP Analytics Cloud".)
+   ============================================================================ */
+.ibcs-actual {
+  background: var(--sap-ibcs-actual);
+}
+.ibcs-prior-year {
+  background: var(--sap-ibcs-actual-2);   /* neutral grey-blue */
+}
+.ibcs-forecast {
+  background-color: #fff;
+  background-image: repeating-linear-gradient(
+    45deg, var(--sap-ibcs-actual) 0 2px, transparent 2px 5px);
+  border: 1px solid var(--sap-ibcs-actual);
+}
+.ibcs-plan {
+  background: #fff;
+  border: 1.5px solid var(--sap-ibcs-actual);   /* hollow / outline */
+}

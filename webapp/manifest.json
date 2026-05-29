@@ -97,6 +97,11 @@
           "pattern": "demo/etax-invoice",
           "name": "etaxInvoiceDemo",
           "target": "etaxInvoiceDemo"
+        },
+        {
+          "pattern": "demo/lean-accounting",
+          "name": "leanAccountingDemo",
+          "target": "leanAccountingDemo"
         }
       ],
       "targets": {
@@ -134,6 +139,10 @@
         },
         "etaxInvoiceDemo": {
           "viewName": "demos.EtaxInvoiceDemo",
+          "viewLevel": 1
+        },
+        "leanAccountingDemo": {
+          "viewName": "demos.LeanAccountingDemo",
           "viewLevel": 1
         }
       }
