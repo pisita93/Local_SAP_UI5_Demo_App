@@ -49,6 +49,7 @@ controller.
 | Delivery Optimization & Tracking | `webapp/delivery-tracking/` | Truck-load grouping, proof-of-delivery capture, role-based status tracking |
 | Sales Order Creation App | `webapp/sales-order/` | Sales order creation with line items, pricing, and summary |
 | E-Tax Invoice Portal | `webapp/etax-invoice/` | Thai e-tax invoice worklist, billing creation, INET submission, master data |
+| LEAN Accounting · SAC Report | `webapp/lean-accounting/` | SAC-style analytics with Box Score, Metric Time Sequence, Analytic Dashboard (drill by brand/product/market/channel), and BCG portfolio matrix |
 
 Each prototype is self-contained: it ships its own CSS, web fonts,
 React + Babel-standalone, and JSX modules. You can open any prototype
