@@ -30,7 +30,7 @@ function ApplicationBar({ title }) {
   return (
     <div className="appbar">
       <div className="appbar-left">
-        <img className="logo" src="assets/sap-logo.png" alt="SAP" />
+        <img className="logo" src={(window.__resources && window.__resources.sapLogo) || "assets/sap-logo.png"} alt="SAP" />
         <span className="home"><Icon name="house" /> {title}</span>
       </div>
       <div className="appbar-right">
